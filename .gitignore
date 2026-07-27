@@ -1,0 +1,124 @@
+# .gitignore for rate-my-representatives-app
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.code-workspace
+
+# Node / JavaScript
+node_modules/
+.pnpm-store/
+.yarn/
+.yarnrc
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.pnpm-debug.log
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+.venv/
+venv/
+ENV/
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Go
+bin/
+vendor/
+
+# Rust
+target/
+Cargo.lock
+
+# .NET
+bin/
+obj/
+
+# Java / Kotlin
+*.class
+*.jar
+*.war
+*.ear
+.gradle/
+build/
+
+# Terraform / Infrastructure
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Docker
+.env.*.local
+docker-compose.override.yml
+
+# Logs
+logs/
+*.log
+
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+secrets/
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# Application artifacts
+coverage/
+*.coverage
+.nyc_output/
+out/
+.next/
+.nuxt/
+.svelte-kit/
+storybook-static/
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.pgdump
+
+# Object storage / uploads (local dev)
+uploads/
+quarantine/
+source-snapshots/
+
+# Build outputs
+dist/
+build/
+public/build/
+
+# Local dev data
+tmp/
+temp/
+*.local
+
+# Keep directory placeholders but ignore contents
+!**/.gitkeep
+!**/README.md
+!**/.env.example

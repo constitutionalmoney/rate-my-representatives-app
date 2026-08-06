@@ -1,0 +1,127 @@
+name: Public record correction or source gap
+description: Report a potentially incorrect, stale, conflicting, or missing public-role record using public sources.
+title: "record: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template only for public, source-based record corrections or coverage gaps. Do not submit identity documents, private contact information, home addresses, private correspondence, individual civic activity, confidential evidence, credentials, or legal demands.
+
+        This repository is pre-release. A repository issue does not prove that a production profile or correction workflow is operational.
+
+  - type: checkboxes
+    id: safe
+    attributes:
+      label: Public and safe to report
+      options:
+        - label: The information and sources below are public, and this issue contains no private or sensitive personal information.
+          required: true
+        - label: This is not a security/privacy vulnerability; those are reported privately.
+          required: true
+
+  - type: dropdown
+    id: record_type
+    attributes:
+      label: Record type
+      options:
+        - Person identity or duplicate/mismatch
+        - Office or public body
+        - District or jurisdiction
+        - Office term/status
+        - Election or candidacy
+        - Party/affiliation
+        - Official contact or identifier
+        - Vote/attendance/committee work
+        - Expense/disclosure
+        - Public statement/promise/position
+        - Evidence/claim/source
+        - Representative response
+        - Dispute/correction/appeal history
+        - Coverage or freshness state
+        - Methodology/indicator display
+        - Provenance/status display
+        - Other public record
+    validations:
+      required: true
+
+  - type: input
+    id: record
+    attributes:
+      label: Public record or page
+      description: Provide the stable RMR ID/URL when one exists, or identify the person, office, district, term, or candidacy precisely.
+      placeholder: Person + office term/candidacy + jurisdiction...
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Current or missing information
+      description: Quote only the minimum relevant public text and describe what appears incorrect, stale, conflicting, or absent.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Requested correction or coverage update
+      description: State the exact correction, uncertainty label, source conflict, or gap that should be reviewed. Do not demand silent deletion of history.
+    validations:
+      required: true
+
+  - type: textarea
+    id: sources
+    attributes:
+      label: Public sources
+      description: Provide original authoritative URLs, publisher, relevant dates, and what each source supports. Identify conflicting sources separately.
+      placeholder: |
+        1. Publisher — URL — date — supports...
+        2. Publisher — URL — date — conflicts because...
+    validations:
+      required: true
+
+  - type: textarea
+    id: temporal
+    attributes:
+      label: Effective dates and context
+      description: Identify the office term, candidacy/election, appointment/effective date, redistricting version, or historical period so the correction is not applied to the wrong record.
+
+  - type: textarea
+    id: source_rights
+    attributes:
+      label: Source access and reuse notes
+      description: State whether the source is an official public record, API, article, image, dataset, or other material and any visible attribution/licensing restrictions. Link rather than copying full works.
+
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: Impact
+      options:
+        - Minor formatting or metadata
+        - Stale but not materially misleading
+        - Could identify the wrong person/office/term/candidacy
+        - Could materially misstate a public claim, response, dispute, or correction
+        - Could affect a methodology/aggregate display
+        - Unknown — reviewer should assess
+    validations:
+      required: true
+
+  - type: textarea
+    id: conflict
+    attributes:
+      label: Conflict of interest or role
+      description: Disclose if you are the representative/candidate, staff, source publisher, submitter, political opponent, campaign, organization, or otherwise materially connected. A conflict does not automatically invalidate the source; it must be visible to reviewers.
+
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Acknowledgements
+      options:
+        - label: I understand a source URL or signature does not by itself prove the requested conclusion.
+          required: true
+        - label: I understand corrections may create visible supersession/history rather than silently erasing prior public records.
+          required: true
+        - label: I have not included an individual representative signal, rating, subscription, identity evidence, private staff evidence, or moderator information.
+          required: true
+        - label: I searched existing issues for this record/source conflict.
+          required: true

@@ -1,0 +1,152 @@
+name: Feature request
+description: Propose a scoped product or engineering improvement consistent with the PRD.
+title: "feat: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Read `README.md`, `docs/PRD.md`, `docs/ROADMAP.md`, `docs/WEBSITE_ALIGNMENT.md`, and `GOVERNANCE.md` first.
+
+        Major changes to identity, privacy, participation, methodology, scoring, moderation, public APIs, Verus, AI, or on-chain behavior require an RFC rather than an ordinary feature request.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Describe the concrete user, source, operational, accessibility, or security problem. Do not start with a preferred technology.
+      placeholder: A person/reviewer/representative/maintainer cannot... because...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: actor
+    attributes:
+      label: Primary actor
+      options:
+        - Public reader
+        - Basic participant
+        - Verified/jurisdiction-eligible participant
+        - Evidence contributor or researcher
+        - Representative/candidate
+        - Authorized staff
+        - Moderator/reviewer
+        - Administrator/operator
+        - Civic Agent/developer
+        - Multiple actors
+    validations:
+      required: true
+
+  - type: dropdown
+    id: product_area
+    attributes:
+      label: Product area
+      options:
+        - Public-role registry and sources
+        - Jurisdiction resolution
+        - Native iOS/Android
+        - Responsive web
+        - Civic Signal monitoring/briefings
+        - Representative signals
+        - Category ratings/community context
+        - Evidence/moderation/due process
+        - Representative portal/authorization
+        - Authentication/identity/attestation
+        - Methodology/Light Mathematics
+        - Verus Mobile proof of control
+        - Representative identity update
+        - VDXF provenance/verifier
+        - Accessibility
+        - Security/privacy/No Social Credit
+        - Developer API/SDK
+        - Infrastructure/operations
+        - Documentation/governance
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_outcome
+    attributes:
+      label: Proposed outcome
+      description: Describe observable behavior and what remains unchanged.
+    validations:
+      required: true
+
+  - type: textarea
+    id: user_flow
+    attributes:
+      label: User or system flow
+      placeholder: |
+        1. Actor...
+        2. System...
+        3. Human confirms/reviews...
+        4. Audit/correction/rollback...
+
+  - type: textarea
+    id: source_truth
+    attributes:
+      label: Source of truth and evidence
+      description: Identify sources, records, methods, contracts, or release evidence required. Do not invent facts or approvals.
+
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Required product boundaries
+      options:
+        - label: Public-role records must work without Verus.
+        - label: Civic Signal remains separate from human representative signals.
+        - label: Skip must create no representative signal.
+        - label: Evidence, ratings, context, responses, indicators, and human signals remain separate.
+        - label: No generalized citizen score, political profile, or unrelated eligibility use is introduced.
+        - label: AI cannot submit human civic intent or official authority.
+        - label: Corrections/disputes/appeals and public history remain possible.
+        - label: Proposed/testnet/disabled status will be represented honestly.
+
+  - type: textarea
+    id: privacy_security
+    attributes:
+      label: Privacy, security, and abuse analysis
+      description: Identify data classes, actors, misuse, retention, public/private fields, authorization, and No Social Credit impact.
+    validations:
+      required: true
+
+  - type: textarea
+    id: mobile_accessibility
+    attributes:
+      label: Mobile and accessibility impact
+      description: Address iOS, Android, web fallback, gesture alternatives, screen readers, font scaling, reduced motion, deep links, push, and offline/degraded behavior where applicable.
+
+  - type: textarea
+    id: verus
+    attributes:
+      label: Verus impact
+      description: State none, or explain VRSCTEST, wallet versions, payload, permissions, keys/signers, idempotency, confirmation/readback, privacy, rollback, and why Verus is necessary.
+      placeholder: None — or VRSCTEST-only optional...
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+        - [ ] Tests and release gates...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives and non-goals
+      description: Include the simplest non-blockchain/non-AI/manual option and what this request should not build.
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: I searched existing issues and the master tracker (#65).
+          required: true
+        - label: This request is compatible with the No Social Credit Covenant.
+          required: true
+        - label: This request does not require treasury, reserve, token, DEX, NFT, PBaaS, AxeTax, or Mirror-State infrastructure unless an accepted RFC establishes an optional integration.
+          required: true

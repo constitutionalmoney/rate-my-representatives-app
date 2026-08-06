@@ -359,7 +359,7 @@ At deployment and before write work:
 - disable writes on mismatch;
 - reject mainnet writes unless all explicit production gates are true.
 
-As of 2026-08-05, the documentation example is Verus `v1.2.17-3`; runtime policy, not this dated example, controls deployment.
+As of 2026-08-05, the current GitHub release marked **Latest** is Verus `v1.2.16-1`; runtime policy, not this dated example, controls deployment.
 
 ## 12. Source ingestion architecture
 

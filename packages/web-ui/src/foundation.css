@@ -1,0 +1,54 @@
+:root {
+  color: #f8fafc;
+  background: #0b1220;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+.foundation-shell {
+  display: grid;
+  min-height: 100vh;
+  padding: clamp(1rem, 6vw, 5rem);
+  place-items: center;
+}
+
+.foundation-card {
+  background: #172033;
+  border: 1px solid #334155;
+  border-radius: 1.5rem;
+  max-width: 48rem;
+  padding: clamp(1.5rem, 5vw, 4rem);
+}
+
+.foundation-eyebrow,
+.foundation-status {
+  color: #cbd5e1;
+  font-weight: 700;
+}
+
+h1 {
+  font-size: clamp(2rem, 8vw, 4.5rem);
+  line-height: 1;
+}
+
+p {
+  font-size: clamp(1rem, 3vw, 1.25rem);
+  line-height: 1.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+}

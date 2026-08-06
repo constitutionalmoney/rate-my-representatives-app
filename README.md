@@ -10,12 +10,17 @@ This repository is the implementation home for the application described at [rat
 
 **Specification and repository-foundation stage — not operational.**
 
+The mobile-first TypeScript workspace and CI foundation now exist. The native, web,
+portal, admin, API, and worker surfaces are deliberately limited to placeholder and
+typed health/example behavior. Domain packages that belong to later roadmap issues
+remain explicit non-operational stubs.
+
 - No production iOS or Android app is released.
 - No public representative profile, category rating, representative signal, Civic Signal briefing, authenticated aggregate, VerusID claim, or Representative Accountability Score is live.
 - No composite score is approved.
 - Checks and Balances Protocol integration is planned and disabled by default.
 - All Verus wallet, identity-update, and provenance work must be developed on **VRSCTEST** before any mainnet decision.
-- The folder tree below is the approved target architecture, not a claim that implementation already exists.
+- The folder tree below exists as a buildable foundation; its presence is not a claim that civic behavior is implemented.
 - The marketing site owns public explanation, early access, and prelaunch status. This repository owns application code, civic data, workflows, APIs, native clients, moderation, and Verus integration. The two systems must not share a production database.
 
 The project will not label a proposed capability as operational merely because a mockup, schema, issue, or experimental test exists.
@@ -260,6 +265,30 @@ The native apps and browsers never connect directly to authenticated `verusd` RP
 9. **Accountability-score decision** — implement only if the Light Mathematics method and all approval gates justify it.
 
 See [docs/ROADMAP.md](./docs/ROADMAP.md).
+
+## Development foundation
+
+The workspace pins Node.js `24.19.0` and pnpm `11.20.0`. After installing those
+prerequisites, a clean checkout installs with one command:
+
+```bash
+pnpm install --frozen-lockfile
+```
+
+Run the complete local foundation validation with:
+
+```bash
+pnpm check
+```
+
+The command generates contracts, formats-checks, lints, enforces workspace boundaries,
+type-checks, tests, builds, checks generated artifacts, reviews dependency licences, and
+scans tracked source for high-confidence secret patterns. It does not require PostgreSQL,
+a queue, object storage, Verus, wallet software, keys, or external civic data.
+
+See [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md),
+[docs/CONTRACTS.md](./docs/CONTRACTS.md), and
+[docs/adr/0001-mobile-first-typescript-monorepo.md](./docs/adr/0001-mobile-first-typescript-monorepo.md).
 
 ## Release gates
 

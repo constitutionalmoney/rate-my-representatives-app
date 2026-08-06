@@ -1,0 +1,31 @@
+{
+  "name": "@rmr/mobile",
+  "version": "0.0.0-foundation",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "main": "index.ts",
+  "scripts": {
+    "android": "expo run:android",
+    "build": "expo export --platform all --output-dir dist",
+    "ios": "expo run:ios",
+    "prebuild:android": "expo prebuild --platform android --clean --no-install",
+    "prebuild:ios": "expo prebuild --platform ios --clean --no-install",
+    "start": "expo start --dev-client",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@expo/metro-runtime": "57.0.8",
+    "@rmr/mobile-ui": "workspace:*",
+    "expo": "57.0.11",
+    "expo-dev-client": "57.0.10",
+    "expo-status-bar": "57.0.1",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.86.0",
+    "react-native-web": "0.21.2"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:"
+  }
+}

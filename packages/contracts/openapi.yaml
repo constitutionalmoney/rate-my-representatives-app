@@ -1,0 +1,26 @@
+openapi: 3.1.0
+info:
+  title: Rate My Representatives Foundation API
+  version: 0.0.0-foundation
+  description: >-
+    A non-operational health/example contract for repository issue #8. The complete
+    versioned API skeleton belongs to issue #60.
+servers:
+  - url: http://127.0.0.1:3000
+    description: Synthetic local development only
+paths:
+  /api/v1/health:
+    get:
+      operationId: getHealth
+      summary: Read core API foundation readiness
+      responses:
+        '200':
+          description: Core API can serve the enabled foundation routes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+components:
+  schemas:
+    HealthStatus:
+      $ref: './schemas/health-status.schema.json'

@@ -1,0 +1,47 @@
+{
+  "name": "rate-my-representatives-app",
+  "version": "0.0.0-foundation",
+  "private": true,
+  "description": "Mobile-first Rate My Representatives application workspace",
+  "license": "Apache-2.0",
+  "type": "module",
+  "packageManager": "pnpm@11.20.0",
+  "engines": {
+    "node": "24.19.0",
+    "pnpm": "11.20.0"
+  },
+  "scripts": {
+    "build": "pnpm generate:contracts && pnpm --recursive --workspace-concurrency=1 --if-present build",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm check:contracts && pnpm check:dependencies && pnpm check:licenses && pnpm check:secrets",
+    "check:boundaries": "node scripts/check-workspace-boundaries.mjs",
+    "check:contracts": "pnpm --filter @rmr/contracts generate:check",
+    "check:dco": "node scripts/check-dco.mjs",
+    "check:dependencies": "pnpm audit --prod --audit-level high",
+    "check:licenses": "license-checker-rseidelsohn --production --excludePrivatePackages --onlyAllow '0BSD;Apache-2.0;BSD-2-Clause;BSD-3-Clause;BlueOak-1.0.0;CC0-1.0;ISC;MIT;MIT-0;MPL-2.0;Python-2.0;Unlicense'",
+    "check:secrets": "node scripts/check-secrets.mjs",
+    "dev:api": "pnpm --filter @rmr/api dev",
+    "dev:mobile": "pnpm --filter @rmr/mobile start",
+    "dev:web": "pnpm --filter @rmr/web dev",
+    "format": "prettier --write . --ignore-unknown",
+    "format:check": "prettier --check . --ignore-unknown",
+    "generate:contracts": "pnpm --filter @rmr/contracts generate",
+    "lint": "eslint . && pnpm check:boundaries",
+    "mobile:prebuild:android": "pnpm --filter @rmr/mobile prebuild:android",
+    "mobile:prebuild:ios": "pnpm --filter @rmr/mobile prebuild:ios",
+    "test": "pnpm generate:contracts && vitest run",
+    "test:contract": "pnpm generate:contracts && vitest run packages/contracts/src/client.contract.test.ts apps/api/src/handler.contract.test.ts apps/web/src/health.contract.test.ts",
+    "test:unit": "pnpm generate:contracts && vitest run packages/config packages/observability packages/web-ui apps/mobile tests/tooling",
+    "typecheck": "pnpm generate:contracts && pnpm --recursive --workspace-concurrency=1 --if-present typecheck"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "24.13.3",
+    "eslint": "10.8.0",
+    "globals": "17.3.0",
+    "license-checker-rseidelsohn": "5.0.1",
+    "prettier": "3.9.6",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.66.0",
+    "vitest": "4.1.10"
+  }
+}

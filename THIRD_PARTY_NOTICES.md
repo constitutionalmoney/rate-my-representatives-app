@@ -4,7 +4,25 @@ This file is the repository-level inventory for third-party software, data, sche
 
 ## Current status
 
-The application has not yet been scaffolded. No production dependency inventory is asserted by this file.
+The issue #8 repository foundation uses the package versions locked in `pnpm-lock.yaml`.
+These dependencies support local and CI scaffolding only; no civic feature or production
+service is operational. CI checks dependency licences and uploads no private data.
+
+Direct runtime foundations introduced by issue #8 are:
+
+| Component | Version | Upstream | Licence | Use |
+|---|---:|---|---|---|
+| Expo | 57.0.11 | https://github.com/expo/expo | MIT | Native iOS/Android development-build foundation |
+| React | 19.2.3 | https://github.com/facebook/react | MIT | Native/web UI runtime |
+| React Native | 0.86.0 | https://github.com/facebook/react-native | MIT | Native application runtime |
+| React Native for Web | 0.21.2 | https://github.com/necolas/react-native-web | MIT | Expo web compatibility |
+| Vite | 8.2.1 | https://github.com/vitejs/vite | MIT | Web, portal, and admin builds |
+| openapi-fetch | 0.17.0 | https://github.com/openapi-ts/openapi-typescript | MIT | Generated-contract client runtime |
+
+Development-only generators, linters, test runners, and CI tooling remain governed by
+their upstream licences and exact versions in `pnpm-lock.yaml`. This inventory must be
+expanded before distributing applications or adding native libraries, datasets, media,
+connectors, containers, or Verus dependencies.
 
 Before a dependency, source snapshot, photograph, logo, map, dataset, model, SDK, generated client, or copied code is committed or distributed, the contributor must record:
 

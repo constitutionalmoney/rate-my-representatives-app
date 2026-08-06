@@ -1,0 +1,139 @@
+name: Bug report
+description: Report a reproducible defect that is safe to discuss publicly.
+title: "bug: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a defect. Do not include credentials, private keys, seed phrases, WIFs, wallet files, identity documents, precise addresses, private civic activity, moderator records, real personal data, or unpatched exploit details.
+
+        Security or privacy vulnerabilities must be reported through the private Security Advisory link.
+
+  - type: checkboxes
+    id: safe_public
+    attributes:
+      label: Public-report safety
+      options:
+        - label: This report does not contain a security/privacy vulnerability or sensitive data that should be reported privately.
+          required: true
+
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Affected surface
+      options:
+        - Native iOS app
+        - Native Android app
+        - Responsive web app
+        - Representative portal
+        - Moderation/admin console
+        - Public API or generated client
+        - Civic Signal briefing/notification
+        - Representative signal or rating flow
+        - Evidence/source ingestion
+        - Authentication or authorization
+        - Verus Mobile handoff
+        - Representative identity update
+        - VDXF provenance/verifier
+        - Infrastructure/operations
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Defect summary
+      description: State what is wrong without including sensitive data.
+      placeholder: The expected record/action/status is..., but the application...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      description: Use synthetic/test data and identify feature flags or test environment.
+      placeholder: |
+        1. On VRSCTEST/staging...
+        2. Open...
+        3. Select...
+        4. Observe...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_actual
+    attributes:
+      label: Expected and actual behavior
+      placeholder: |
+        Expected:
+        Actual:
+    validations:
+      required: true
+
+  - type: input
+    id: revision
+    attributes:
+      label: App/API/repository version
+      description: Include app build, API version, commit SHA, or branch where known.
+      placeholder: iOS build..., Android build..., API v1..., commit...
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment and device
+      description: Include OS/device/browser and whether Verus or another optional dependency was enabled. Do not include private endpoints or credentials.
+      placeholder: iOS..., Android..., browser..., staging/local..., VRSCTEST enabled/disabled...
+
+  - type: textarea
+    id: status_data
+    attributes:
+      label: Relevant safe status or logs
+      description: Redact tokens, IDs that identify people, precise location, civic choices, source-submission content, wallet payloads, RPC details, and private stack traces.
+      render: shell
+
+  - type: dropdown
+    id: product_rule
+    attributes:
+      label: Product invariant affected
+      options:
+        - Source/coverage/freshness correctness
+        - Person/office/term/candidacy separation
+        - Civic Signal versus representative signal terminology
+        - Skip should create no signal
+        - Privacy or No Social Credit boundary
+        - Accessibility
+        - AI/human-review boundary
+        - Verus optionality/provenance-not-truth
+        - Correction/dispute/appeal history
+        - None or unknown
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: User and operational impact
+      description: Explain who is affected and whether data, accessibility, public record correctness, or release status may be impacted.
+    validations:
+      required: true
+
+  - type: textarea
+    id: workaround
+    attributes:
+      label: Safe workaround
+      description: Provide one only if it does not expose data, bypass authorization, or misstate a record.
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: I searched existing issues for the same defect.
+          required: true
+        - label: I used synthetic or authorized test data.
+          required: true
+        - label: I have not represented a proposed/testnet feature as operational.
+          required: true

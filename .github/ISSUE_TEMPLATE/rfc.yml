@@ -1,0 +1,149 @@
+name: Request for Comments (RFC)
+description: Propose a material change to architecture, identity, privacy, participation, methodology, AI, moderation, public APIs, Verus, or governance.
+title: "rfc: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for changes that require the RFC path in `GOVERNANCE.md`. An RFC starts review; it does not authorize implementation, release, mainnet use, a composite score, or official product status.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Executive summary
+      description: State the proposed decision and why it matters in plain language.
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and evidence
+      description: Define the problem, affected actors, current behavior, sources/data, and why the existing design is insufficient.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: decision_class
+    attributes:
+      label: Decision class
+      options:
+        - Public-role identity or civic registry semantics
+        - Authentication, representative authorization, attestation, or eligibility
+        - Representative signals, ratings, context, or privacy-safe aggregation
+        - Civic Signal monitoring/AI behavior
+        - Evidence, moderation, responses, corrections, disputes, or appeals
+        - Light Mathematics, indicators, or Representative Accountability Score
+        - No Social Credit, privacy, analytics, or data sharing
+        - Public API, SDK, schema, or compatibility
+        - Native mobile, app links, push, or store architecture
+        - Verus Mobile proof/signature/identity update
+        - VDXF provenance, RPC, signer, or mainnet decision
+        - Security, infrastructure, retention, or incident response
+        - Licensing, governance, trademarks, or official status
+        - Future Mirror-State/Direct Republic integration
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Current design and source-of-truth references
+      description: Link the PRD requirements, architecture, issue, schema, method, policy, code, or website statement affected.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed design
+      description: Define entities, state transitions, contracts, UI, authorization, operations, feature flags, and status language in enough detail to evaluate.
+    validations:
+      required: true
+
+  - type: textarea
+    id: boundaries
+    attributes:
+      label: Product boundaries and invariants
+      description: Explain how the proposal preserves or intentionally changes source attribution, entity separation, Civic Signal terminology, skip/withdrawal semantics, evidence/rating separation, correction rights, optional Verus, provenance-not-truth, and score gates.
+    validations:
+      required: true
+
+  - type: textarea
+    id: no_social_credit
+    attributes:
+      label: No Social Credit impact assessment
+      description: Identify citizen data, any ranking/prediction, purpose, access, retention, appeal, cross-product use, unrelated eligibility impact, and tests proving no generalized citizen score/profile results.
+    validations:
+      required: true
+
+  - type: textarea
+    id: privacy_security
+    attributes:
+      label: Privacy, security, abuse, and legal impact
+      description: Include data-flow/trust-boundary changes, actors, threats, purpose limitation, public/private fields, retention, correction/deletion, incident response, legal/policy review, and residual risk.
+    validations:
+      required: true
+
+  - type: textarea
+    id: mobile_accessibility
+    attributes:
+      label: Native mobile, web, and accessibility impact
+      description: Address iOS/Android, API compatibility, deep/app links, secure storage, push, offline/degraded behavior, VoiceOver/TalkBack, no-gesture path, font scaling, reduced motion, and store policy where applicable.
+
+  - type: textarea
+    id: verus
+    attributes:
+      label: Verus and cryptographic impact
+      description: State none, or document network, exact compatibility evidence, request/identity/VDXF semantics, key custody, RPC boundary, public payload, size, fee, consent, idempotency, confirmation, reorganization, readback, recovery/revocation, rollback, and mainnet gates.
+      placeholder: None — or detailed VRSCTEST-first design...
+
+  - type: textarea
+    id: methodology
+    attributes:
+      label: Methodology and AI impact
+      description: Explain source eligibility, missing data, confidence, AI role, human review, method versioning, bias/adversarial/correction testing, and whether any public indicator or score changes.
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Include do nothing, manual/process-only, simpler database/API, non-AI, non-blockchain, and incremental alternatives with tradeoffs.
+    validations:
+      required: true
+
+  - type: textarea
+    id: migration
+    attributes:
+      label: Migration, compatibility, rollout, and rollback
+      description: Cover database/schema/API/native versions, historical records, feature flags, cohorts, testnet/pilot, monitoring, stop conditions, correction/supersession, and rollback.
+    validations:
+      required: true
+
+  - type: textarea
+    id: tests
+    attributes:
+      label: Validation and release evidence
+      description: List unit, contract, integration, native, accessibility, privacy, security, No Social Credit, abuse, source, AI, Verus, backup, incident, legal, and public-review evidence required.
+    validations:
+      required: true
+
+  - type: textarea
+    id: unresolved
+    attributes:
+      label: Unresolved questions and decision owner
+      description: State what is unknown, what external facts must be verified, who decides, and which work remains blocked.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: reserved
+    attributes:
+      label: Reserved-decision acknowledgement
+      options:
+        - label: I understand that public discussion does not replace a decision by the project steward where `GOVERNANCE.md` reserves authority.
+          required: true
+        - label: I understand that an accepted RFC does not by itself enable a feature, composite score, production/mainnet write, store release, or official deployment.
+          required: true
+        - label: I have not included secrets, private civic data, identity evidence, credentials, or unpatched vulnerability details.
+          required: true

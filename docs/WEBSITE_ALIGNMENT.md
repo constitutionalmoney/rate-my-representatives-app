@@ -187,7 +187,7 @@ The old guide contained a dated daemon example. The deployment rule is now:
 - disable writes on an unapproved, unsynced, or wrong-network node;
 - record the exact tested release in deployment evidence.
 
-As of this reconciliation, the dated documentation example is `v1.2.17-3`. The runtime policy supersedes the example when a newer mandatory release exists.
+As of August 5, 2026, the current GitHub release marked **Latest** is `v1.2.16-1`. The runtime policy supersedes this dated example whenever the official required release changes.
 
 ## 13. Website/application boundary
 

@@ -1,0 +1,41 @@
+# Default steward review
+* @constitutionalmoney
+
+# Governance, licensing, contribution, security, privacy, and public policy
+/LICENSE @constitutionalmoney
+/NOTICE @constitutionalmoney
+/GOVERNANCE.md @constitutionalmoney
+/CONTRIBUTING.md @constitutionalmoney
+/DCO.txt @constitutionalmoney
+/SECURITY.md @constitutionalmoney
+/CODE_OF_CONDUCT.md @constitutionalmoney
+/TRADEMARKS.md @constitutionalmoney
+/DATA_LICENSE.md @constitutionalmoney
+/THIRD_PARTY_NOTICES.md @constitutionalmoney
+/AI_CONTRIBUTIONS.md @constitutionalmoney
+/CODEX.md @constitutionalmoney
+
+# Product and architecture source of truth
+/docs/PRD.md @constitutionalmoney
+/docs/ROADMAP.md @constitutionalmoney
+/docs/ARCHITECTURE.md @constitutionalmoney
+/docs/WEBSITE_ALIGNMENT.md @constitutionalmoney
+/docs/IDENTITY_AND_VERUS_MOBILE.md @constitutionalmoney
+/docs/SUBDOMAINS.md @constitutionalmoney
+/docs/METHODOLOGY.md @constitutionalmoney
+/docs/NO_SOCIAL_CREDIT.md @constitutionalmoney
+/docs/PRIVACY_AND_RETENTION.md @constitutionalmoney
+/docs/THREAT_MODEL.md @constitutionalmoney
+
+# High-risk implementation boundaries
+/apps/admin/ @constitutionalmoney
+/apps/portal/ @constitutionalmoney
+/packages/auth/ @constitutionalmoney
+/packages/methodology/ @constitutionalmoney
+/packages/moderation/ @constitutionalmoney
+/packages/verus/ @constitutionalmoney
+/packages/provenance/ @constitutionalmoney
+/packages/observability/ @constitutionalmoney
+/infra/deployment/ @constitutionalmoney
+/infra/mobile/ @constitutionalmoney
+/.github/ @constitutionalmoney

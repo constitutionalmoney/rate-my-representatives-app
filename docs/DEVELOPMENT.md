@@ -1,6 +1,6 @@
 # Development foundation
 
-**Status:** Issues #8, #12, and #9 foundation. No civic feature, public account service,
+**Status:** Issues #8, #12, #9, #19, and #60 foundation. No civic feature, public account service,
 Verus write, or production backing service is operational.
 
 ## Prerequisites
@@ -23,7 +23,7 @@ Do not use `npm install` or commit another package-manager lockfile.
 
 | Command | Purpose |
 |---|---|
-| `pnpm generate:contracts` | Generate TypeScript from the foundation OpenAPI and JSON Schema inputs |
+| `pnpm generate:contracts` | Generate TypeScript, schema documents, and fixtures from canonical v1 inputs |
 | `pnpm format:check` | Check formatting without writing files |
 | `pnpm lint` | Run ESLint and workspace-boundary enforcement |
 | `pnpm typecheck` | Strictly type-check every workspace |
@@ -34,7 +34,9 @@ Do not use `npm install` or commit another package-manager lockfile.
 | `pnpm infra:smoke` | Exercise migrations, retry/DLQ, storage isolation, and Verus-off health |
 | `pnpm infra:down` | Stop the local stack while preserving named volumes and generated secrets |
 | `pnpm build` | Build packages, server workers, native bundles, and web surfaces |
-| `pnpm check:contracts` | Reject uncommitted generated-contract drift |
+| `pnpm check:contracts` | Reject generated drift and validate OpenAPI, schemas, fixtures, and policy metadata |
+| `pnpm check:api-compat` | Reject unapproved breaking changes relative to the parent contract |
+| `pnpm --filter @rmr/contracts mock` | Run the loopback-only synthetic v1 mock server |
 | `pnpm check:dependencies` | Fail on high or critical production dependency advisories |
 | `pnpm check:licenses` | Reject unknown or unapproved production dependency licences |
 | `pnpm check:secrets` | Scan source for high-confidence credential/key patterns |
@@ -61,7 +63,8 @@ override is applied.
 - `apps/web`: responsive public-app placeholder and generated-client consumer.
 - `apps/portal`: representative portal placeholder.
 - `apps/admin`: administration/moderation placeholder.
-- `apps/api`: built-in Node HTTP adapter exposing only `GET /api/v1/health`.
+- `apps/api`: built-in Node HTTP adapter exposing health plus a non-operational,
+  typed jurisdiction-availability response.
 - `apps/worker`: no-job worker process proving the worker build boundary.
 
 Start local placeholder surfaces with `pnpm dev:web`, `pnpm dev:api`, or

@@ -16,6 +16,8 @@ export interface RoutePolicy {
 
 export const ROUTE_POLICIES: readonly RoutePolicy[] = Object.freeze([
   { action: 'public_read', method: 'GET', path: '/api/v1/health' },
+  { action: 'public_read', method: 'GET', path: '/api/v1/health/mobile' },
+  { action: 'public_read', method: 'GET', path: '/api/v1/jurisdictions' },
   {
     action: 'public_read',
     feature: 'PASSKEY_AUTH_ENABLED',

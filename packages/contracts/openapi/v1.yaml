@@ -1,0 +1,383 @@
+openapi: 3.1.0
+info:
+  title: Rate My Representatives API
+  version: 1.0.0-contract
+  summary: Versioned mobile-first public-accountability API contract
+  description: >-
+    Canonical v1 contract foundation. Only GET /api/v1/health is operational.
+    GET /api/v1/jurisdictions is an explicit proposed-state vertical slice and
+    returns a typed feature-disabled error until issue #49 implements the registry.
+    Every other route family is contract discovery only and has no operation.
+  license:
+    name: Apache-2.0
+    identifier: Apache-2.0
+servers:
+  - url: http://127.0.0.1:3000
+    description: Synthetic local development
+    x-rmr-feature-status: operational
+  - url: https://api.ratemyrepresentatives.com
+    description: Proposed production origin; no production API is claimed live
+    x-rmr-feature-status: proposed
+tags:
+  - name: Health
+    description: Operational contract-foundation health only; expanded readiness belongs to issue #42.
+  - name: Jurisdictions
+    description: Proposed nested jurisdiction registry owned by issue #49.
+  - name: Representation
+    description: Proposed representation resolution.
+  - name: People
+    description: Proposed public-role people registry.
+  - name: Offices
+    description: Proposed public office registry.
+  - name: Office terms
+    description: Proposed office-term registry.
+  - name: Elections
+    description: Proposed election registry.
+  - name: Candidacies
+    description: Proposed candidacy lifecycle.
+  - name: Sources
+    description: Proposed official-source contracts.
+  - name: Claims
+    description: Proposed source-backed factual claims.
+  - name: Coverage
+    description: Proposed source coverage and freshness.
+  - name: Methodologies
+    description: Proposed versioned methodology publication.
+  - name: Authentication
+    description: Disabled public authentication routes.
+  - name: Account
+    description: Disabled private account routes.
+  - name: Representative claims
+    description: Disabled representative authority claim routes.
+  - name: Staff delegations
+    description: Disabled authorized-staff delegation routes.
+  - name: Representative signals
+    description: Disabled, human-only representative signal routes; distinct from Civic Signal.
+  - name: Category ratings
+    description: Disabled human category-rating routes.
+  - name: Community context
+    description: Disabled human community-context routes.
+  - name: Evidence
+    description: Disabled evidence submission routes.
+  - name: Responses
+    description: Disabled official response routes.
+  - name: Disputes
+    description: Proposed dispute routes.
+  - name: Corrections
+    description: Proposed correction routes.
+  - name: Appeals
+    description: Proposed appeal routes.
+  - name: Civic Signal
+    description: Disabled monitoring and briefing routes; never a human representative signal.
+  - name: Notifications
+    description: Disabled notification routes.
+  - name: Verus
+    description: Disabled optional VRSCTEST-first Verus integration routes; no arbitrary RPC.
+  - name: Provenance
+    description: Disabled public provenance reads and writes; no chain writer is implemented.
+paths:
+  /api/v1/health:
+    get:
+      operationId: getApiHealth
+      summary: Read the API contract-foundation status
+      description: >-
+        Reports that the implemented contract slice can respond. This is not the
+        database/dependency readiness family owned by issue #42.
+      tags: [Health]
+      deprecated: false
+      security: []
+      x-rmr-contract:
+        featureStatus: operational
+        allowedActors: [anonymous, human, representative, staff, reviewer, admin, service, agent]
+        requiredScopes: []
+        authentication: none
+        recentPresence: false
+        privacyClassification: public
+        fieldPrivacy: all-response-fields-public
+        publicSerializer: health-status-v1
+        privateSerializer: not-applicable
+        idempotency: not-applicable
+        concurrency: none
+        rateLimitClass: public-health
+        errorCodes: []
+        auditEffect: none
+        outboxEffect: none
+        pagination: none
+        filters: none
+        sort: none
+        cache: no-store
+        versionPolicy: additive-v1
+        sourceMetadata: none
+      responses:
+        '200':
+          description: The API contract foundation is available.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CacheControl'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+              examples:
+                syntheticReady:
+                  $ref: '#/components/examples/SyntheticHealthReady'
+  /api/v1/health/mobile:
+    get:
+      operationId: getMobileCompatibility
+      summary: Read installed native-client compatibility policy
+      description: >-
+        Reports the synthetic foundation minimum app builds and supported contract
+        versions for native iOS and Android clients. It does not claim an app-store release.
+      tags: [Health]
+      deprecated: false
+      security: []
+      x-rmr-contract:
+        featureStatus: operational
+        allowedActors: [anonymous, human, representative, staff, reviewer, admin, service, agent]
+        requiredScopes: []
+        authentication: none
+        recentPresence: false
+        privacyClassification: public
+        fieldPrivacy: all-response-fields-public
+        publicSerializer: mobile-compatibility-status-v1
+        privateSerializer: not-applicable
+        idempotency: not-applicable
+        concurrency: none
+        rateLimitClass: public-health
+        errorCodes: []
+        auditEffect: none
+        outboxEffect: none
+        pagination: none
+        filters: none
+        sort: none
+        cache: no-store
+        versionPolicy: additive-v1
+        sourceMetadata: release-policy-foundation
+      responses:
+        '200':
+          description: Native client contract compatibility policy.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CacheControl'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MobileCompatibilityStatus'
+              examples:
+                syntheticCompatible:
+                  $ref: '#/components/examples/SyntheticMobileCompatibilityReady'
+  /api/v1/jurisdictions:
+    get:
+      operationId: getJurisdictionAvailability
+      summary: Read the proposed jurisdiction route state
+      description: >-
+        The route is deliberately non-operational until issue #49 implements the
+        nested jurisdiction registry. No jurisdiction records are returned.
+      tags: [Jurisdictions]
+      deprecated: false
+      security: []
+      x-rmr-contract:
+        featureStatus: proposed
+        allowedActors: [anonymous, human, representative, staff, reviewer, admin, service, agent]
+        requiredScopes: []
+        authentication: none
+        recentPresence: false
+        privacyClassification: public
+        fieldPrivacy: all-response-fields-public
+        publicSerializer: api-error-v1
+        privateSerializer: not-applicable
+        idempotency: not-applicable
+        concurrency: none
+        rateLimitClass: public-read
+        errorCodes: [FEATURE_DISABLED, MAINTENANCE]
+        auditEffect: none
+        outboxEffect: none
+        pagination: cursor-proposed
+        filters: proposed
+        sort: proposed
+        cache: no-store
+        versionPolicy: additive-v1
+        sourceMetadata: not-implemented
+      responses:
+        '503':
+          $ref: '#/components/responses/FeatureDisabled'
+  /api/v1/representation:
+    description: Proposed; no operation until the representation-resolution issue is implemented.
+    x-rmr-feature-status: proposed
+  /api/v1/people:
+    description: Proposed; no public-role person operation until issue #59.
+    x-rmr-feature-status: proposed
+  /api/v1/offices:
+    description: Proposed; no office operation until issue #59.
+    x-rmr-feature-status: proposed
+  /api/v1/office-terms:
+    description: Proposed; no office-term operation until issue #59.
+    x-rmr-feature-status: proposed
+  /api/v1/elections:
+    description: Proposed; no election operation in this issue.
+    x-rmr-feature-status: proposed
+  /api/v1/candidacies:
+    description: Proposed; no candidacy operation until issue #59.
+    x-rmr-feature-status: proposed
+  /api/v1/sources:
+    description: Proposed; no source ingestion or read operation until issues #55 and #11.
+    x-rmr-feature-status: proposed
+  /api/v1/claims:
+    description: Proposed; no source-backed claim operation in this issue.
+    x-rmr-feature-status: proposed
+  /api/v1/coverage:
+    description: Proposed; no coverage operation in this issue.
+    x-rmr-feature-status: proposed
+  /api/v1/methodologies:
+    description: Proposed; no scoring or methodology result operation in this issue.
+    x-rmr-feature-status: proposed
+  /api/v1/auth:
+    description: Disabled; issue #12 domain policy does not expose public authentication routes.
+    x-rmr-feature-status: disabled
+  /api/v1/account:
+    description: Disabled private account route family.
+    x-rmr-feature-status: disabled
+  /api/v1/representative-claims:
+    description: Disabled representative-claim route family.
+    x-rmr-feature-status: disabled
+  /api/v1/staff-delegations:
+    description: Disabled staff-delegation route family.
+    x-rmr-feature-status: disabled
+  /api/v1/representative-signals:
+    description: Disabled human-intent route family. Skip has no operation and creates no signal.
+    x-rmr-feature-status: disabled
+    x-rmr-allowed-actors: [human]
+    x-rmr-agent-access: forbidden
+  /api/v1/category-ratings:
+    description: Disabled human-intent category-rating route family.
+    x-rmr-feature-status: disabled
+    x-rmr-allowed-actors: [human]
+    x-rmr-agent-access: forbidden
+  /api/v1/community-context:
+    description: Disabled human-authored community-context route family.
+    x-rmr-feature-status: disabled
+    x-rmr-allowed-actors: [human]
+    x-rmr-agent-access: forbidden
+  /api/v1/evidence:
+    description: Disabled evidence route family; no ingestion is implemented.
+    x-rmr-feature-status: disabled
+  /api/v1/responses:
+    description: Disabled official response route family.
+    x-rmr-feature-status: disabled
+    x-rmr-agent-access: forbidden
+  /api/v1/disputes:
+    description: Proposed dispute route family.
+    x-rmr-feature-status: proposed
+  /api/v1/corrections:
+    description: Proposed correction route family.
+    x-rmr-feature-status: proposed
+  /api/v1/appeals:
+    description: Proposed appeal route family.
+    x-rmr-feature-status: proposed
+  /api/v1/civic-signal:
+    description: Disabled monitoring/briefing route family; it cannot create human judgment.
+    x-rmr-feature-status: disabled
+    x-rmr-allowed-actors: [human, service, agent]
+    x-rmr-human-intent: forbidden
+  /api/v1/notifications:
+    description: Disabled notification route family.
+    x-rmr-feature-status: disabled
+  /api/v1/verus:
+    description: Disabled optional Verus route family; no arbitrary RPC, signer, or key operation exists.
+    x-rmr-feature-status: disabled
+    x-rmr-network: VRSCTEST
+  /api/v1/provenance:
+    description: Disabled provenance route family; issue #35 owns any future VRSCTEST writer.
+    x-rmr-feature-status: disabled
+components:
+  headers:
+    CacheControl:
+      description: Explicit response cache policy.
+      schema:
+        type: string
+    CorrelationId:
+      description: Safe opaque correlation reference; never an account or identity identifier.
+      schema:
+        type: string
+        pattern: '^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$'
+    RetryAfter:
+      description: Seconds before a safe retry may be attempted.
+      schema:
+        type: integer
+        minimum: 0
+  schemas:
+    ApiError:
+      $ref: ../schemas/api-error.schema.json
+    CivicSignalBriefing:
+      $ref: ../schemas/civic-signal-briefing.schema.json
+    HealthStatus:
+      $ref: ../schemas/health-status.schema.json
+    MobileCompatibilityStatus:
+      $ref: ../schemas/mobile-compatibility-status.schema.json
+    RepresentativeSignalCommand:
+      $ref: ../schemas/representative-signal-command.schema.json
+  responses:
+    FeatureDisabled:
+      description: The capability is disabled or still proposed.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheControl'
+        X-Correlation-ID:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            proposedJurisdictions:
+              $ref: '#/components/examples/SyntheticJurisdictionsProposed'
+  examples:
+    SyntheticHealthReady:
+      summary: Synthetic contract-foundation health
+      value:
+        status: ready
+        service: api
+        version: 1.0.0-contract
+        contract:
+          currentVersion: v1
+          minimumSupportedVersion: v1
+          supportedVersions: [v1]
+        featureStates:
+          publicRegistry: proposed
+          civicSignal: disabled
+          representativeSignals: disabled
+          verus: disabled
+          provenanceWrites: disabled
+        optionalDependencies:
+          verus: disabled
+    SyntheticJurisdictionsProposed:
+      summary: Synthetic proposed-state response
+      value:
+        schemaVersion: api-error.v1
+        code: FEATURE_DISABLED
+        message: This capability is not operational.
+        correlationId: synthetic-correlation-jurisdictions
+        fieldErrors: []
+        retryable: false
+        retryAfterSeconds: null
+        featureState: proposed
+        dependencyState: null
+    SyntheticMobileCompatibilityReady:
+      summary: Synthetic native-client compatibility policy
+      value:
+        status: compatible
+        contract:
+          currentVersion: v1
+          minimumSupportedVersion: v1
+          supportedVersions: [v1]
+        platforms:
+          ios:
+            releaseState: foundation
+            minimumAppVersion: 0.0.0-foundation
+            minimumBuildNumber: 1
+            supportedContractVersions: [v1]
+          android:
+            releaseState: foundation
+            minimumAppVersion: 0.0.0-foundation
+            minimumBuildNumber: 1
+            supportedContractVersions: [v1]

@@ -1,43 +1,64 @@
-# Foundation contract generation
+# Versioned contract generation
 
-**Status:** Issue #8 generation pipeline plus issue #12 security schemas. The complete
-OpenAPI v1 surface belongs to issue #60.
+**Status:** Issue #60 contract foundation. Health is operational; jurisdiction discovery
+is proposed and returns no records; every other initial route family is proposed or
+disabled.
 
-## Sources and outputs
+## Canonical sources and committed outputs
 
 | Kind | Canonical input | Generated output |
 |---|---|---|
-| OpenAPI 3.1 | `packages/contracts/openapi.yaml` | `packages/contracts/src/generated/openapi.ts` |
-| JSON Schema 2020-12 | `packages/contracts/schemas/health-status.schema.json` | `packages/contracts/src/generated/health-status.ts` |
-| JSON Schema 2020-12 | `packages/contracts/schemas/authentication.schema.json` | `packages/contracts/src/generated/authentication.ts` |
-| JSON Schema 2020-12 | `packages/contracts/schemas/feature-gates.schema.json` | `packages/contracts/src/generated/feature-gates.ts` |
-| JSON Schema 2020-12 | `packages/contracts/schemas/audit-event.schema.json` | `packages/contracts/src/generated/audit-event.ts` |
-| JSON Schema 2020-12 | `packages/contracts/schemas/outbox-event.schema.json` | `packages/contracts/src/generated/outbox-event.ts` |
+| OpenAPI 3.1 | `packages/contracts/openapi/v1.yaml` | `packages/contracts/src/generated/openapi.ts` |
+| JSON Schema 2020-12 | `packages/contracts/schemas/*.schema.json` | `packages/contracts/src/generated/*.ts` |
+| Schema documents | all JSON Schemas | `packages/contracts/src/generated/schema-documents.ts` |
+| Synthetic examples | `packages/contracts/fixtures/*.json` | `packages/contracts/src/generated/contract-fixtures.ts` |
 
-Run:
+Generated files are committed so downstream clients have a reviewable contract. Edit
+only the canonical YAML, schemas, or fixtures, then run:
 
 ```bash
 pnpm generate:contracts
 pnpm check:contracts
+pnpm check:api-compat
+pnpm test:contract
 ```
 
-The generated OpenAPI path types are wrapped by `@rmr/contracts`. The public web app
-consumes that typed client in `apps/web/src/health.ts`, and contract tests execute it with
-a synthetic response. The API handler returns the same `HealthStatus` type.
+`check:contracts` rejects generated drift and validates the OpenAPI document, all ten
+schemas, synthetic fixtures, operation metadata, privacy fields, and human-intent
+boundaries. `check:api-compat` compares the canonical contract with the parent commit and
+rejects unapproved breaking changes. An intentional break requires a versioned migration
+and an exact reviewed finding in `packages/contracts/compatibility-approvals.json`; an
+approval is not a substitute for publishing the new API version.
 
-The only route is `GET /api/v1/health`. It proves contract, server, client, generation,
-and optional-dependency wiring without introducing representative records or civic
-behavior. It reports Verus as disabled and does not attempt an RPC connection.
+## Generated clients and runtime validation
 
-Issue #12 adds generated payload types for authentication starts, private sessions,
-effective scoped role grants, and the complete false-by-default feature-gate map. These
-schemas are consumed by contract tests without declaring planned auth routes operational.
-See `docs/AUTH_SECURITY_FOUNDATION.md`.
+`@rmr/contracts` publishes generated clients for mobile, web, portal, admin, worker, and
+public SDK consumers. Each adds an `x-rmr-client-surface` diagnostic header and shares
+the generated OpenAPI path types. The corresponding application packages import their
+surface-specific factory rather than maintaining handwritten request/response types.
 
-Issue #19 adds generated append-only audit and at-least-once outbox envelopes. They
-declare privacy, idempotency, correlation, schema-version, retry-state, and future
-destination fields without adding any public API route or making a downstream worker
-operational. See `docs/AUDIT_OUTBOX.md`.
+Responses cross an AJV 2020-12 validation boundary. Servers reject undocumented output.
+Clients tolerate additive response fields by stripping them from a cloned value, which
+supports compatible v1 growth without leaking unknown data further into an app.
+Validation errors include paths and keywords only; they never echo submitted values.
 
-Issue #60 may replace or extend this minimal specification, but it must preserve versioned
-generation and update committed outputs in the same change.
+## Mock and fixture policy
+
+All committed examples are explicitly synthetic. Run the local, loopback-only mock with:
+
+```bash
+pnpm --filter @rmr/contracts mock
+```
+
+It serves:
+
+- `GET /api/v1/health` as `200`;
+- `GET /api/v1/health/mobile` as `200` with foundation native-client compatibility;
+- `GET /api/v1/jurisdictions` as a typed `503 FEATURE_DISABLED`; and
+- all other requests as a typed `404 NOT_FOUND`.
+
+`pnpm --filter @rmr/contracts mock:smoke` starts the mock on an ephemeral local port,
+checks all three cases, and stops it. It does not use PostgreSQL, Verus, a wallet, keys,
+external civic data, or network services.
+
+See [API_V1.md](./API_V1.md) for operation metadata and compatibility policy.

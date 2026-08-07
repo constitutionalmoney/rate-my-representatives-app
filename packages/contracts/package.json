@@ -15,16 +15,24 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "compatibility": "node scripts/check-openapi-compatibility.mjs",
     "generate": "node scripts/generate.mjs",
     "generate:check": "node scripts/generate.mjs --check",
+    "mock": "node scripts/mock-server.mjs",
+    "mock:smoke": "node scripts/mock-server.mjs --smoke",
+    "validate": "node scripts/validate-contracts.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
     "openapi-fetch": "0.17.0"
   },
   "devDependencies": {
+    "@apidevtools/swagger-parser": "12.1.0",
     "@rmr/config": "workspace:*",
     "json-schema-to-typescript": "15.0.4",
-    "openapi-typescript": "7.13.0"
+    "openapi-typescript": "7.13.0",
+    "yaml": "2.9.0"
   }
 }

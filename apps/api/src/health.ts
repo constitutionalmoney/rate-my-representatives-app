@@ -1,12 +1,53 @@
-import type { HealthStatus } from '@rmr/contracts';
+import {
+  parseHealthStatus,
+  parseMobileCompatibilityStatus,
+  type HealthStatus,
+  type MobileCompatibilityStatus,
+} from '@rmr/contracts';
 
 export function foundationHealth(): HealthStatus {
-  return {
-    optionalDependencies: {
-      verus: 'disabled',
+  return parseHealthStatus(
+    {
+      contract: {
+        currentVersion: 'v1',
+        minimumSupportedVersion: 'v1',
+        supportedVersions: ['v1'],
+      },
+      featureStates: {
+        civicSignal: 'disabled',
+        provenanceWrites: 'disabled',
+        publicRegistry: 'proposed',
+        representativeSignals: 'disabled',
+        verus: 'disabled',
+      },
+      optionalDependencies: {
+        verus: 'disabled',
+      },
+      service: 'api',
+      status: 'ready',
+      version: '1.0.0-contract',
     },
-    service: 'api',
-    status: 'ready',
-    version: '0.0.0-foundation',
+    'server',
+  );
+}
+
+export function mobileCompatibility(): MobileCompatibilityStatus {
+  const platformPolicy = {
+    minimumAppVersion: '0.0.0-foundation' as const,
+    minimumBuildNumber: 1 as const,
+    releaseState: 'foundation' as const,
+    supportedContractVersions: ['v1'] as const,
   };
+  return parseMobileCompatibilityStatus(
+    {
+      contract: {
+        currentVersion: 'v1',
+        minimumSupportedVersion: 'v1',
+        supportedVersions: ['v1'],
+      },
+      platforms: { android: platformPolicy, ios: platformPolicy },
+      status: 'compatible',
+    },
+    'server',
+  );
 }

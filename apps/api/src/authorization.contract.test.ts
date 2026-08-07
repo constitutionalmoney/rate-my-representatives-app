@@ -43,18 +43,21 @@ function roleGrant(role: RoleGrant['role']): RoleGrant {
 }
 
 describe('route and domain authorization contract', () => {
-  it('keeps the public health read anonymous', () => {
-    expect(
-      authorizeRoute({
-        actor: anonymous,
-        at,
-        featureGates: gateEvaluator(),
-        grants: [],
-        method: 'GET',
-        path: '/api/v1/health',
-      }),
-    ).toEqual({ allowed: true, reason: 'authorized' });
-  });
+  it.each(['/api/v1/health', '/api/v1/health/mobile', '/api/v1/jurisdictions'])(
+    'keeps public contract discovery anonymous at %s',
+    (path) => {
+      expect(
+        authorizeRoute({
+          actor: anonymous,
+          at,
+          featureGates: gateEvaluator(),
+          grants: [],
+          method: 'GET',
+          path,
+        }),
+      ).toEqual({ allowed: true, reason: 'authorized' });
+    },
+  );
 
   it('denies unknown routes and disabled authentication flows by default', () => {
     expect(

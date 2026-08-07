@@ -33,6 +33,12 @@ leases, bounded retry, dead letters, controlled replay, and idempotent delivery 
 The live synthetic smoke runs with Verus disabled. Provenance is only a reserved event
 contract—no signer, RPC call, identity operation, or chain write is implemented.
 
+Issue #60 publishes the canonical OpenAPI 3.1 v1 skeleton, versioned JSON Schemas,
+privacy-safe error envelope, runtime validators, compatibility checks, synthetic mock
+server, and generated clients for mobile, web, portal, admin, workers, and the public
+SDK. Health and native-client compatibility discovery are operational. Jurisdiction discovery returns an explicit proposed-state
+`503` with no records; all other initial route families remain proposed or disabled.
+
 - No production iOS or Android app is released.
 - No public representative profile, category rating, representative signal, Civic Signal briefing, authenticated aggregate, VerusID claim, or Representative Accountability Score is live.
 - No composite score is approved.
@@ -307,7 +313,7 @@ scans tracked source for high-confidence secret patterns. It does not require Po
 a queue, object storage, Verus, wallet software, keys, or external civic data.
 
 See [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md),
-[docs/CONTRACTS.md](./docs/CONTRACTS.md), and
+[docs/CONTRACTS.md](./docs/CONTRACTS.md), [docs/API_V1.md](./docs/API_V1.md), and
 [docs/adr/0001-mobile-first-typescript-monorepo.md](./docs/adr/0001-mobile-first-typescript-monorepo.md).
 
 The issue #12 security boundaries and non-operational status are documented in

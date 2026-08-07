@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ratemyrepresentatives.com/v1/mobile-compatibility-status.schema.json",
+  "title": "MobileCompatibilityStatus",
+  "description": "Synthetic foundation compatibility policy for installed native iOS and Android clients.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "contract", "platforms"],
+  "properties": {
+    "status": { "const": "compatible" },
+    "contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["currentVersion", "minimumSupportedVersion", "supportedVersions"],
+      "properties": {
+        "currentVersion": { "const": "v1" },
+        "minimumSupportedVersion": { "const": "v1" },
+        "supportedVersions": {
+          "type": "array",
+          "items": { "const": "v1" },
+          "minItems": 1,
+          "maxItems": 1
+        }
+      }
+    },
+    "platforms": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ios", "android"],
+      "properties": {
+        "ios": { "$ref": "#/$defs/platformPolicy" },
+        "android": { "$ref": "#/$defs/platformPolicy" }
+      }
+    }
+  },
+  "$defs": {
+    "platformPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "releaseState",
+        "minimumAppVersion",
+        "minimumBuildNumber",
+        "supportedContractVersions"
+      ],
+      "properties": {
+        "releaseState": { "const": "foundation" },
+        "minimumAppVersion": { "const": "0.0.0-foundation" },
+        "minimumBuildNumber": { "const": 1 },
+        "supportedContractVersions": {
+          "type": "array",
+          "items": { "const": "v1" },
+          "minItems": 1,
+          "maxItems": 1
+        }
+      }
+    }
+  }
+}

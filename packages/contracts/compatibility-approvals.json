@@ -1,0 +1,4 @@
+{
+  "description": "Exact compatibility findings approved through review. Keep empty unless a versioned migration explicitly authorizes a break.",
+  "approvedBreaks": []
+}

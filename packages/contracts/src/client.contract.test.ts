@@ -1,26 +1,73 @@
 import { describe, expect, it } from 'vitest';
 
-import { createRmrClient } from './client.js';
-import type { HealthStatusSchema } from './index.js';
+import {
+  createAdminClient,
+  createMobileClient,
+  createPortalClient,
+  createPublicSdkClient,
+  createWebClient,
+  createWorkerClient,
+  OFFICIAL_CLIENT_SURFACES,
+  readApiHealth,
+  readJurisdictionAvailability,
+  readMobileCompatibility,
+} from './client.js';
+import { createContractMockFetch } from './mock.js';
 
-describe('generated foundation client', () => {
-  it('consumes the generated health contract through openapi-fetch', async () => {
-    const response: HealthStatusSchema = {
-      optionalDependencies: { verus: 'disabled' },
-      service: 'api',
-      status: 'ready',
-      version: '0.0.0-foundation',
+describe('generated v1 clients', () => {
+  it('publishes one typed client for every official consumer surface', () => {
+    expect(OFFICIAL_CLIENT_SURFACES).toEqual([
+      'mobile',
+      'web',
+      'portal',
+      'admin',
+      'worker',
+      'public-sdk',
+    ]);
+  });
+
+  it.each([
+    ['mobile', createMobileClient],
+    ['web', createWebClient],
+    ['portal', createPortalClient],
+    ['admin', createAdminClient],
+    ['worker', createWorkerClient],
+    ['public-sdk', createPublicSdkClient],
+  ] as const)('consumes the health contract from the %s client', async (surface, factory) => {
+    let observedSurface: string | null = null;
+    const mockFetch: typeof globalThis.fetch = async (input, init) => {
+      const request = new Request(input, init);
+      observedSurface = request.headers.get('x-rmr-client-surface');
+      return createContractMockFetch()(request);
     };
-    const mockFetch: typeof globalThis.fetch = async () =>
-      new Response(JSON.stringify(response), {
-        headers: { 'content-type': 'application/json' },
-        status: 200,
-      });
-    const client = createRmrClient('http://127.0.0.1:3000', mockFetch);
+    const client = factory('http://127.0.0.1:3000', mockFetch);
 
-    const result = await client.GET('/api/v1/health');
+    const result = await readApiHealth(client);
 
-    expect(result.error).toBeUndefined();
-    expect(result.data).toEqual(response);
+    expect(observedSurface).toBe(surface);
+    expect(result.contract.supportedVersions).toEqual(['v1']);
+    expect(result.optionalDependencies.verus).toBe('disabled');
+  });
+
+  it('returns the typed proposed-state error without inventing registry data', async () => {
+    const client = createPublicSdkClient('http://127.0.0.1:3000', createContractMockFetch());
+
+    await expect(readJurisdictionAvailability(client)).resolves.toMatchObject({
+      code: 'FEATURE_DISABLED',
+      featureState: 'proposed',
+      retryable: false,
+    });
+  });
+
+  it('publishes installed native-client compatibility through the generated client', async () => {
+    const client = createMobileClient('http://127.0.0.1:3000', createContractMockFetch());
+
+    await expect(readMobileCompatibility(client)).resolves.toMatchObject({
+      contract: { minimumSupportedVersion: 'v1' },
+      platforms: {
+        android: { releaseState: 'foundation', supportedContractVersions: ['v1'] },
+        ios: { releaseState: 'foundation', supportedContractVersions: ['v1'] },
+      },
+    });
   });
 });

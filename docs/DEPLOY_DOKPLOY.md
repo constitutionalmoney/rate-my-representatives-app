@@ -18,7 +18,9 @@ capability. Portal and admin placeholders are intentionally not published.
 4. Prefer an isolated deployment. Do not add manual Traefik labels or a fixed host port.
 5. In **Domains**, route the public hostname to service `web`, container port `8080`.
 6. Preview the resolved Compose configuration, deploy, and confirm both `/healthz` and
-   `/api/v1/health` return successfully through the public hostname.
+   `/api/v1/health` return successfully through the public hostname. The
+   `/api/v1/health/mobile` compatibility response should also return `200`, while
+   `/api/v1/jurisdictions` intentionally returns `503 FEATURE_DISABLED` until issue #49.
 
 Dokploy automatically deploys pushes only for the branch selected for the service. A
 production service should therefore track a reviewed protected branch, not a feature
@@ -59,6 +61,7 @@ Verify:
 ```bash
 curl --fail http://127.0.0.1:8080/healthz
 curl --fail http://127.0.0.1:8080/api/v1/health
+curl --fail http://127.0.0.1:8080/api/v1/health/mobile
 ```
 
 Stop the isolated local stack with:

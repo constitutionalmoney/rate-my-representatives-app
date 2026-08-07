@@ -1,0 +1,12 @@
+.git
+.github
+.expo
+**/android
+**/coverage
+**/dist
+**/ios
+**/node_modules
+.env*
+*.log
+compose.local.yaml
+docs

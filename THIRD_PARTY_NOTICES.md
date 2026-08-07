@@ -18,6 +18,7 @@ Direct runtime foundations introduced by issue #8 are:
 | React Native for Web | 0.21.2 | https://github.com/necolas/react-native-web | MIT | Expo web compatibility |
 | Vite | 8.2.1 | https://github.com/vitejs/vite | MIT | Web, portal, and admin builds |
 | openapi-fetch | 0.17.0 | https://github.com/openapi-ts/openapi-typescript | MIT | Generated-contract client runtime |
+| nginx | 1.28.2 | https://nginx.org | BSD-2-Clause | Static web serving and same-origin API proxy container |
 
 Development-only generators, linters, test runners, and CI tooling remain governed by
 their upstream licences and exact versions in `pnpm-lock.yaml`. This inventory must be

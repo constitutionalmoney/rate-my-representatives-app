@@ -56,4 +56,15 @@ describe('issue #8 workspace foundation', () => {
     expect(highRiskLines.every((line) => line.endsWith('=false'))).toBe(true);
     expect(example).not.toMatch(/mainnet/i);
   });
+
+  it('provides an application-only Dokploy compose foundation with safe feature defaults', async () => {
+    const compose = await readFile(path.join(root, 'compose.yaml'), 'utf8');
+
+    expect(compose).toContain('dockerfile: infra/docker/api.Dockerfile');
+    expect(compose).toContain('dockerfile: infra/docker/web.Dockerfile');
+    expect(compose.match(/[A-Z_]+_ENABLED: ['"]false['"]/g)).toHaveLength(13);
+    expect(compose).not.toMatch(/postgres|redis|rabbitmq|minio/i);
+    expect(compose).not.toMatch(/image:\s*[^\n]*verus/i);
+    expect(compose).not.toContain('container_name:');
+  });
 });

@@ -290,6 +290,12 @@ See [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md),
 [docs/CONTRACTS.md](./docs/CONTRACTS.md), and
 [docs/adr/0001-mobile-first-typescript-monorepo.md](./docs/adr/0001-mobile-first-typescript-monorepo.md).
 
+The application-only [Docker Compose foundation](./compose.yaml) can build the public
+web placeholder and internal synthetic API without Verus or backing services. It is
+prepared for GitHub-sourced Dokploy deployment; see
+[docs/DEPLOY_DOKPLOY.md](./docs/DEPLOY_DOKPLOY.md). PostgreSQL, queue, object storage,
+and optional VRSCTEST services remain scoped to issue #9.
+
 ## Release gates
 
 No public pilot may open until the applicable release has:

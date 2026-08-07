@@ -21,6 +21,7 @@ export type RuntimeEnvironment = 'development' | 'test' | 'production';
 export interface RuntimeConfig {
   readonly environment: RuntimeEnvironment;
   readonly featureFlags: FeatureFlags;
+  readonly host: string;
   readonly port: number;
 }
 
@@ -54,6 +55,12 @@ function parsePort(value: string | undefined): number {
   return port;
 }
 
+function parseHost(value: string | undefined): string {
+  const host = value ?? '127.0.0.1';
+  if (host === '127.0.0.1' || host === '0.0.0.0') return host;
+  throw new Error('HOST must be 127.0.0.1 or 0.0.0.0.');
+}
+
 export function loadFeatureFlags(
   environment: Readonly<Record<string, string | undefined>> = {},
 ): FeatureFlags {
@@ -70,6 +77,7 @@ export function loadRuntimeConfig(
   return Object.freeze({
     environment: parseEnvironment(environment.NODE_ENV),
     featureFlags: loadFeatureFlags(environment),
+    host: parseHost(environment.HOST),
     port: parsePort(environment.PORT),
   });
 }

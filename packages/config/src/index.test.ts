@@ -22,7 +22,13 @@ describe('foundation configuration', () => {
   it('provides a typed, local-only runtime baseline', () => {
     const config = loadRuntimeConfig({ NODE_ENV: 'test', PORT: '4100' });
     expect(config.environment).toBe('test');
+    expect(config.host).toBe('127.0.0.1');
     expect(config.port).toBe(4100);
     expect(config.featureFlags.VERUS_ANCHORING_ENABLED).toBe(false);
+  });
+
+  it('allows an explicit all-interface bind for a container and rejects arbitrary hosts', () => {
+    expect(loadRuntimeConfig({ HOST: '0.0.0.0' }).host).toBe('0.0.0.0');
+    expect(() => loadRuntimeConfig({ HOST: 'public.example' })).toThrow(/HOST/);
   });
 });

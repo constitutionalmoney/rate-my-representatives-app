@@ -7,7 +7,7 @@ import { handleRequest } from './handler.js';
 
 const config = loadRuntimeConfig(process.env);
 const server = createServer(async (incoming, outgoing) => {
-  const request = new Request(`http://127.0.0.1:${config.port}${incoming.url ?? '/'}`, {
+  const request = new Request(`http://${config.host}:${config.port}${incoming.url ?? '/'}`, {
     headers: incoming.headers as HeadersInit,
     method: incoming.method ?? 'GET',
   });
@@ -16,11 +16,12 @@ const server = createServer(async (incoming, outgoing) => {
   outgoing.end(Buffer.from(await response.arrayBuffer()));
 });
 
-server.listen(config.port, '127.0.0.1', () => {
+server.listen(config.port, config.host, () => {
   process.stdout.write(
     `${JSON.stringify(
       createStructuredEvent('foundation.api.ready', {
         optionalVerus: 'disabled',
+        host: config.host,
         port: config.port,
       }),
     )}\n`,

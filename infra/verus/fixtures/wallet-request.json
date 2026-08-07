@@ -1,0 +1,6 @@
+{
+  "fixtureId": "synthetic-vrsctest-wallet-request-0001",
+  "network": "VRSCTEST",
+  "requestType": "disabled_stub",
+  "signingEnabled": false
+}

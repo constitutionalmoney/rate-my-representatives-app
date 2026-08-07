@@ -44,6 +44,19 @@ const outputs = [
       })
     ).replaceAll('\r\n', '\n'),
   },
+  {
+    path: path.join(generatedDirectory, 'infrastructure-services.ts'),
+    value: (
+      await compileFromFile(
+        path.join(packageDirectory, 'schemas', 'infrastructure-services.schema.json'),
+        {
+          bannerComment:
+            '/* Generated from infrastructure-services.schema.json. Do not edit directly. */',
+          style: { singleQuote: true, trailingComma: 'all' },
+        },
+      )
+    ).replaceAll('\r\n', '\n'),
+  },
 ];
 
 if (process.argv.includes('--check')) {

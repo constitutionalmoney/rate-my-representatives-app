@@ -21,6 +21,12 @@ scoped role checks, service-agent prohibitions, and audited feature gates. Every
 and high-risk gate remains false; no public account route, credential provider, database,
 or civic write is operational.
 
+Issue #9 adds a reproducible local/CI infrastructure stack: PostgreSQL migrations and a
+synthetic seed, RabbitMQ retry/dead-letter topology, isolated S3-compatible buckets,
+Mailpit, and API/worker container wiring. An optional Compose profile can start a pinned
+`verusd` on VRSCTEST plus disabled signer stubs. No Verus profile or civic write is
+enabled by default, and the application-only Dokploy Compose remains independent.
+
 - No production iOS or Android app is released.
 - No public representative profile, category rating, representative signal, Civic Signal briefing, authenticated aggregate, VerusID claim, or Representative Accountability Score is live.
 - No composite score is approved.
@@ -305,8 +311,14 @@ The issue #12 security boundaries and non-operational status are documented in
 The application-only [Docker Compose foundation](./compose.yaml) can build the public
 web placeholder and internal synthetic API without Verus or backing services. It is
 prepared for GitHub-sourced Dokploy deployment; see
-[docs/DEPLOY_DOKPLOY.md](./docs/DEPLOY_DOKPLOY.md). PostgreSQL, queue, object storage,
-and optional VRSCTEST services remain scoped to issue #9.
+[docs/DEPLOY_DOKPLOY.md](./docs/DEPLOY_DOKPLOY.md).
+
+For local or CI infrastructure, `pnpm infra:up` starts the core
+[Compose stack](./compose.infrastructure.yaml) and `pnpm infra:smoke` verifies migrations,
+fixtures, retry/dead-letter behavior, storage policy isolation, email readiness, and
+Verus-off API/worker health. The separately selected `pnpm infra:verus:up` command is
+VRSCTEST-only and contains no signer keys. See
+[docs/LOCAL_INFRASTRUCTURE.md](./docs/LOCAL_INFRASTRUCTURE.md).
 
 ## Release gates
 

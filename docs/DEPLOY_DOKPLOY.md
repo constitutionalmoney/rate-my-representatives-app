@@ -39,9 +39,11 @@ Compose network. The public web container is the sole domain target and proxies 
 foundation API under `/api/`.
 
 Do not add secrets to the Compose file or repository. Future environment values belong
-in Dokploy's environment controls, referenced individually from Compose. Issue #9 will
-add the optional local backing-service stack without making it a requirement for core
-workspace builds or tests.
+in Dokploy's environment controls, referenced individually from Compose. Issue #9's
+`compose.infrastructure.yaml` is intentionally a synthetic local/CI stack; do not select
+it as the Dokploy Compose path. A future hosted release must use reviewed managed or
+production-hardened backing services, backups, secrets, and release gates while retaining
+`compose.yaml` as the GitHub-sourced application entry point.
 
 ## Local smoke test
 

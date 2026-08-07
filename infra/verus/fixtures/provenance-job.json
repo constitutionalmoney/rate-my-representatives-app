@@ -1,0 +1,6 @@
+{
+  "fixtureId": "synthetic-vrsctest-provenance-job-0001",
+  "network": "VRSCTEST",
+  "operation": "disabled_stub",
+  "writeEnabled": false
+}

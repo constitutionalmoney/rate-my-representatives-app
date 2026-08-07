@@ -122,6 +122,7 @@ apps/mobile/.expo/
 apps/mobile/web-build/
 
 # Local dev data
+.local/
 tmp/
 temp/
 *.local

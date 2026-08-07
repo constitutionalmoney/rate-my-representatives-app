@@ -19,6 +19,12 @@ Direct runtime foundations introduced by issue #8 are:
 | Vite | 8.2.1 | https://github.com/vitejs/vite | MIT | Web, portal, and admin builds |
 | openapi-fetch | 0.17.0 | https://github.com/openapi-ts/openapi-typescript | MIT | Generated-contract client runtime |
 | nginx | 1.28.2 | https://nginx.org | BSD-2-Clause | Static web serving and same-origin API proxy container |
+| PostgreSQL | 17.10 | https://www.postgresql.org | PostgreSQL | Canonical local/CI database container |
+| RabbitMQ | 4.3.4 | https://www.rabbitmq.com | MPL-2.0 | Durable local/CI retry and dead-letter queue |
+| MinIO | RELEASE.2025-10-15T17-29-55Z | https://github.com/minio/minio | AGPL-3.0-only | Source-built S3-compatible local/CI object storage service |
+| MinIO Client | RELEASE.2025-08-13T08-35-41Z | https://github.com/minio/mc | AGPL-3.0-only | Local/CI bucket and policy initialization container |
+| Mailpit | 1.30.6 | https://github.com/axllent/mailpit | MIT | Local/CI email catcher |
+| VerusCoin CLI | 1.2.16-1 | https://github.com/VerusCoin/VerusCoin | MIT | Optional VRSCTEST daemon profile only; upstream archive checksums pinned |
 
 Development-only generators, linters, test runners, and CI tooling remain governed by
 their upstream licences and exact versions in `pnpm-lock.yaml`. This inventory must be

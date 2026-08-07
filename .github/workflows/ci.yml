@@ -2,6 +2,7 @@ name: Foundation CI
 
 on:
   pull_request:
+  workflow_dispatch:
   push:
     branches: [main]
 
@@ -72,6 +73,27 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm generate:contracts
       - run: pnpm --filter "${{ matrix.filter }}" build
+
+  core-infrastructure:
+    name: Ephemeral core infrastructure
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.20.0
+          run_install: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm infra:config
+      - run: pnpm infra:up
+      - run: pnpm infra:smoke
+      - if: always()
+        run: pnpm infra:down
 
   native-generation:
     name: Generate ${{ matrix.platform }} native project

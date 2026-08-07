@@ -54,7 +54,7 @@ not authorized by this ADR.
 
 | Concern | Foundation evidence |
 |---|---|
-| Wallet | Strict `verus:` authorization, exact callback binding, RMR HTTPS fallback, bounded polling, expiry/decline tests; device matrix still required before enabling |
+| Wallet | Strict `verus:` authorization, exact callback binding, RMR HTTPS fallback, bounded polling, expiry/decline tests, and a gated no-key native test control; signed-request device matrix remains #31 |
 | Links | AASA/assetlinks templates, environment-isolated hosts, malicious-link tests |
 | Storage | `expo-secure-store`, device-only Keychain accessibility, Android backup disabled, complete cleanup tests |
 | Push | Native adapter, consent/device/permission gates, token validation and rotation, quiet hours, private previews, categories, unsubscribe |

@@ -55,10 +55,21 @@ The wallet harness provides transport scaffolding for future issue #31:
 6. bind the return to the exact challenge reference; and
 7. recover a terminal result through bounded polling.
 
+When `RMR_VERUS_WALLET_HARNESS_ENABLED=true` is explicitly supplied to a non-production
+development build, the native foundation screen exposes an accessible synthetic transport
+control. It launches a deliberately non-signable public envelope, accepts only the exact
+environment callback, and completes a deterministic bounded polling sequence. The control
+is absent by default and cannot be enabled in production.
+
 The harness uses synthetic envelopes in automated tests, never a key. It does not define
 a `GenericRequest`, signature verification, callback API, identity update, or RPC call.
 Those remain separately gated. RMR-managed representative VerusIDs are provisioned and
 published by future isolated server workers (#80-#83), never by this client.
+
+Pinned-device evidence is recorded in
+[the mobile compatibility matrix](./MOBILE_COMPATIBILITY_MATRIX.md). A successful synthetic
+transport test is not evidence that a signed `GenericRequest` or `GenericResponse` is
+compatible; issue #31 owns that separate protocol matrix.
 
 ## Secure storage and privacy
 

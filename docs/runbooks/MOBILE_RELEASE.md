@@ -58,7 +58,9 @@ installed-app and web-fallback behavior. Never reuse a staging association in pr
 9. For a wallet-enabled non-production candidate, record exact OS/device, wallet APK/app
    version and digest, request-library version, VRSCTEST daemon version, link form, and
    success/decline/cancel/expiry/wrong-environment/polling results. Use an isolated test
-   profile and no production keys.
+   profile and no production keys. Append the redacted results to
+   `docs/MOBILE_COMPATIBILITY_MATRIX.md`; never record a profile password, seed, private key,
+   wallet file, private address inventory, or RPC credential.
 10. Confirm release notes list every enabled, disabled, testnet-only, and unavailable
     capability.
 11. Obtain protected-environment approval before a signed internal/pilot candidate.

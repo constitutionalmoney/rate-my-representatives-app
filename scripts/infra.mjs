@@ -28,7 +28,9 @@ async function writeNewSecret(name, value) {
     if (error instanceof Error && 'code' in error && error.code === 'EEXIST') {
       const secretPath = path.join(secretDirectory, name);
       const current = (await readFile(secretPath, 'utf8')).trim();
-      if (current.length === 0) throw new Error(`Local secret ${name} is empty.`);
+      if (current.length === 0) {
+        throw new Error(`Local secret ${name} is empty.`, { cause: error });
+      }
       await writeFile(secretPath, current, { encoding: 'utf8', mode: 0o600 });
       await chmod(secretPath, 0o600);
       return;

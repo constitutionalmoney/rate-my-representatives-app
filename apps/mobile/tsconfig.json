@@ -6,5 +6,14 @@
     "noUncheckedIndexedAccess": true,
     "strict": true
   },
-  "include": ["App.tsx", "index.ts", "src/**/*.ts", "src/**/*.tsx", ".expo/types/**/*.ts"]
+  "include": [
+    "App.tsx",
+    "app.config.ts",
+    "index.ts",
+    "mobile-environments.ts",
+    "mobile-environments.json",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    ".expo/types/**/*.ts"
+  ]
 }

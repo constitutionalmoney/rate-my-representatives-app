@@ -36,7 +36,7 @@ export const SYNTHETIC_MOBILE_COMPATIBILITY_READY = {
   "platforms": {
     "ios": {
       "releaseState": "foundation",
-      "minimumAppVersion": "0.0.0-foundation",
+      "minimumAppVersion": "0.1.0",
       "minimumBuildNumber": 1,
       "supportedContractVersions": [
         "v1"
@@ -44,7 +44,7 @@ export const SYNTHETIC_MOBILE_COMPATIBILITY_READY = {
     },
     "android": {
       "releaseState": "foundation",
-      "minimumAppVersion": "0.0.0-foundation",
+      "minimumAppVersion": "0.1.0",
       "minimumBuildNumber": 1,
       "supportedContractVersions": [
         "v1"

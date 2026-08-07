@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schemas.ratemyrepresentatives.com/v1/mobile-compatibility-status.schema.json",
   "title": "MobileCompatibilityStatus",
-  "description": "Synthetic foundation compatibility policy for installed native iOS and Android clients.",
+  "description": "Versioned compatibility policy for installed native iOS and Android clients.",
   "type": "object",
   "additionalProperties": false,
   "required": ["status", "contract", "platforms"],
@@ -44,9 +44,14 @@
         "supportedContractVersions"
       ],
       "properties": {
-        "releaseState": { "const": "foundation" },
-        "minimumAppVersion": { "const": "0.0.0-foundation" },
-        "minimumBuildNumber": { "const": 1 },
+        "releaseState": {
+          "enum": ["foundation", "development", "staging", "pilot", "production", "blocked"]
+        },
+        "minimumAppVersion": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+        },
+        "minimumBuildNumber": { "type": "integer", "minimum": 1, "maximum": 2100000000 },
         "supportedContractVersions": {
           "type": "array",
           "items": { "const": "v1" },

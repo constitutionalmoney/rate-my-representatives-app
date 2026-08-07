@@ -1,0 +1,46 @@
+{
+  "development": {
+    "androidPackage": "com.ratemyrepresentatives.app.dev",
+    "apiOrigin": "http://127.0.0.1:3000",
+    "appLinkHost": "development-connect.ratemyrepresentatives.invalid",
+    "appName": "RMR Development",
+    "iosBundleIdentifier": "com.ratemyrepresentatives.app.dev",
+    "name": "development",
+    "releaseChannel": "development",
+    "scheme": "rmr-dev",
+    "verusNetwork": "VRSCTEST"
+  },
+  "staging": {
+    "androidPackage": "com.ratemyrepresentatives.app.staging",
+    "apiOrigin": "https://staging-api.ratemyrepresentatives.com",
+    "appLinkHost": "staging-connect.ratemyrepresentatives.com",
+    "appName": "RMR Staging",
+    "iosBundleIdentifier": "com.ratemyrepresentatives.app.staging",
+    "name": "staging",
+    "releaseChannel": "staging",
+    "scheme": "rmr-staging",
+    "verusNetwork": "VRSCTEST"
+  },
+  "pilot": {
+    "androidPackage": "com.ratemyrepresentatives.app.pilot",
+    "apiOrigin": "https://pilot-api.ratemyrepresentatives.com",
+    "appLinkHost": "pilot-connect.ratemyrepresentatives.com",
+    "appName": "RMR Pilot",
+    "iosBundleIdentifier": "com.ratemyrepresentatives.app.pilot",
+    "name": "pilot",
+    "releaseChannel": "pilot",
+    "scheme": "rmr-pilot",
+    "verusNetwork": "VRSCTEST"
+  },
+  "production": {
+    "androidPackage": "com.ratemyrepresentatives.app",
+    "apiOrigin": "https://api.ratemyrepresentatives.com",
+    "appLinkHost": "connect.ratemyrepresentatives.com",
+    "appName": "Rate My Representatives",
+    "iosBundleIdentifier": "com.ratemyrepresentatives.app",
+    "name": "production",
+    "releaseChannel": "production",
+    "scheme": "rmr",
+    "verusNetwork": "disabled"
+  }
+}

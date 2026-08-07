@@ -208,6 +208,211 @@ export const SYNTHETIC_PUBLIC_ROLE_REGISTRY = {
   }
 } as const;
 
+export const SYNTHETIC_CA_SOURCE_CONNECTOR = {
+  "schemaVersion": "source-connector-capability.v1",
+  "connectorId": "connector:ca:synthetic-pilot",
+  "connectorVersion": "1.0.0",
+  "dataMode": "synthetic",
+  "approval": {
+    "state": "synthetic_approved",
+    "reviewReference": "issue:55:synthetic-pilot-approval",
+    "reviewedAt": "2026-08-07T12:00:00Z"
+  },
+  "source": {
+    "sourceId": "source:ca:synthetic-pilot",
+    "publisher": "Synthetic Canada Pilot Authority",
+    "authoritativeScope": "Synthetic CA public-role pilot records only.",
+    "countries": [
+      "CA"
+    ],
+    "jurisdictionIds": [
+      "jurisdiction:ca:maple"
+    ],
+    "recordTypes": [
+      "person",
+      "office_term",
+      "correction"
+    ]
+  },
+  "access": {
+    "method": "https_json",
+    "authentication": "none",
+    "endpointOrigin": "https://ca-pilot.synthetic.invalid",
+    "rateLimitPerMinute": 10,
+    "obeyRobotsPolicy": true
+  },
+  "rights": {
+    "licenseName": "CC0-1.0 synthetic fixture",
+    "termsUrl": "https://ca-pilot.synthetic.invalid/terms",
+    "attributionText": "Synthetic Canada Pilot Authority; synthetic fixture for automated tests.",
+    "retentionDays": 30,
+    "redistribution": "permitted_snapshots",
+    "snapshotStorage": "quarantine_only"
+  },
+  "identity": {
+    "externalIdentifierTypes": [
+      "synthetic-official-record-id"
+    ],
+    "effectiveDateSemantics": "RFC3339 effective time declared by the synthetic publisher"
+  },
+  "schedule": {
+    "cadenceMinutes": 60,
+    "freshnessExpectedMinutes": 120,
+    "freshnessStaleMinutes": 240
+  },
+  "pagination": {
+    "style": "cursor",
+    "checkpointVersion": "checkpoint.v1"
+  },
+  "parser": {
+    "parserVersion": "synthetic-ca-parser.v1",
+    "schemaVersion": "pilot-feed.v1"
+  },
+  "content": {
+    "expectedContentTypes": [
+      "application/json"
+    ],
+    "permittedContentEncodings": [
+      "identity"
+    ],
+    "maximumWireBytes": 100000,
+    "maximumDecodedBytes": 200000,
+    "maximumExpansionRatio": 10,
+    "timeoutMs": 1000,
+    "maximumRedirects": 2
+  },
+  "behavior": {
+    "conflicts": "quarantine",
+    "deletions": "review",
+    "retractions": "review",
+    "outages": "retry_then_dead_letter"
+  },
+  "owner": {
+    "team": "data-stewardship",
+    "incidentRunbook": "docs/runbooks/SOURCE_INGESTION.md"
+  }
+} as const;
+
+export const SYNTHETIC_US_SOURCE_CONNECTOR = {
+  "schemaVersion": "source-connector-capability.v1",
+  "connectorId": "connector:us:synthetic-pilot",
+  "connectorVersion": "1.0.0",
+  "dataMode": "synthetic",
+  "approval": {
+    "state": "synthetic_approved",
+    "reviewReference": "issue:55:synthetic-pilot-approval",
+    "reviewedAt": "2026-08-07T12:00:00Z"
+  },
+  "source": {
+    "sourceId": "source:us:synthetic-pilot",
+    "publisher": "Synthetic United States Pilot Authority",
+    "authoritativeScope": "Synthetic US public-role pilot records only.",
+    "countries": [
+      "US"
+    ],
+    "jurisdictionIds": [
+      "jurisdiction:us:example-state"
+    ],
+    "recordTypes": [
+      "person",
+      "candidacy",
+      "election",
+      "correction"
+    ]
+  },
+  "access": {
+    "method": "https_json",
+    "authentication": "none",
+    "endpointOrigin": "https://us-pilot.synthetic.invalid",
+    "rateLimitPerMinute": 10,
+    "obeyRobotsPolicy": true
+  },
+  "rights": {
+    "licenseName": "CC0-1.0 synthetic fixture",
+    "termsUrl": "https://us-pilot.synthetic.invalid/terms",
+    "attributionText": "Synthetic United States Pilot Authority; synthetic fixture for automated tests.",
+    "retentionDays": 30,
+    "redistribution": "permitted_snapshots",
+    "snapshotStorage": "quarantine_only"
+  },
+  "identity": {
+    "externalIdentifierTypes": [
+      "synthetic-official-record-id"
+    ],
+    "effectiveDateSemantics": "RFC3339 effective time declared by the synthetic publisher"
+  },
+  "schedule": {
+    "cadenceMinutes": 60,
+    "freshnessExpectedMinutes": 120,
+    "freshnessStaleMinutes": 240
+  },
+  "pagination": {
+    "style": "cursor",
+    "checkpointVersion": "checkpoint.v1"
+  },
+  "parser": {
+    "parserVersion": "synthetic-us-parser.v1",
+    "schemaVersion": "pilot-feed.v1"
+  },
+  "content": {
+    "expectedContentTypes": [
+      "application/json"
+    ],
+    "permittedContentEncodings": [
+      "identity"
+    ],
+    "maximumWireBytes": 100000,
+    "maximumDecodedBytes": 200000,
+    "maximumExpansionRatio": 10,
+    "timeoutMs": 1000,
+    "maximumRedirects": 2
+  },
+  "behavior": {
+    "conflicts": "quarantine",
+    "deletions": "review",
+    "retractions": "review",
+    "outages": "retry_then_dead_letter"
+  },
+  "owner": {
+    "team": "data-stewardship",
+    "incidentRunbook": "docs/runbooks/SOURCE_INGESTION.md"
+  }
+} as const;
+
+export const SYNTHETIC_SOURCE_COVERAGE = {
+  "schemaVersion": "source-coverage-snapshot.v1",
+  "dataMode": "synthetic",
+  "snapshotId": "coverage:synthetic:issue55",
+  "generatedAt": "2026-08-07T14:00:01Z",
+  "methodVersion": "source-coverage.v1",
+  "codeRevision": "issue-55-synthetic",
+  "items": [
+    {
+      "countryCode": "CA",
+      "jurisdictionId": "jurisdiction:ca:maple",
+      "recordType": "person",
+      "sourceAvailability": "available",
+      "candidateCount": 1,
+      "pendingReviewCount": 1,
+      "conflictCount": 0,
+      "lastRetrievedAt": "2026-08-07T14:00:00Z"
+    },
+    {
+      "countryCode": "US",
+      "jurisdictionId": "jurisdiction:us:example-state",
+      "recordType": "candidacy",
+      "sourceAvailability": "missing",
+      "candidateCount": 0,
+      "pendingReviewCount": 0,
+      "conflictCount": 0,
+      "lastRetrievedAt": null
+    }
+  ],
+  "missingDataMeaning": "coverage_gap_not_misconduct",
+  "provenanceState": "not_anchored",
+  "sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+} as const;
+
 export const SYNTHETIC_NOT_FOUND = {
   "schemaVersion": "api-error.v1",
   "code": "NOT_FOUND",

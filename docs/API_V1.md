@@ -33,6 +33,11 @@ provenance are discoverable as empty OpenAPI path items. They do not define call
 operations until their owning issue implements authorization, domain rules, persistence,
 and tests. Empty discovery entries must not be described as released endpoints.
 
+Issue #55 implements internal source retrieval and review persistence only. Its generated
+connector-capability and coverage schemas are operational contracts between internal
+packages, not HTTP operations. `/api/v1/sources` and `/api/v1/coverage` remain empty and
+proposed until issue #11 defines privacy-reviewed public serializers and reads.
+
 ## Required operation policy
 
 Every callable operation declares a stable operation ID, feature status, allowed actors,
@@ -73,7 +78,7 @@ versions so installed clients can make compatibility decisions without depending
 Verus or other optional services. `releaseState: foundation` makes clear that this is not
 an app-store release claim.
 
-Each response identifies its deferred families. Official-source ingestion, location
+Each response identifies its deferred families. Public source/profile reads, location
 resolution, participation, public conduct, representative authority, identity proof,
 provenance, and scoring remain unavailable. Public attribution on synthetic records
 includes freshness, coverage, conflict, observation time, source reference, and

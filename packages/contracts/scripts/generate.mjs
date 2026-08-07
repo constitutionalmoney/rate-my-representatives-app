@@ -29,6 +29,16 @@ const schemaDefinitions = [
   ['outbox-event', 'outbox-event.schema.json', 'OUTBOX_EVENT_SCHEMA'],
   ['public-role-registry', 'public-role-registry.schema.json', 'PUBLIC_ROLE_REGISTRY_SCHEMA'],
   [
+    'source-connector-capability',
+    'source-connector-capability.schema.json',
+    'SOURCE_CONNECTOR_CAPABILITY_SCHEMA',
+  ],
+  [
+    'source-coverage-snapshot',
+    'source-coverage-snapshot.schema.json',
+    'SOURCE_COVERAGE_SNAPSHOT_SCHEMA',
+  ],
+  [
     'representative-signal-command',
     'representative-signal-command.schema.json',
     'REPRESENTATIVE_SIGNAL_COMMAND_SCHEMA',
@@ -39,6 +49,9 @@ const fixtureDefinitions = [
   ['SYNTHETIC_MOBILE_COMPATIBILITY_READY', 'mobile-compatibility.ready.json'],
   ['SYNTHETIC_JURISDICTIONS', 'jurisdictions.synthetic.json'],
   ['SYNTHETIC_PUBLIC_ROLE_REGISTRY', 'public-role-registry.synthetic.json'],
+  ['SYNTHETIC_CA_SOURCE_CONNECTOR', 'source-connector-ca.synthetic.json'],
+  ['SYNTHETIC_US_SOURCE_CONNECTOR', 'source-connector-us.synthetic.json'],
+  ['SYNTHETIC_SOURCE_COVERAGE', 'source-coverage.synthetic.json'],
   ['SYNTHETIC_NOT_FOUND', 'not-found.json'],
 ];
 

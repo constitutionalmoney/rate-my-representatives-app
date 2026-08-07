@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ratemyrepresentatives.com/source-coverage-snapshot.schema.json",
+  "title": "SourceCoverageSnapshotV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "dataMode",
+    "snapshotId",
+    "generatedAt",
+    "methodVersion",
+    "codeRevision",
+    "items",
+    "missingDataMeaning",
+    "provenanceState",
+    "sha256"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "source-coverage-snapshot.v1" },
+    "dataMode": { "const": "synthetic" },
+    "snapshotId": { "$ref": "#/$defs/id" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "methodVersion": { "$ref": "#/$defs/id" },
+    "codeRevision": { "$ref": "#/$defs/id" },
+    "missingDataMeaning": { "const": "coverage_gap_not_misconduct" },
+    "provenanceState": { "const": "not_anchored" },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "countryCode",
+          "jurisdictionId",
+          "recordType",
+          "sourceAvailability",
+          "candidateCount",
+          "pendingReviewCount",
+          "conflictCount",
+          "lastRetrievedAt"
+        ],
+        "properties": {
+          "countryCode": { "enum": ["CA", "US"] },
+          "jurisdictionId": { "$ref": "#/$defs/id" },
+          "recordType": { "type": "string", "minLength": 1 },
+          "sourceAvailability": {
+            "enum": ["available", "stale", "missing", "retracted", "unavailable"]
+          },
+          "candidateCount": { "type": "integer", "minimum": 0 },
+          "pendingReviewCount": { "type": "integer", "minimum": 0 },
+          "conflictCount": { "type": "integer", "minimum": 0 },
+          "lastRetrievedAt": { "type": ["string", "null"], "format": "date-time" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,191}$" }
+  }
+}

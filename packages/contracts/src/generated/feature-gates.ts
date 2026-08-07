@@ -15,6 +15,7 @@ export interface FeatureGatesContract {
   CATEGORY_RATINGS_ENABLED: boolean;
   COMMUNITY_CONTEXT_ENABLED: boolean;
   EVIDENCE_SUBMISSION_ENABLED: boolean;
+  SOURCE_INGESTION_ENABLED: boolean;
   AI_RESEARCH_ENABLED: boolean;
   VERUS_ID_LINKING_ENABLED: boolean;
   VERUS_AUTH_ENABLED: boolean;

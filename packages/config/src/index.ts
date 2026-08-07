@@ -13,6 +13,7 @@ export const FEATURE_FLAG_DEFINITIONS = {
   CATEGORY_RATINGS_ENABLED: 'Human category ratings',
   COMMUNITY_CONTEXT_ENABLED: 'Moderated community context',
   EVIDENCE_SUBMISSION_ENABLED: 'Evidence submission',
+  SOURCE_INGESTION_ENABLED: 'Approved official-source ingestion',
   AI_RESEARCH_ENABLED: 'AI-assisted research drafts',
   VERUS_ID_LINKING_ENABLED: 'Optional VerusID account linking',
   VERUS_AUTH_ENABLED: 'Optional Verus proof-of-control authentication',

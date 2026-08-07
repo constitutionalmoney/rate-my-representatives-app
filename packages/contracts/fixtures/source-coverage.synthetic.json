@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "source-coverage-snapshot.v1",
+  "dataMode": "synthetic",
+  "snapshotId": "coverage:synthetic:issue55",
+  "generatedAt": "2026-08-07T14:00:01Z",
+  "methodVersion": "source-coverage.v1",
+  "codeRevision": "issue-55-synthetic",
+  "items": [
+    {
+      "countryCode": "CA",
+      "jurisdictionId": "jurisdiction:ca:maple",
+      "recordType": "person",
+      "sourceAvailability": "available",
+      "candidateCount": 1,
+      "pendingReviewCount": 1,
+      "conflictCount": 0,
+      "lastRetrievedAt": "2026-08-07T14:00:00Z"
+    },
+    {
+      "countryCode": "US",
+      "jurisdictionId": "jurisdiction:us:example-state",
+      "recordType": "candidacy",
+      "sourceAvailability": "missing",
+      "candidateCount": 0,
+      "pendingReviewCount": 0,
+      "conflictCount": 0,
+      "lastRetrievedAt": null
+    }
+  ],
+  "missingDataMeaning": "coverage_gap_not_misconduct",
+  "provenanceState": "not_anchored",
+  "sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+}

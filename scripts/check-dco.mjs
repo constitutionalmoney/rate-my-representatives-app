@@ -19,7 +19,12 @@ if (!range && process.env.GITHUB_BASE_REF) {
 }
 range ??= 'HEAD^..HEAD';
 
-const log = spawnSync('git', ['log', '--format=%H%x1f%B%x1e', range], { encoding: 'utf8' });
+// Pull-request workflows run against a synthetic merge commit created by GitHub.
+// That commit is not authored by a contributor and therefore cannot carry their
+// DCO trailer; only evaluate the authored, non-merge commits in the range.
+const log = spawnSync('git', ['log', '--no-merges', '--format=%H%x1f%B%x1e', range], {
+  encoding: 'utf8',
+});
 if (log.status !== 0) {
   console.error(log.stderr);
   process.exit(log.status ?? 1);

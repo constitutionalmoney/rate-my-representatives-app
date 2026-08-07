@@ -1,0 +1,161 @@
+{
+  "schemaVersion": "public-role-profile.v1",
+  "dataMode": "synthetic",
+  "profileId": "profile:ca:avery-quill:maple-member:2024",
+  "recordVersion": 3,
+  "updatedAt": "2026-08-07T15:00:00Z",
+  "etag": "W/\"profile:ca:avery-quill:maple-member:2024.v3\"",
+  "publication": {
+    "state": "published",
+    "method": "human_review",
+    "decisionId": "publication-decision:ca:profile:1",
+    "decidedAt": "2026-08-07T15:00:00Z"
+  },
+  "summary": {
+    "profileId": "profile:ca:avery-quill:maple-member:2024",
+    "personId": "person:ca:avery-quill",
+    "displayName": "Avery Quill",
+    "countryCode": "CA",
+    "governmentLevel": "provincial",
+    "officeTitle": "Member of the Synthetic Maple Assembly",
+    "districtLabel": "Maple North",
+    "roleStatus": "appointed",
+    "context": {
+      "kind": "office_term",
+      "officeTermId": "office-term:ca:avery-quill:2024",
+      "candidacyId": null
+    },
+    "availability": "available",
+    "recordVersion": 3,
+    "updatedAt": "2026-08-07T15:00:00Z"
+  },
+  "person": {
+    "personId": "person:ca:avery-quill",
+    "displayName": "Avery Quill",
+    "officialIdentifiers": [
+      {
+        "identifierId": "official-id:ca:avery-quill",
+        "issuer": "synthetic-maple-registry",
+        "value": "SYN-CA-PERSON-001",
+        "sourceIds": ["source:ca:synthetic-registry"],
+        "freshness": "current"
+      }
+    ]
+  },
+  "office": {
+    "officeId": "office:ca:maple-member",
+    "title": "Member of the Synthetic Maple Assembly",
+    "governmentLevel": "provincial",
+    "selectionMethod": "appointed",
+    "sourceIds": ["source:ca:synthetic-registry"],
+    "freshness": "current"
+  },
+  "district": {
+    "districtId": "district:ca:maple-north",
+    "label": "Maple North",
+    "sourceIds": ["source:ca:synthetic-registry"],
+    "freshness": "current"
+  },
+  "officeTerm": {
+    "officeTermId": "office-term:ca:avery-quill:2024",
+    "state": "active",
+    "origin": "appointment",
+    "serviceCapacity": "regular",
+    "plannedStart": "2024-01-01T00:00:00Z",
+    "plannedEnd": null,
+    "sourceIds": ["source:ca:synthetic-registry"],
+    "freshness": "current"
+  },
+  "election": null,
+  "candidacy": null,
+  "officialContactRoutes": [],
+  "claims": [],
+  "sources": {
+    "schemaVersion": "public-role-profile-sources.v1",
+    "profileId": "profile:ca:avery-quill:maple-member:2024",
+    "recordVersion": 3,
+    "updatedAt": "2026-08-07T15:00:00Z",
+    "items": [
+      {
+        "sourceId": "source:ca:synthetic-registry",
+        "publisher": "Synthetic Canada Registry Publisher",
+        "sourceType": "official_registry",
+        "originalUrl": "synthetic://ca/registry/avery-quill",
+        "normalizedUrl": "synthetic://ca/registry/avery-quill",
+        "retrievedAt": "2026-08-07T15:00:00Z",
+        "contentSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "licenceNote": "Synthetic fixture; no real public record is represented.",
+        "termsUrl": "synthetic://ca/terms",
+        "freshness": "current",
+        "fetchOutcome": "succeeded",
+        "reviewedRecordVersionId": "reviewed-version:ca:registry:1"
+      }
+    ]
+  },
+  "coverage": {
+    "schemaVersion": "public-role-profile-coverage.v1",
+    "profileId": "profile:ca:avery-quill:maple-member:2024",
+    "recordVersion": 3,
+    "updatedAt": "2026-08-07T15:00:00Z",
+    "methodVersion": "source-coverage.v1",
+    "missingDataMeaning": "coverage_gap_not_misconduct",
+    "items": [
+      {
+        "category": "identity",
+        "state": "available",
+        "explanation": "Reviewed synthetic registry fixture is available.",
+        "lastReviewedAt": "2026-08-07T15:00:00Z",
+        "sourceIds": ["source:ca:synthetic-registry"]
+      },
+      {
+        "category": "expenses",
+        "state": "coverage_gap",
+        "explanation": "No approved synthetic expense source is configured.",
+        "lastReviewedAt": null,
+        "sourceIds": []
+      }
+    ],
+    "conflicts": []
+  },
+  "responses": {
+    "schemaVersion": "public-role-profile-responses.v1",
+    "profileId": "profile:ca:avery-quill:maple-member:2024",
+    "recordVersion": 3,
+    "updatedAt": "2026-08-07T15:00:00Z",
+    "availability": "not_available",
+    "items": []
+  },
+  "disputes": {
+    "schemaVersion": "public-role-profile-disputes.v1",
+    "profileId": "profile:ca:avery-quill:maple-member:2024",
+    "recordVersion": 3,
+    "updatedAt": "2026-08-07T15:00:00Z",
+    "availability": "not_available",
+    "items": []
+  },
+  "corrections": {
+    "schemaVersion": "public-role-profile-corrections.v1",
+    "profileId": "profile:ca:avery-quill:maple-member:2024",
+    "recordVersion": 3,
+    "updatedAt": "2026-08-07T15:00:00Z",
+    "availability": "not_available",
+    "items": []
+  },
+  "appeals": {
+    "schemaVersion": "public-role-profile-appeals.v1",
+    "profileId": "profile:ca:avery-quill:maple-member:2024",
+    "recordVersion": 3,
+    "updatedAt": "2026-08-07T15:00:00Z",
+    "availability": "not_available",
+    "items": []
+  },
+  "method": {
+    "profileMethodVersion": "public-profile.v1",
+    "coverageMethodVersion": "source-coverage.v1",
+    "compositeScoreIncluded": false,
+    "signalAggregateIncluded": false
+  },
+  "provenance": null,
+  "externalIdentityReferences": [],
+  "timelinePath": "/api/v1/profiles/profile:ca:avery-quill:maple-member:2024/timeline"
+}

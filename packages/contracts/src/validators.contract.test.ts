@@ -4,6 +4,7 @@ import {
   SYNTHETIC_HEALTH_READY,
   SYNTHETIC_JURISDICTIONS,
   SYNTHETIC_PUBLIC_ROLE_REGISTRY,
+  SYNTHETIC_PUBLIC_ROLE_PROFILE,
   SYNTHETIC_CA_SOURCE_CONNECTOR,
   SYNTHETIC_SOURCE_COVERAGE,
   SYNTHETIC_US_SOURCE_CONNECTOR,
@@ -18,6 +19,7 @@ import {
   parseHealthStatus,
   parseJurisdictionRegistry,
   parsePublicRoleRegistry,
+  parsePublicRoleProfile,
   parseSourceConnectorCapability,
   parseSourceCoverageSnapshot,
 } from './validators.js';
@@ -97,5 +99,14 @@ describe('runtime contract validators', () => {
         'server',
       ),
     ).toThrow(ContractValidationError);
+  });
+
+  it('validates the source-backed public profile and rejects private serializer fields', () => {
+    expect(parsePublicRoleProfile(SYNTHETIC_PUBLIC_ROLE_PROFILE, 'server')).toEqual(
+      SYNTHETIC_PUBLIC_ROLE_PROFILE,
+    );
+    const profile = structuredClone(SYNTHETIC_PUBLIC_ROLE_PROFILE) as Record<string, unknown>;
+    profile.person = { ...(profile.person as object), accountId: 'must-not-escape' };
+    expect(() => parsePublicRoleProfile(profile, 'server')).toThrow(ContractValidationError);
   });
 });

@@ -12,6 +12,13 @@ import {
   readJurisdictionRegistry,
   readMobileCompatibility,
   readPeople,
+  readPublicProfile,
+  readPublicProfileAppeals,
+  readPublicProfileCorrections,
+  readPublicProfileCoverage,
+  readPublicProfiles,
+  readPublicProfileSources,
+  readPublicProfileTimeline,
 } from './client.js';
 import { createContractMockFetch } from './mock.js';
 
@@ -92,5 +99,43 @@ describe('generated v1 clients', () => {
       dataMode: 'synthetic',
       externalIdentityReferences: [],
     });
+  });
+
+  it.each([
+    ['mobile', createMobileClient],
+    ['web', createWebClient],
+    ['portal', createPortalClient],
+    ['admin', createAdminClient],
+    ['worker', createWorkerClient],
+    ['public-sdk', createPublicSdkClient],
+  ] as const)(
+    'makes the reviewed public-profile contract available to the %s client',
+    async (_, factory) => {
+      const client = factory('http://127.0.0.1:3000', createContractMockFetch());
+      const list = await readPublicProfiles(client);
+      const profileId = list.items[0]?.profileId ?? '';
+      await expect(readPublicProfile(client, profileId)).resolves.toMatchObject({
+        profileId,
+        provenance: null,
+        externalIdentityReferences: [],
+      });
+    },
+  );
+
+  it('validates profile timeline, source, coverage, and correction section clients', async () => {
+    const client = createPublicSdkClient('http://127.0.0.1:3000', createContractMockFetch());
+    const profileId = 'profile:ca:avery-quill:maple-member:2024';
+    await expect(readPublicProfileTimeline(client, profileId)).resolves.toMatchObject({
+      profileId,
+      page: { nextCursor: null },
+    });
+    await expect(readPublicProfileSources(client, profileId)).resolves.toMatchObject({ profileId });
+    await expect(readPublicProfileCoverage(client, profileId)).resolves.toMatchObject({
+      profileId,
+    });
+    await expect(readPublicProfileCorrections(client, profileId)).resolves.toMatchObject({
+      profileId,
+    });
+    await expect(readPublicProfileAppeals(client, profileId)).resolves.toMatchObject({ profileId });
   });
 });

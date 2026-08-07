@@ -165,6 +165,13 @@ Owns source publishers, URLs, retrievals, licences/terms, hashes, freshness, con
 
 A source record is not automatically a verified claim. Review and claim state remain explicit.
 
+Issue #11 adds an `rmr_public` read-projection boundary over canonical registry and
+human-reviewed source versions. One stable profile ID always relates one person to one
+office term or candidacy. Append-only versions carry reviewed-source links and explicit
+human publication decisions; API serializers enforce the exact public JSON Schema.
+Corrections and source refreshes increment the record version/ETag. This projection is
+rebuildable and cannot publish itself. See `docs/PUBLIC_PROFILE_API.md`.
+
 ### 5.3 Accounts and authorization
 
 Owns accounts, authenticators, sessions, roles, staff delegations, representative claims, optional VerusID links, and attestation snapshots.

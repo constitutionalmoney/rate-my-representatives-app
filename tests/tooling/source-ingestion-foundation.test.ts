@@ -44,7 +44,7 @@ describe('issue #55 official-source ingestion foundation', () => {
     }
   });
 
-  it('keeps runtime ingestion disabled and public source reads deferred', async () => {
+  it('keeps runtime ingestion disabled while issue #11 owns profile-scoped reads', async () => {
     const [config, environment, compose, openapi] = await Promise.all([
       read('packages/config/src/index.ts'),
       read('.env.example'),
@@ -54,8 +54,9 @@ describe('issue #55 official-source ingestion foundation', () => {
     expect(config).toContain('SOURCE_INGESTION_ENABLED');
     expect(environment).toContain('SOURCE_INGESTION_ENABLED=false');
     expect(compose).toContain("SOURCE_INGESTION_ENABLED: 'false'");
-    expect(openapi).toContain('no public source read operation until issue #11');
-    expect(openapi).not.toMatch(/operationId: .*?(Source|Coverage)/);
+    expect(openapi).toContain('/api/v1/profiles/{profileId}/sources');
+    expect(openapi).toContain('operationId: getPublicRoleProfileSources');
+    expect(openapi).toContain('operationId: getPublicRoleProfileCoverage');
   });
 
   it('contains no Verus, scoring, identity update, or provenance write coupling', async () => {

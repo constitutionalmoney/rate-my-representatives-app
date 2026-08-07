@@ -42,6 +42,15 @@ const initialRouteFamilies = [
   '/api/v1/office-terms',
   '/api/v1/elections',
   '/api/v1/candidacies',
+  '/api/v1/profiles',
+  '/api/v1/profiles/{profileId}',
+  '/api/v1/profiles/{profileId}/timeline',
+  '/api/v1/profiles/{profileId}/sources',
+  '/api/v1/profiles/{profileId}/coverage',
+  '/api/v1/profiles/{profileId}/responses',
+  '/api/v1/profiles/{profileId}/disputes',
+  '/api/v1/profiles/{profileId}/corrections',
+  '/api/v1/profiles/{profileId}/appeals',
   '/api/v1/sources',
   '/api/v1/claims',
   '/api/v1/coverage',
@@ -180,7 +189,20 @@ for (const operationId of [
 ]) {
   assert(operationIds.has(operationId), `Issue #59 operation is missing: ${operationId}.`);
 }
-assert(operationIds.size === 7, 'Issue #59 must expose exactly seven operational reads.');
+for (const operationId of [
+  'listPublicRoleProfiles',
+  'getPublicRoleProfile',
+  'getPublicRoleProfileTimeline',
+  'getPublicRoleProfileSources',
+  'getPublicRoleProfileCoverage',
+  'getPublicRoleProfileResponses',
+  'getPublicRoleProfileDisputes',
+  'getPublicRoleProfileCorrections',
+  'getPublicRoleProfileAppeals',
+]) {
+  assert(operationIds.has(operationId), `Issue #11 operation is missing: ${operationId}.`);
+}
+assert(operationIds.size === 16, 'Issues #59 and #11 must expose exactly sixteen reads.');
 
 const publicForbidden = new Set([
   'accountid',
@@ -200,6 +222,7 @@ for (const filename of [
   'health-status.schema.json',
   'jurisdiction-registry.schema.json',
   'mobile-compatibility-status.schema.json',
+  'public-role-profile.schema.json',
   'public-role-registry.schema.json',
 ]) {
   for (const key of propertyKeys(schemas.get(filename))) {
@@ -209,6 +232,16 @@ for (const filename of [
     );
   }
 }
+
+const publicProfile = schemas.get('public-role-profile.schema.json');
+assert(
+  publicProfile.$defs.methodMetadata.properties.compositeScoreIncluded.const === false,
+  'Public profiles must explicitly exclude a composite score.',
+);
+assert(
+  publicProfile.$defs.methodMetadata.properties.signalAggregateIncluded.const === false,
+  'Public profiles must explicitly exclude representative-signal aggregates.',
+);
 
 const civicSignal = schemas.get('civic-signal-briefing.schema.json');
 const representativeSignal = schemas.get('representative-signal-command.schema.json');
@@ -239,6 +272,7 @@ const fixtureSchemas = new Map([
   ['jurisdictions.proposed.json', 'api-error.schema.json'],
   ['jurisdictions.synthetic.json', 'jurisdiction-registry.schema.json'],
   ['not-found.json', 'api-error.schema.json'],
+  ['public-role-profile.synthetic.json', 'public-role-profile.schema.json'],
   ['public-role-registry.synthetic.json', 'public-role-registry.schema.json'],
   ['source-connector-ca.synthetic.json', 'source-connector-capability.schema.json'],
   ['source-connector-us.synthetic.json', 'source-connector-capability.schema.json'],

@@ -5,6 +5,17 @@ import type { ApiError } from './generated/api-error.js';
 import type { HealthStatus } from './generated/health-status.js';
 import type { JurisdictionRegistry } from './generated/jurisdiction-registry.js';
 import type { MobileCompatibilityStatus } from './generated/mobile-compatibility-status.js';
+import type { PublicRoleProfileList } from './generated/public-role-profile-list.js';
+import type {
+  AppealSection,
+  CorrectionSection,
+  CoverageSection,
+  DisputeSection,
+  PublicRoleProfile,
+  ResponseSection,
+  SourceSection,
+} from './generated/public-role-profile.js';
+import type { PublicRoleProfileTimeline } from './generated/public-role-profile-timeline.js';
 import type { PublicRoleRegistry } from './generated/public-role-registry.js';
 import type { SourceConnectorCapabilityV1 } from './generated/source-connector-capability.js';
 import type { SourceCoverageSnapshotV1 } from './generated/source-coverage-snapshot.js';
@@ -13,6 +24,9 @@ import {
   HEALTH_STATUS_SCHEMA,
   JURISDICTION_REGISTRY_SCHEMA,
   MOBILE_COMPATIBILITY_STATUS_SCHEMA,
+  PUBLIC_ROLE_PROFILE_LIST_SCHEMA,
+  PUBLIC_ROLE_PROFILE_SCHEMA,
+  PUBLIC_ROLE_PROFILE_TIMELINE_SCHEMA,
   PUBLIC_ROLE_REGISTRY_SCHEMA,
   SOURCE_CONNECTOR_CAPABILITY_SCHEMA,
   SOURCE_COVERAGE_SNAPSHOT_SCHEMA,
@@ -57,6 +71,29 @@ const serverJurisdictionRegistry = serverAjv.compile(JURISDICTION_REGISTRY_SCHEM
 const clientJurisdictionRegistry = clientAjv.compile(JURISDICTION_REGISTRY_SCHEMA);
 const serverMobileCompatibility = serverAjv.compile(MOBILE_COMPATIBILITY_STATUS_SCHEMA);
 const clientMobileCompatibility = clientAjv.compile(MOBILE_COMPATIBILITY_STATUS_SCHEMA);
+const serverPublicRoleProfile = serverAjv.compile(PUBLIC_ROLE_PROFILE_SCHEMA);
+const clientPublicRoleProfile = clientAjv.compile(PUBLIC_ROLE_PROFILE_SCHEMA);
+const serverPublicRoleProfileList = serverAjv.compile(PUBLIC_ROLE_PROFILE_LIST_SCHEMA);
+const clientPublicRoleProfileList = clientAjv.compile(PUBLIC_ROLE_PROFILE_LIST_SCHEMA);
+const serverPublicRoleProfileTimeline = serverAjv.compile(PUBLIC_ROLE_PROFILE_TIMELINE_SCHEMA);
+const clientPublicRoleProfileTimeline = clientAjv.compile(PUBLIC_ROLE_PROFILE_TIMELINE_SCHEMA);
+const profileSchemaId = PUBLIC_ROLE_PROFILE_SCHEMA.$id;
+const serverProfileSections = {
+  appeals: serverAjv.compile({ $ref: `${profileSchemaId}#/$defs/appealSection` }),
+  corrections: serverAjv.compile({ $ref: `${profileSchemaId}#/$defs/correctionSection` }),
+  coverage: serverAjv.compile({ $ref: `${profileSchemaId}#/$defs/coverageSection` }),
+  disputes: serverAjv.compile({ $ref: `${profileSchemaId}#/$defs/disputeSection` }),
+  responses: serverAjv.compile({ $ref: `${profileSchemaId}#/$defs/responseSection` }),
+  sources: serverAjv.compile({ $ref: `${profileSchemaId}#/$defs/sourceSection` }),
+};
+const clientProfileSections = {
+  appeals: clientAjv.compile({ $ref: `${profileSchemaId}#/$defs/appealSection` }),
+  corrections: clientAjv.compile({ $ref: `${profileSchemaId}#/$defs/correctionSection` }),
+  coverage: clientAjv.compile({ $ref: `${profileSchemaId}#/$defs/coverageSection` }),
+  disputes: clientAjv.compile({ $ref: `${profileSchemaId}#/$defs/disputeSection` }),
+  responses: clientAjv.compile({ $ref: `${profileSchemaId}#/$defs/responseSection` }),
+  sources: clientAjv.compile({ $ref: `${profileSchemaId}#/$defs/sourceSection` }),
+};
 const serverPublicRoleRegistry = serverAjv.compile(PUBLIC_ROLE_REGISTRY_SCHEMA);
 const clientPublicRoleRegistry = clientAjv.compile(PUBLIC_ROLE_REGISTRY_SCHEMA);
 const serverSourceConnector = serverAjv.compile(SOURCE_CONNECTOR_CAPABILITY_SCHEMA);
@@ -134,6 +171,114 @@ export function parsePublicRoleRegistry(
   return parseContract<PublicRoleRegistry>(
     'PublicRoleRegistry',
     boundary === 'client' ? clientPublicRoleRegistry : serverPublicRoleRegistry,
+    value,
+    boundary === 'client',
+  );
+}
+
+export function parsePublicRoleProfile(
+  value: unknown,
+  boundary: ContractBoundary = 'client',
+): PublicRoleProfile {
+  return parseContract<PublicRoleProfile>(
+    'PublicRoleProfile',
+    boundary === 'client' ? clientPublicRoleProfile : serverPublicRoleProfile,
+    value,
+    boundary === 'client',
+  );
+}
+
+export function parsePublicRoleProfileList(
+  value: unknown,
+  boundary: ContractBoundary = 'client',
+): PublicRoleProfileList {
+  return parseContract<PublicRoleProfileList>(
+    'PublicRoleProfileList',
+    boundary === 'client' ? clientPublicRoleProfileList : serverPublicRoleProfileList,
+    value,
+    boundary === 'client',
+  );
+}
+
+export function parsePublicRoleProfileTimeline(
+  value: unknown,
+  boundary: ContractBoundary = 'client',
+): PublicRoleProfileTimeline {
+  return parseContract<PublicRoleProfileTimeline>(
+    'PublicRoleProfileTimeline',
+    boundary === 'client' ? clientPublicRoleProfileTimeline : serverPublicRoleProfileTimeline,
+    value,
+    boundary === 'client',
+  );
+}
+
+export function parsePublicRoleProfileSources(
+  value: unknown,
+  boundary: ContractBoundary = 'client',
+): SourceSection {
+  return parseContract<SourceSection>(
+    'PublicRoleProfileSources',
+    boundary === 'client' ? clientProfileSections.sources : serverProfileSections.sources,
+    value,
+    boundary === 'client',
+  );
+}
+
+export function parsePublicRoleProfileCoverage(
+  value: unknown,
+  boundary: ContractBoundary = 'client',
+): CoverageSection {
+  return parseContract<CoverageSection>(
+    'PublicRoleProfileCoverage',
+    boundary === 'client' ? clientProfileSections.coverage : serverProfileSections.coverage,
+    value,
+    boundary === 'client',
+  );
+}
+
+export function parsePublicRoleProfileResponses(
+  value: unknown,
+  boundary: ContractBoundary = 'client',
+): ResponseSection {
+  return parseContract<ResponseSection>(
+    'PublicRoleProfileResponses',
+    boundary === 'client' ? clientProfileSections.responses : serverProfileSections.responses,
+    value,
+    boundary === 'client',
+  );
+}
+
+export function parsePublicRoleProfileDisputes(
+  value: unknown,
+  boundary: ContractBoundary = 'client',
+): DisputeSection {
+  return parseContract<DisputeSection>(
+    'PublicRoleProfileDisputes',
+    boundary === 'client' ? clientProfileSections.disputes : serverProfileSections.disputes,
+    value,
+    boundary === 'client',
+  );
+}
+
+export function parsePublicRoleProfileCorrections(
+  value: unknown,
+  boundary: ContractBoundary = 'client',
+): CorrectionSection {
+  return parseContract<CorrectionSection>(
+    'PublicRoleProfileCorrections',
+    boundary === 'client' ? clientProfileSections.corrections : serverProfileSections.corrections,
+    value,
+    boundary === 'client',
+  );
+}
+
+export function parsePublicRoleProfileAppeals(
+  value: unknown,
+  boundary: ContractBoundary = 'client',
+): AppealSection {
+  return parseContract<AppealSection>(
+    'PublicRoleProfileAppeals',
+    boundary === 'client' ? clientProfileSections.appeals : serverProfileSections.appeals,
     value,
     boundary === 'client',
   );

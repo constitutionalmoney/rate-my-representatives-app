@@ -1,9 +1,10 @@
 # Development foundation
 
-**Status:** Issues #8, #12, #9, #19, #60, #49, #59, and #55 foundation. Effective-dated
-jurisdiction/public-role reads and internal source-candidate ingestion are operational
-with synthetic data only. No public source/profile API, public account service, Verus
-write, participation, scoring, or production civic data is operational.
+**Status:** Issues #8, #12, #9, #19, #60, #49, #59, #55, and #11 foundation.
+Effective-dated jurisdiction/public-role reads, internal source-candidate ingestion, and
+reviewed source-backed profile reads are operational with synthetic data only. No public
+account service, automatic publication, Verus write, participation, scoring, or
+production civic data is operational.
 
 ## Prerequisites
 
@@ -30,10 +31,10 @@ Do not use `npm install` or commit another package-manager lockfile.
 | `pnpm lint` | Run ESLint and workspace-boundary enforcement |
 | `pnpm typecheck` | Strictly type-check every workspace |
 | `pnpm test` | Run unit, contract, privacy/redaction, and tooling tests |
-| `pnpm test:integration` | Run synthetic authentication/session, infrastructure, audit/outbox, registry, and source-ingestion integration tests |
+| `pnpm test:integration` | Run synthetic authentication/session, infrastructure, audit/outbox, registry, source-ingestion, and public-profile integration tests |
 | `pnpm test:security` | Run abuse, recovery, authorization, gates, source-retrieval, and No Social Credit tests |
 | `pnpm infra:up` | Generate local secrets and start the core PostgreSQL/queue/storage/mail/API/worker stack |
-| `pnpm infra:smoke` | Exercise migrations, jurisdiction/public-role/source constraints, retry/DLQ, storage isolation, and Verus-off health |
+| `pnpm infra:smoke` | Exercise migrations, jurisdiction/public-role/source/profile constraints, retry/DLQ, storage isolation, and Verus-off health |
 | `pnpm infra:down` | Stop the local stack while preserving named volumes and generated secrets |
 | `pnpm build` | Build packages, server workers, native bundles, and web surfaces |
 | `pnpm check:contracts` | Reject generated drift and validate OpenAPI, schemas, fixtures, and policy metadata |
@@ -57,6 +58,10 @@ Issue #55 connector tests inject a synthetic resolver and transport. They make n
 network request. The production connector execution path rejects all production
 capabilities, and `SOURCE_INGESTION_ENABLED` is false in local and Dokploy examples.
 
+Issue #11 tests use only in-memory synthetic profile projections and the generated
+mock client unless `pnpm infra:smoke` is run. The API exposes no write route. Profile
+responses remain available with Verus stopped and all high-risk flags false.
+
 The initial Expo toolchain currently reports one moderate advisory in the transitive
 `xcode -> uuid@7.0.3` native-project generator path. RMR does not call that UUID API or
 ship it as application civic behavior. CI blocks high/critical advisories and GitHub
@@ -70,7 +75,7 @@ override is applied.
 - `apps/portal`: representative portal placeholder.
 - `apps/admin`: administration/moderation placeholder.
 - `apps/api`: built-in Node HTTP adapter exposing health plus typed, read-only synthetic
-  jurisdiction and public-role registries.
+  jurisdiction, public-role registry, and source-backed public-profile reads.
 - `apps/worker`: no-job worker process proving the worker build boundary.
 
 Start local placeholder surfaces with `pnpm dev:web`, `pnpm dev:api`, or

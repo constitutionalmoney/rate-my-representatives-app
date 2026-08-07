@@ -2,7 +2,12 @@ import { describe, expect, it } from 'vitest';
 
 import { createContractMockFetch } from '@rmr/contracts';
 
-import { readFoundationHealth, readWebJurisdictionRegistry } from './health.js';
+import {
+  readFoundationHealth,
+  readWebJurisdictionRegistry,
+  readWebPublicProfile,
+  readWebPublicProfiles,
+} from './health.js';
 
 describe('web generated-client wiring', () => {
   it('reads a synthetic response using the generated contract', async () => {
@@ -20,6 +25,20 @@ describe('web generated-client wiring', () => {
     ).resolves.toMatchObject({
       dataMode: 'synthetic',
       jurisdictions: expect.arrayContaining([expect.objectContaining({ countryCode: 'CA' })]),
+    });
+  });
+
+  it('reads source-backed profile contracts through the web client', async () => {
+    const mockFetch = createContractMockFetch();
+    const list = await readWebPublicProfiles('http://127.0.0.1:3000', mockFetch);
+    const profile = await readWebPublicProfile(
+      'http://127.0.0.1:3000',
+      list.items[0]?.profileId ?? '',
+      mockFetch,
+    );
+    expect(profile).toMatchObject({
+      dataMode: 'synthetic',
+      method: { compositeScoreIncluded: false, signalAggregateIncluded: false },
     });
   });
 });

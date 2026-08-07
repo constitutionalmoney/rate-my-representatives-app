@@ -11,8 +11,14 @@ BEGIN
     OR (SELECT count(*) FROM rmr_source.candidate_record) < 2 THEN
     RAISE EXCEPTION 'Synthetic retrieval or candidate history is missing.';
   END IF;
-  IF EXISTS (SELECT 1 FROM rmr_source.reviewed_record_version) THEN
-    RAISE EXCEPTION 'Synthetic ingestion seed automatically published material records.';
+  IF EXISTS (
+    SELECT 1
+    FROM rmr_source.reviewed_record_version version
+    JOIN rmr_source.candidate_review_transition review
+      ON review.transition_id = version.review_transition_id
+    WHERE review.actor_type = 'source_process'
+  ) THEN
+    RAISE EXCEPTION 'A source process automatically approved a material record.';
   END IF;
   IF NOT EXISTS (
     SELECT 1 FROM rmr_source.candidate_record
@@ -61,11 +67,26 @@ BEGIN
 END
 $$;
 
+INSERT INTO rmr_source.candidate_record (
+  candidate_id, run_id, retrieval_id, source_id, source_record_id, country_code,
+  jurisdiction_id, record_type, source_effective_at, subject_kind,
+  subject_reference, public_payload, normalized_sha256, match_outcome,
+  initial_review_state, material, source_availability, created_at
+) VALUES (
+  'candidate:smoke:avery:initial', 'run:ca:synthetic:001',
+  'retrieval:ca:synthetic:001', 'source:ca:synthetic-pilot', 'ca-person-smoke-initial',
+  'CA', 'jurisdiction:ca:maple', 'person', '2026-08-01T00:00:00Z', 'person',
+  'person:ca:avery-quill',
+  '{"displayName":"Avery Quill","recordStatus":"current","synthetic":true}'::jsonb,
+  repeat('8', 64), 'candidate_match', 'pending_review', true, 'available',
+  '2026-08-07T14:59:00Z'
+);
+
 INSERT INTO rmr_source.candidate_review_transition (
   transition_id, candidate_id, from_state, to_state, actor_type,
   actor_reference, reason_code, policy_version, decided_at
 ) VALUES (
-  'decision:smoke:source:v1', 'candidate:ca:synthetic:avery', 'pending_review',
+  'decision:smoke:source:v1', 'candidate:smoke:avery:initial', 'pending_review',
   'approved', 'reviewer', 'reviewer:smoke', 'SOURCE_RECORD_CONFIRMED',
   'source-review.v1', '2026-08-07T15:00:00Z'
 );
@@ -86,7 +107,7 @@ INSERT INTO rmr_source.reviewed_record_version (
   'decision:smoke:source:v1', public_payload, source_id, retrieval_id,
   source_effective_at, '2026-08-07T15:00:00Z', NULL, 'active'
 FROM rmr_source.candidate_record
-WHERE candidate_id = 'candidate:ca:synthetic:avery';
+WHERE candidate_id = 'candidate:smoke:avery:initial';
 
 INSERT INTO rmr_source.candidate_record (
   candidate_id, run_id, retrieval_id, source_id, source_record_id, country_code,

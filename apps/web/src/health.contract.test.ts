@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { createContractMockFetch } from '@rmr/contracts';
 
-import { readFoundationHealth, readWebJurisdictionAvailability } from './health.js';
+import { readFoundationHealth, readWebJurisdictionRegistry } from './health.js';
 
 describe('web generated-client wiring', () => {
   it('reads a synthetic response using the generated contract', async () => {
@@ -14,9 +14,12 @@ describe('web generated-client wiring', () => {
     });
   });
 
-  it('keeps proposed registry discovery non-operational', async () => {
+  it('reads the operational synthetic registry', async () => {
     await expect(
-      readWebJurisdictionAvailability('http://127.0.0.1:3000', createContractMockFetch()),
-    ).resolves.toMatchObject({ code: 'FEATURE_DISABLED', featureState: 'proposed' });
+      readWebJurisdictionRegistry('http://127.0.0.1:3000', createContractMockFetch()),
+    ).resolves.toMatchObject({
+      dataMode: 'synthetic',
+      jurisdictions: expect.arrayContaining([expect.objectContaining({ countryCode: 'CA' })]),
+    });
   });
 });

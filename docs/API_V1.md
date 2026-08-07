@@ -1,6 +1,6 @@
 # API v1 contract foundation
 
-**Status:** Contract foundation, not a public civic-data release
+**Status:** Contract and synthetic registry foundation, not a public civic-data release
 **Canonical specification:** `packages/contracts/openapi/v1.yaml`
 
 ## Implemented operations
@@ -9,7 +9,14 @@
 |---|---|---|---|
 | `GET /api/v1/health` | Operational | Typed contract and safe feature-state discovery | None |
 | `GET /api/v1/health/mobile` | Operational | Synthetic native minimum-build and contract-version policy | None |
-| `GET /api/v1/jurisdictions` | Proposed | Typed `503 FEATURE_DISABLED` | None; returns no jurisdictions |
+| `GET /api/v1/jurisdictions` | Operational, synthetic | Effective-dated jurisdictions, districts, bodies, offices, identifiers, and gaps | Read only |
+
+The registry accepts optional `asOf`, `countryCode`, `jurisdictionId`, and
+`includeHistorical` filters. Its default timestamp and every returned record are
+deterministic synthetic fixtures. Unknown filters—including latitude, longitude,
+address, and other location-resolution inputs—return the typed `400 VALIDATION_ERROR`
+envelope. The endpoint does not determine legal residence, citizenship, eligibility,
+or the district for a precise location.
 
 The initial v1 route families for representation, civic records, sources, coverage,
 accounts, participation, evidence, due process, Civic Signal, notifications, Verus, and
@@ -56,3 +63,9 @@ Health publishes `currentVersion`, `minimumSupportedVersion`, and `supportedVers
 versions so installed clients can make compatibility decisions without depending on
 Verus or other optional services. `releaseState: foundation` makes clear that this is not
 an app-store release claim.
+
+The jurisdiction response identifies deferred route families in `deferredFamilies`.
+People, office terms, candidacies, official-source ingestion, and location resolution
+remain unavailable until their owning issues implement them. Public attribution on
+synthetic records includes freshness, coverage, conflict, observation time, source
+reference, and supersession metadata.

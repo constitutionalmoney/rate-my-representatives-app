@@ -162,9 +162,17 @@ assert(
 );
 assert(
   operationIds.has('getJurisdictionAvailability'),
-  'Proposed registry status slice is missing.',
+  'Operational jurisdiction registry slice is missing.',
 );
-assert(operationIds.size === 3, 'Issue #60 must not make another route operation callable.');
+assert(
+  api.paths['/api/v1/jurisdictions'].get['x-rmr-contract'].featureStatus === 'operational',
+  'Jurisdiction registry operation must be operational.',
+);
+assert(
+  api.paths['/api/v1/jurisdictions'].get.responses['200'],
+  'Jurisdiction registry must publish its successful read response.',
+);
+assert(operationIds.size === 3, 'Issue #49 must not make another route operation callable.');
 
 const publicForbidden = new Set([
   'accountid',
@@ -182,6 +190,7 @@ const publicForbidden = new Set([
 for (const filename of [
   'api-error.schema.json',
   'health-status.schema.json',
+  'jurisdiction-registry.schema.json',
   'mobile-compatibility-status.schema.json',
 ]) {
   for (const key of propertyKeys(schemas.get(filename))) {
@@ -219,6 +228,7 @@ const fixtureSchemas = new Map([
   ['health.ready.json', 'health-status.schema.json'],
   ['mobile-compatibility.ready.json', 'mobile-compatibility-status.schema.json'],
   ['jurisdictions.proposed.json', 'api-error.schema.json'],
+  ['jurisdictions.synthetic.json', 'jurisdiction-registry.schema.json'],
   ['not-found.json', 'api-error.schema.json'],
 ]);
 for (const [fixtureName, schemaName] of fixtureSchemas) {

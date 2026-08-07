@@ -129,6 +129,14 @@ Owns:
 
 It does not own ratings, private accounts, wallet keys, or score methodology.
 
+Issue #49 implements the first bounded slice of this context: stable jurisdiction,
+district, public-body, and office IDs; effective-dated versions and graph edges;
+boundary references/digests; external identifiers; and public attribution/gap state.
+The graph permits multiple parents and overlaps and is not derived from a treasury,
+currency, VerusID, or other universal hierarchy. People, office terms, candidacies,
+source ingestion, and location resolution remain with their owning later issues. See
+`docs/JURISDICTION_REGISTRY.md`.
+
 ### 5.2 Source and coverage
 
 Owns source publishers, URLs, retrievals, licences/terms, hashes, freshness, conflicts, quarantine, coverage snapshots, and connector health.

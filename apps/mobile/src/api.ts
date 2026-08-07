@@ -1,10 +1,10 @@
 import {
   createMobileClient,
   readApiHealth,
-  readJurisdictionAvailability,
+  readJurisdictionRegistry,
   readMobileCompatibility,
-  type ApiError,
   type HealthStatus,
+  type JurisdictionRegistry,
   type MobileCompatibilityStatus,
 } from '@rmr/contracts';
 
@@ -15,11 +15,11 @@ export function readMobileHealth(
   return readApiHealth(createMobileClient(baseUrl, fetchImplementation));
 }
 
-export function readMobileJurisdictionAvailability(
+export function readMobileJurisdictionRegistry(
   baseUrl: string,
   fetchImplementation?: typeof globalThis.fetch,
-): Promise<ApiError> {
-  return readJurisdictionAvailability(createMobileClient(baseUrl, fetchImplementation));
+): Promise<JurisdictionRegistry> {
+  return readJurisdictionRegistry(createMobileClient(baseUrl, fetchImplementation));
 }
 
 export function readMobileCompatibilityPolicy(

@@ -1,9 +1,9 @@
 import {
   createWebClient,
   readApiHealth,
-  readJurisdictionAvailability,
-  type ApiError,
+  readJurisdictionRegistry,
   type HealthStatus,
+  type JurisdictionRegistry,
 } from '@rmr/contracts';
 
 export async function readFoundationHealth(
@@ -13,9 +13,9 @@ export async function readFoundationHealth(
   return readApiHealth(createWebClient(baseUrl, fetchImplementation));
 }
 
-export async function readWebJurisdictionAvailability(
+export async function readWebJurisdictionRegistry(
   baseUrl: string,
   fetchImplementation?: typeof globalThis.fetch,
-): Promise<ApiError> {
-  return readJurisdictionAvailability(createWebClient(baseUrl, fetchImplementation));
+): Promise<JurisdictionRegistry> {
+  return readJurisdictionRegistry(createWebClient(baseUrl, fetchImplementation));
 }

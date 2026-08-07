@@ -1,11 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
-import { SYNTHETIC_HEALTH_READY } from './generated/contract-fixtures.js';
+import { SYNTHETIC_HEALTH_READY, SYNTHETIC_JURISDICTIONS } from './generated/contract-fixtures.js';
 import {
   CIVIC_SIGNAL_BRIEFING_SCHEMA,
   REPRESENTATIVE_SIGNAL_COMMAND_SCHEMA,
 } from './generated/schema-documents.js';
-import { ContractValidationError, parseApiError, parseHealthStatus } from './validators.js';
+import {
+  ContractValidationError,
+  parseApiError,
+  parseHealthStatus,
+  parseJurisdictionRegistry,
+} from './validators.js';
 
 describe('runtime contract validators', () => {
   it('allows additive response fields at clients and strips them from the result', () => {
@@ -29,6 +34,16 @@ describe('runtime contract validators', () => {
       expect(error).toBeInstanceOf(ContractValidationError);
       expect(String(error)).not.toContain('secret-value');
     }
+  });
+
+  it('validates the generated synthetic registry and strips client-only additions', () => {
+    const parsed = parseJurisdictionRegistry({
+      ...SYNTHETIC_JURISDICTIONS,
+      privateEligibilityInference: true,
+    });
+
+    expect(parsed).toEqual(SYNTHETIC_JURISDICTIONS);
+    expect('privateEligibilityInference' in parsed).toBe(false);
   });
 
   it('keeps monitoring distinct from human-only representative judgment', () => {

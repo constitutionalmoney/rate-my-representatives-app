@@ -9,6 +9,7 @@ export {
   OFFICIAL_CLIENT_SURFACES,
   readApiHealth,
   readJurisdictionAvailability,
+  readJurisdictionRegistry,
   readMobileCompatibility,
 } from './client.js';
 export { createContractMockFetch } from './mock.js';
@@ -16,18 +17,22 @@ export {
   ContractValidationError,
   parseApiError,
   parseHealthStatus,
+  parseJurisdictionRegistry,
   parseMobileCompatibilityStatus,
 } from './validators.js';
 export { LOCAL_INFRASTRUCTURE_CONTRACT } from './infrastructure.js';
 export type {
   ApiError,
   HealthStatus,
+  JurisdictionRegistry,
+  JurisdictionRegistryQuery,
   MobileCompatibilityStatus,
   OfficialClientSurface,
   RmrApiClient,
 } from './client.js';
 export type { ApiError as ApiErrorSchema } from './generated/api-error.js';
 export type { HealthStatus as HealthStatusSchema } from './generated/health-status.js';
+export type { JurisdictionRegistry as JurisdictionRegistrySchema } from './generated/jurisdiction-registry.js';
 export type { MobileCompatibilityStatus as MobileCompatibilityStatusSchema } from './generated/mobile-compatibility-status.js';
 export type {
   AuthenticatedSession as AuthenticatedSessionSchema,

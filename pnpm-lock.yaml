@@ -97,6 +97,9 @@ importers:
       '@rmr/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
+      '@rmr/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
       '@rmr/observability':
         specifier: workspace:*
         version: link:../../packages/observability

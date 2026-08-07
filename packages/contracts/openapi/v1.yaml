@@ -4,9 +4,8 @@ info:
   version: 1.0.0-contract
   summary: Versioned mobile-first public-accountability API contract
   description: >-
-    Canonical v1 contract foundation. Only GET /api/v1/health is operational.
-    GET /api/v1/jurisdictions is an explicit proposed-state vertical slice and
-    returns a typed feature-disabled error until issue #49 implements the registry.
+    Canonical v1 contract foundation. GET /api/v1/health, mobile compatibility,
+    and the synthetic effective-dated jurisdiction registry are operational.
     Every other route family is contract discovery only and has no operation.
   license:
     name: Apache-2.0
@@ -22,7 +21,7 @@ tags:
   - name: Health
     description: Operational contract-foundation health only; expanded readiness belongs to issue #42.
   - name: Jurisdictions
-    description: Proposed nested jurisdiction registry owned by issue #49.
+    description: Operational synthetic nested jurisdiction, district, body, and office registry.
   - name: Representation
     description: Proposed representation resolution.
   - name: People
@@ -169,36 +168,90 @@ paths:
   /api/v1/jurisdictions:
     get:
       operationId: getJurisdictionAvailability
-      summary: Read the proposed jurisdiction route state
+      summary: Read the effective-dated synthetic jurisdiction registry
       description: >-
-        The route is deliberately non-operational until issue #49 implements the
-        nested jurisdiction registry. No jurisdiction records are returned.
+        Returns the nested Canada/United States synthetic registry at an effective
+        date. It is not an eligibility, citizenship, legal-residence, or precise
+        location determination. Person, term, candidacy, ingestion, and location
+        resolution families remain explicitly deferred.
       tags: [Jurisdictions]
       deprecated: false
       security: []
+      parameters:
+        - name: asOf
+          in: query
+          required: false
+          description: Effective-date timestamp; defaults to the deterministic fixture timestamp.
+          schema:
+            type: string
+            format: date-time
+        - name: countryCode
+          in: query
+          required: false
+          description: Restrict the graph to a synthetic country fixture.
+          schema:
+            type: string
+            enum: [CA, US]
+        - name: jurisdictionId
+          in: query
+          required: false
+          description: Restrict the result to the connected effective-dated jurisdiction graph.
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$'
+        - name: includeHistorical
+          in: query
+          required: false
+          description: Include superseded and historical versions instead of only the as-of slice.
+          schema:
+            type: boolean
+            default: false
       x-rmr-contract:
-        featureStatus: proposed
+        featureStatus: operational
         allowedActors: [anonymous, human, representative, staff, reviewer, admin, service, agent]
         requiredScopes: []
         authentication: none
         recentPresence: false
         privacyClassification: public
         fieldPrivacy: all-response-fields-public
-        publicSerializer: api-error-v1
+        publicSerializer: jurisdiction-registry-v1
         privateSerializer: not-applicable
         idempotency: not-applicable
         concurrency: none
         rateLimitClass: public-read
-        errorCodes: [FEATURE_DISABLED, MAINTENANCE]
+        errorCodes: [VALIDATION_ERROR, FEATURE_DISABLED, MAINTENANCE]
         auditEffect: none
         outboxEffect: none
-        pagination: cursor-proposed
-        filters: proposed
-        sort: proposed
+        pagination: terminal-cursor
+        filters: [asOf, countryCode, jurisdictionId, includeHistorical]
+        sort: stable-id
         cache: no-store
         versionPolicy: additive-v1
-        sourceMetadata: not-implemented
+        sourceMetadata: synthetic-attribution-per-record
       responses:
+        '200':
+          description: Effective-dated synthetic registry read model.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CacheControl'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JurisdictionRegistry'
+              examples:
+                syntheticRegistry:
+                  $ref: '#/components/examples/SyntheticJurisdictionRegistry'
+        '400':
+          description: One or more effective-date or filter parameters are invalid.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CacheControl'
+            X-Correlation-ID:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
         '503':
           $ref: '#/components/responses/FeatureDisabled'
   /api/v1/representation:
@@ -312,6 +365,8 @@ components:
       $ref: ../schemas/civic-signal-briefing.schema.json
     HealthStatus:
       $ref: ../schemas/health-status.schema.json
+    JurisdictionRegistry:
+      $ref: ../schemas/jurisdiction-registry.schema.json
     MobileCompatibilityStatus:
       $ref: ../schemas/mobile-compatibility-status.schema.json
     RepresentativeSignalCommand:
@@ -343,13 +398,17 @@ components:
           minimumSupportedVersion: v1
           supportedVersions: [v1]
         featureStates:
-          publicRegistry: proposed
+          publicRegistry: operational
           civicSignal: disabled
           representativeSignals: disabled
           verus: disabled
           provenanceWrites: disabled
         optionalDependencies:
           verus: disabled
+        dataMode: synthetic
+    SyntheticJurisdictionRegistry:
+      summary: Synthetic Canada and United States registry slice
+      externalValue: ../fixtures/jurisdictions.synthetic.json
     SyntheticJurisdictionsProposed:
       summary: Synthetic proposed-state response
       value:

@@ -3,10 +3,12 @@ import addFormats from 'ajv-formats';
 
 import type { ApiError } from './generated/api-error.js';
 import type { HealthStatus } from './generated/health-status.js';
+import type { JurisdictionRegistry } from './generated/jurisdiction-registry.js';
 import type { MobileCompatibilityStatus } from './generated/mobile-compatibility-status.js';
 import {
   API_ERROR_SCHEMA,
   HEALTH_STATUS_SCHEMA,
+  JURISDICTION_REGISTRY_SCHEMA,
   MOBILE_COMPATIBILITY_STATUS_SCHEMA,
 } from './generated/schema-documents.js';
 
@@ -45,6 +47,8 @@ const serverAjv = createAjv('server');
 const clientAjv = createAjv('client');
 const serverHealth = serverAjv.compile(HEALTH_STATUS_SCHEMA);
 const clientHealth = clientAjv.compile(HEALTH_STATUS_SCHEMA);
+const serverJurisdictionRegistry = serverAjv.compile(JURISDICTION_REGISTRY_SCHEMA);
+const clientJurisdictionRegistry = clientAjv.compile(JURISDICTION_REGISTRY_SCHEMA);
 const serverMobileCompatibility = serverAjv.compile(MOBILE_COMPATIBILITY_STATUS_SCHEMA);
 const clientMobileCompatibility = clientAjv.compile(MOBILE_COMPATIBILITY_STATUS_SCHEMA);
 const serverError = serverAjv.compile(API_ERROR_SCHEMA);
@@ -82,6 +86,18 @@ export function parseApiError(value: unknown, boundary: ContractBoundary = 'clie
   return parseContract<ApiError>(
     'ApiError',
     boundary === 'client' ? clientError : serverError,
+    value,
+    boundary === 'client',
+  );
+}
+
+export function parseJurisdictionRegistry(
+  value: unknown,
+  boundary: ContractBoundary = 'client',
+): JurisdictionRegistry {
+  return parseContract<JurisdictionRegistry>(
+    'JurisdictionRegistry',
+    boundary === 'client' ? clientJurisdictionRegistry : serverJurisdictionRegistry,
     value,
     boundary === 'client',
   );

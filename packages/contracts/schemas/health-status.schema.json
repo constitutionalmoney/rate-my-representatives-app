@@ -42,13 +42,14 @@
         "provenanceWrites"
       ],
       "properties": {
-        "publicRegistry": { "const": "proposed" },
+        "publicRegistry": { "enum": ["proposed", "operational"] },
         "civicSignal": { "const": "disabled" },
         "representativeSignals": { "const": "disabled" },
         "verus": { "const": "disabled" },
         "provenanceWrites": { "const": "disabled" }
       }
     },
+    "dataMode": { "enum": ["synthetic"] },
     "optionalDependencies": {
       "type": "object",
       "additionalProperties": false,

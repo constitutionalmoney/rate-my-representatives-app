@@ -255,8 +255,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Read the proposed jurisdiction route state
-         * @description The route is deliberately non-operational until issue #49 implements the nested jurisdiction registry. No jurisdiction records are returned.
+         * Read the effective-dated synthetic jurisdiction registry
+         * @description Returns the nested Canada/United States synthetic registry at an effective date. It is not an eligibility, citizenship, legal-residence, or precise location determination. Person, term, candidacy, ingestion, and location resolution families remain explicitly deferred.
          */
         get: operations["getJurisdictionAvailability"];
         put?: never;
@@ -502,6 +502,36 @@ export interface components {
             schemaVersion: "api-error.v1";
         };
         ApiError: components["schemas"]["api-error.schema"];
+        attribution: {
+            assertionId: components["schemas"]["id"];
+            /** @enum {unknown} */
+            conflict: "clear" | "conflicting" | "unsupported";
+            /** @enum {unknown} */
+            coverage: "supported" | "partial" | "gap" | "unsupported";
+            /** @enum {unknown} */
+            freshness: "current" | "stale" | "unknown" | "unavailable";
+            observedAt: components["schemas"]["timestamp"];
+            sourceReference: string;
+            supersedesAssertionId: components["schemas"]["id"] | null;
+        };
+        bodyJurisdictionRelationship: {
+            attribution: components["schemas"]["attribution"];
+            effectiveFrom: components["schemas"]["timestamp"];
+            effectiveTo: components["schemas"]["timestamp"] | null;
+            jurisdictionId: components["schemas"]["id"];
+            /** @enum {unknown} */
+            kind: "governs" | "serves" | "overlaps";
+            publicBodyId: components["schemas"]["id"];
+            relationshipId: components["schemas"]["id"];
+        };
+        boundary: {
+            attribution: components["schemas"]["attribution"];
+            boundaryVersionId: components["schemas"]["id"];
+            effectiveFrom: components["schemas"]["timestamp"];
+            effectiveTo: components["schemas"]["timestamp"] | null;
+            geometryReference: string;
+            geometrySha256: string;
+        };
         /**
          * CivicSignalBriefing
          * @description Proposed monitoring/briefing envelope. It contains no human judgment operation.
@@ -518,6 +548,68 @@ export interface components {
             status: "proposed";
         };
         CivicSignalBriefing: components["schemas"]["civic-signal-briefing.schema"];
+        /** @enum {unknown} */
+        countryCode: "CA" | "US";
+        district: {
+            boundaries: components["schemas"]["boundary"][];
+            countryCode: components["schemas"]["countryCode"];
+            districtId: components["schemas"]["id"];
+            versions: components["schemas"]["districtVersion"][];
+        };
+        districtJurisdictionRelationship: {
+            attribution: components["schemas"]["attribution"];
+            districtId: components["schemas"]["id"];
+            effectiveFrom: components["schemas"]["timestamp"];
+            effectiveTo: components["schemas"]["timestamp"] | null;
+            jurisdictionId: components["schemas"]["id"];
+            /** @enum {unknown} */
+            kind: "contained_by" | "overlaps" | "represents" | "successor_of";
+            relationshipId: components["schemas"]["id"];
+        };
+        districtLineage: {
+            attribution: components["schemas"]["attribution"];
+            districtId: components["schemas"]["id"];
+            effectiveFrom: components["schemas"]["timestamp"];
+            effectiveTo: components["schemas"]["timestamp"] | null;
+            /** @enum {unknown} */
+            kind: "redistricted_from" | "split_from" | "merged_from";
+            lineageId: components["schemas"]["id"];
+            predecessorDistrictId: components["schemas"]["id"];
+        };
+        districtVersion: {
+            attribution: components["schemas"]["attribution"];
+            effectiveFrom: components["schemas"]["timestamp"];
+            effectiveTo: components["schemas"]["timestamp"] | null;
+            /** @enum {unknown} */
+            kind: "federal_electoral" | "provincial_electoral" | "state_legislative" | "local_electoral" | "special";
+            name: string;
+            slug: string;
+            /** @enum {unknown} */
+            status: "active" | "future" | "former" | "superseded";
+            versionId: components["schemas"]["id"];
+        };
+        externalIdentifier: {
+            attribution: components["schemas"]["attribution"];
+            effectiveFrom: components["schemas"]["timestamp"];
+            effectiveTo: components["schemas"]["timestamp"] | null;
+            entityId: components["schemas"]["id"];
+            /** @enum {unknown} */
+            entityKind: "jurisdiction" | "district" | "public_body" | "office";
+            externalIdentifierId: components["schemas"]["id"];
+            identifier: string;
+            issuer: string;
+        };
+        gap: {
+            attribution: components["schemas"]["attribution"];
+            code: string;
+            effectiveFrom: components["schemas"]["timestamp"];
+            effectiveTo: components["schemas"]["timestamp"] | null;
+            entityId: components["schemas"]["id"];
+            /** @enum {unknown} */
+            entityKind: "jurisdiction" | "district" | "public_body" | "office";
+            gapId: components["schemas"]["id"];
+            message: string;
+        };
         /**
          * HealthStatus
          * @description Operational v1 contract-foundation health response; expanded dependency readiness belongs to issue #42.
@@ -530,13 +622,15 @@ export interface components {
                 minimumSupportedVersion: "v1";
                 supportedVersions: "v1"[];
             };
+            /** @enum {unknown} */
+            dataMode?: "synthetic";
             featureStates: {
                 /** @constant */
                 civicSignal: "disabled";
                 /** @constant */
                 provenanceWrites: "disabled";
-                /** @constant */
-                publicRegistry: "proposed";
+                /** @enum {unknown} */
+                publicRegistry: "proposed" | "operational";
                 /** @constant */
                 representativeSignals: "disabled";
                 /** @constant */
@@ -554,6 +648,221 @@ export interface components {
             version: "1.0.0-contract";
         };
         HealthStatus: components["schemas"]["health-status.schema"];
+        id: string;
+        jurisdiction: {
+            countryCode: components["schemas"]["countryCode"];
+            jurisdictionId: components["schemas"]["id"];
+            versions: components["schemas"]["jurisdictionVersion"][];
+        };
+        /**
+         * JurisdictionRegistry
+         * @description Synthetic, effective-dated public registry read model. It contains jurisdictions, districts, public bodies, and offices only; person, term, candidacy, source-ingestion, and location-resolution families are deferred.
+         */
+        "jurisdiction-registry.schema": {
+            asOf: components["schemas"]["timestamp"];
+            bodyJurisdictionRelationships: components["schemas"]["bodyJurisdictionRelationship"][];
+            /** @constant */
+            dataMode: "synthetic";
+            deferredFamilies: ("people" | "office_terms" | "candidacies" | "source_ingestion" | "location_resolution")[];
+            districtJurisdictionRelationships: components["schemas"]["districtJurisdictionRelationship"][];
+            districtLineage: components["schemas"]["districtLineage"][];
+            districts: components["schemas"]["district"][];
+            externalIdentifiers: components["schemas"]["externalIdentifier"][];
+            gaps: components["schemas"]["gap"][];
+            generatedAt: components["schemas"]["timestamp"];
+            jurisdictionRelationships: components["schemas"]["jurisdictionRelationship"][];
+            jurisdictions: components["schemas"]["jurisdiction"][];
+            offices: components["schemas"]["office"][];
+            page: {
+                nextCursor: null;
+            };
+            publicBodies: components["schemas"]["publicBody"][];
+            /** @constant */
+            schemaVersion: "jurisdiction-registry.v1";
+            $defs: {
+                id: string;
+                /** Format: date-time */
+                timestamp: string;
+                /** @enum {unknown} */
+                countryCode: "CA" | "US";
+                attribution: {
+                    assertionId: components["schemas"]["id"];
+                    /** @enum {unknown} */
+                    conflict: "clear" | "conflicting" | "unsupported";
+                    /** @enum {unknown} */
+                    coverage: "supported" | "partial" | "gap" | "unsupported";
+                    /** @enum {unknown} */
+                    freshness: "current" | "stale" | "unknown" | "unavailable";
+                    observedAt: components["schemas"]["timestamp"];
+                    sourceReference: string;
+                    supersedesAssertionId: components["schemas"]["id"] | null;
+                };
+                jurisdictionVersion: {
+                    attribution: components["schemas"]["attribution"];
+                    effectiveFrom: components["schemas"]["timestamp"];
+                    effectiveTo: components["schemas"]["timestamp"] | null;
+                    /** @enum {unknown} */
+                    kind: "country" | "province" | "state" | "territory" | "municipality" | "locality" | "unincorporated_area" | "county" | "regional_district" | "region" | "special_district";
+                    name: string;
+                    slug: string;
+                    /** @enum {unknown} */
+                    status: "active" | "future" | "former" | "amalgamated" | "dissolved" | "superseded";
+                    versionId: components["schemas"]["id"];
+                };
+                jurisdiction: {
+                    countryCode: components["schemas"]["countryCode"];
+                    jurisdictionId: components["schemas"]["id"];
+                    versions: components["schemas"]["jurisdictionVersion"][];
+                };
+                jurisdictionRelationship: {
+                    attribution: components["schemas"]["attribution"];
+                    effectiveFrom: components["schemas"]["timestamp"];
+                    effectiveTo: components["schemas"]["timestamp"] | null;
+                    /** @enum {unknown} */
+                    kind: "contained_by" | "administered_by" | "overlaps" | "represented_by" | "successor_of";
+                    objectJurisdictionId: components["schemas"]["id"];
+                    relationshipId: components["schemas"]["id"];
+                    subjectJurisdictionId: components["schemas"]["id"];
+                };
+                boundary: {
+                    attribution: components["schemas"]["attribution"];
+                    boundaryVersionId: components["schemas"]["id"];
+                    effectiveFrom: components["schemas"]["timestamp"];
+                    effectiveTo: components["schemas"]["timestamp"] | null;
+                    geometryReference: string;
+                    geometrySha256: string;
+                };
+                districtVersion: {
+                    attribution: components["schemas"]["attribution"];
+                    effectiveFrom: components["schemas"]["timestamp"];
+                    effectiveTo: components["schemas"]["timestamp"] | null;
+                    /** @enum {unknown} */
+                    kind: "federal_electoral" | "provincial_electoral" | "state_legislative" | "local_electoral" | "special";
+                    name: string;
+                    slug: string;
+                    /** @enum {unknown} */
+                    status: "active" | "future" | "former" | "superseded";
+                    versionId: components["schemas"]["id"];
+                };
+                district: {
+                    boundaries: components["schemas"]["boundary"][];
+                    countryCode: components["schemas"]["countryCode"];
+                    districtId: components["schemas"]["id"];
+                    versions: components["schemas"]["districtVersion"][];
+                };
+                districtJurisdictionRelationship: {
+                    attribution: components["schemas"]["attribution"];
+                    districtId: components["schemas"]["id"];
+                    effectiveFrom: components["schemas"]["timestamp"];
+                    effectiveTo: components["schemas"]["timestamp"] | null;
+                    jurisdictionId: components["schemas"]["id"];
+                    /** @enum {unknown} */
+                    kind: "contained_by" | "overlaps" | "represents" | "successor_of";
+                    relationshipId: components["schemas"]["id"];
+                };
+                districtLineage: {
+                    attribution: components["schemas"]["attribution"];
+                    districtId: components["schemas"]["id"];
+                    effectiveFrom: components["schemas"]["timestamp"];
+                    effectiveTo: components["schemas"]["timestamp"] | null;
+                    /** @enum {unknown} */
+                    kind: "redistricted_from" | "split_from" | "merged_from";
+                    lineageId: components["schemas"]["id"];
+                    predecessorDistrictId: components["schemas"]["id"];
+                };
+                publicBodyVersion: {
+                    attribution: components["schemas"]["attribution"];
+                    effectiveFrom: components["schemas"]["timestamp"];
+                    effectiveTo: components["schemas"]["timestamp"] | null;
+                    /** @enum {unknown} */
+                    kind: "legislature" | "council" | "board" | "agency" | "commission";
+                    name: string;
+                    slug: string;
+                    /** @enum {unknown} */
+                    status: "active" | "future" | "former" | "abolished";
+                    versionId: components["schemas"]["id"];
+                };
+                publicBody: {
+                    countryCode: components["schemas"]["countryCode"];
+                    publicBodyId: components["schemas"]["id"];
+                    versions: components["schemas"]["publicBodyVersion"][];
+                };
+                bodyJurisdictionRelationship: {
+                    attribution: components["schemas"]["attribution"];
+                    effectiveFrom: components["schemas"]["timestamp"];
+                    effectiveTo: components["schemas"]["timestamp"] | null;
+                    jurisdictionId: components["schemas"]["id"];
+                    /** @enum {unknown} */
+                    kind: "governs" | "serves" | "overlaps";
+                    publicBodyId: components["schemas"]["id"];
+                    relationshipId: components["schemas"]["id"];
+                };
+                officeVersion: {
+                    attribution: components["schemas"]["attribution"];
+                    districtId: components["schemas"]["id"] | null;
+                    effectiveFrom: components["schemas"]["timestamp"];
+                    effectiveTo: components["schemas"]["timestamp"] | null;
+                    name: string;
+                    /** @enum {unknown} */
+                    operationalState: "active" | "vacant" | "acting" | "future" | "abolished";
+                    publicBodyId: components["schemas"]["id"];
+                    /** @enum {unknown} */
+                    selectionMethod: "elected" | "appointed" | "mixed" | "ex_officio" | "unknown";
+                    slug: string;
+                    versionId: components["schemas"]["id"];
+                };
+                office: {
+                    countryCode: components["schemas"]["countryCode"];
+                    officeId: components["schemas"]["id"];
+                    versions: components["schemas"]["officeVersion"][];
+                };
+                externalIdentifier: {
+                    attribution: components["schemas"]["attribution"];
+                    effectiveFrom: components["schemas"]["timestamp"];
+                    effectiveTo: components["schemas"]["timestamp"] | null;
+                    entityId: components["schemas"]["id"];
+                    /** @enum {unknown} */
+                    entityKind: "jurisdiction" | "district" | "public_body" | "office";
+                    externalIdentifierId: components["schemas"]["id"];
+                    identifier: string;
+                    issuer: string;
+                };
+                gap: {
+                    attribution: components["schemas"]["attribution"];
+                    code: string;
+                    effectiveFrom: components["schemas"]["timestamp"];
+                    effectiveTo: components["schemas"]["timestamp"] | null;
+                    entityId: components["schemas"]["id"];
+                    /** @enum {unknown} */
+                    entityKind: "jurisdiction" | "district" | "public_body" | "office";
+                    gapId: components["schemas"]["id"];
+                    message: string;
+                };
+            };
+        };
+        JurisdictionRegistry: components["schemas"]["jurisdiction-registry.schema"];
+        jurisdictionRelationship: {
+            attribution: components["schemas"]["attribution"];
+            effectiveFrom: components["schemas"]["timestamp"];
+            effectiveTo: components["schemas"]["timestamp"] | null;
+            /** @enum {unknown} */
+            kind: "contained_by" | "administered_by" | "overlaps" | "represented_by" | "successor_of";
+            objectJurisdictionId: components["schemas"]["id"];
+            relationshipId: components["schemas"]["id"];
+            subjectJurisdictionId: components["schemas"]["id"];
+        };
+        jurisdictionVersion: {
+            attribution: components["schemas"]["attribution"];
+            effectiveFrom: components["schemas"]["timestamp"];
+            effectiveTo: components["schemas"]["timestamp"] | null;
+            /** @enum {unknown} */
+            kind: "country" | "province" | "state" | "territory" | "municipality" | "locality" | "unincorporated_area" | "county" | "regional_district" | "region" | "special_district";
+            name: string;
+            slug: string;
+            /** @enum {unknown} */
+            status: "active" | "future" | "former" | "amalgamated" | "dissolved" | "superseded";
+            versionId: components["schemas"]["id"];
+        };
         /**
          * MobileCompatibilityStatus
          * @description Synthetic foundation compatibility policy for installed native iOS and Android clients.
@@ -585,6 +894,25 @@ export interface components {
             };
         };
         MobileCompatibilityStatus: components["schemas"]["mobile-compatibility-status.schema"];
+        office: {
+            countryCode: components["schemas"]["countryCode"];
+            officeId: components["schemas"]["id"];
+            versions: components["schemas"]["officeVersion"][];
+        };
+        officeVersion: {
+            attribution: components["schemas"]["attribution"];
+            districtId: components["schemas"]["id"] | null;
+            effectiveFrom: components["schemas"]["timestamp"];
+            effectiveTo: components["schemas"]["timestamp"] | null;
+            name: string;
+            /** @enum {unknown} */
+            operationalState: "active" | "vacant" | "acting" | "future" | "abolished";
+            publicBodyId: components["schemas"]["id"];
+            /** @enum {unknown} */
+            selectionMethod: "elected" | "appointed" | "mixed" | "ex_officio" | "unknown";
+            slug: string;
+            versionId: components["schemas"]["id"];
+        };
         platformPolicy: {
             /** @constant */
             minimumAppVersion: "0.0.0-foundation";
@@ -593,6 +921,23 @@ export interface components {
             /** @constant */
             releaseState: "foundation";
             supportedContractVersions: "v1"[];
+        };
+        publicBody: {
+            countryCode: components["schemas"]["countryCode"];
+            publicBodyId: components["schemas"]["id"];
+            versions: components["schemas"]["publicBodyVersion"][];
+        };
+        publicBodyVersion: {
+            attribution: components["schemas"]["attribution"];
+            effectiveFrom: components["schemas"]["timestamp"];
+            effectiveTo: components["schemas"]["timestamp"] | null;
+            /** @enum {unknown} */
+            kind: "legislature" | "council" | "board" | "agency" | "commission";
+            name: string;
+            slug: string;
+            /** @enum {unknown} */
+            status: "active" | "future" | "former" | "abolished";
+            versionId: components["schemas"]["id"];
         };
         /**
          * RepresentativeSignalCommand
@@ -610,6 +955,8 @@ export interface components {
             schemaVersion: "representative-signal-command.v1";
         };
         RepresentativeSignalCommand: components["schemas"]["representative-signal-command.schema"];
+        /** Format: date-time */
+        timestamp: string;
     };
     responses: {
         /** @description The capability is disabled or still proposed. */
@@ -682,13 +1029,43 @@ export interface operations {
     };
     getJurisdictionAvailability: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Effective-date timestamp; defaults to the deterministic fixture timestamp. */
+                asOf?: string;
+                /** @description Restrict the graph to a synthetic country fixture. */
+                countryCode?: "CA" | "US";
+                /** @description Include superseded and historical versions instead of only the as-of slice. */
+                includeHistorical?: boolean;
+                /** @description Restrict the result to the connected effective-dated jurisdiction graph. */
+                jurisdictionId?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
+            /** @description Effective-dated synthetic registry read model. */
+            200: {
+                headers: {
+                    "Cache-Control": components["headers"]["CacheControl"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["jurisdiction-registry.schema"];
+                };
+            };
+            /** @description One or more effective-date or filter parameters are invalid. */
+            400: {
+                headers: {
+                    "Cache-Control": components["headers"]["CacheControl"];
+                    "X-Correlation-ID": components["headers"]["CorrelationId"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["api-error.schema"];
+                };
+            };
             503: components["responses"]["FeatureDisabled"];
         };
     };

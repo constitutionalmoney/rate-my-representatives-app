@@ -784,7 +784,10 @@ export const HEALTH_STATUS_SCHEMA = {
       ],
       "properties": {
         "publicRegistry": {
-          "const": "proposed"
+          "enum": [
+            "proposed",
+            "operational"
+          ]
         },
         "civicSignal": {
           "const": "disabled"
@@ -800,6 +803,11 @@ export const HEALTH_STATUS_SCHEMA = {
         }
       }
     },
+    "dataMode": {
+      "enum": [
+        "synthetic"
+      ]
+    },
     "optionalDependencies": {
       "type": "object",
       "additionalProperties": false,
@@ -809,6 +817,922 @@ export const HEALTH_STATUS_SCHEMA = {
       "properties": {
         "verus": {
           "const": "disabled"
+        }
+      }
+    }
+  }
+} as const;
+
+export const JURISDICTION_REGISTRY_SCHEMA = {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ratemyrepresentatives.com/v1/jurisdiction-registry.schema.json",
+  "title": "JurisdictionRegistry",
+  "description": "Synthetic, effective-dated public registry read model. It contains jurisdictions, districts, public bodies, and offices only; person, term, candidacy, source-ingestion, and location-resolution families are deferred.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "dataMode",
+    "generatedAt",
+    "asOf",
+    "jurisdictions",
+    "jurisdictionRelationships",
+    "districts",
+    "districtJurisdictionRelationships",
+    "districtLineage",
+    "publicBodies",
+    "bodyJurisdictionRelationships",
+    "offices",
+    "externalIdentifiers",
+    "gaps",
+    "deferredFamilies",
+    "page"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "jurisdiction-registry.v1"
+    },
+    "dataMode": {
+      "const": "synthetic"
+    },
+    "generatedAt": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "asOf": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "jurisdictions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/jurisdiction"
+      }
+    },
+    "jurisdictionRelationships": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/jurisdictionRelationship"
+      }
+    },
+    "districts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/district"
+      }
+    },
+    "districtJurisdictionRelationships": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/districtJurisdictionRelationship"
+      }
+    },
+    "districtLineage": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/districtLineage"
+      }
+    },
+    "publicBodies": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/publicBody"
+      }
+    },
+    "bodyJurisdictionRelationships": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/bodyJurisdictionRelationship"
+      }
+    },
+    "offices": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/office"
+      }
+    },
+    "externalIdentifiers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/externalIdentifier"
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/gap"
+      }
+    },
+    "deferredFamilies": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "people",
+          "office_terms",
+          "candidacies",
+          "source_ingestion",
+          "location_resolution"
+        ]
+      },
+      "minItems": 5,
+      "maxItems": 5,
+      "uniqueItems": true
+    },
+    "page": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "nextCursor"
+      ],
+      "properties": {
+        "nextCursor": {
+          "type": "null"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "countryCode": {
+      "enum": [
+        "CA",
+        "US"
+      ]
+    },
+    "attribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assertionId",
+        "sourceReference",
+        "observedAt",
+        "freshness",
+        "coverage",
+        "conflict",
+        "supersedesAssertionId"
+      ],
+      "properties": {
+        "assertionId": {
+          "$ref": "#/$defs/id"
+        },
+        "sourceReference": {
+          "type": "string",
+          "pattern": "^synthetic://[a-zA-Z0-9./_:-]+$"
+        },
+        "observedAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "freshness": {
+          "enum": [
+            "current",
+            "stale",
+            "unknown",
+            "unavailable"
+          ]
+        },
+        "coverage": {
+          "enum": [
+            "supported",
+            "partial",
+            "gap",
+            "unsupported"
+          ]
+        },
+        "conflict": {
+          "enum": [
+            "clear",
+            "conflicting",
+            "unsupported"
+          ]
+        },
+        "supersedesAssertionId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "jurisdictionVersion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "versionId",
+        "name",
+        "slug",
+        "kind",
+        "status",
+        "effectiveFrom",
+        "effectiveTo",
+        "attribution"
+      ],
+      "properties": {
+        "versionId": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "kind": {
+          "enum": [
+            "country",
+            "province",
+            "state",
+            "territory",
+            "municipality",
+            "locality",
+            "unincorporated_area",
+            "county",
+            "regional_district",
+            "region",
+            "special_district"
+          ]
+        },
+        "status": {
+          "enum": [
+            "active",
+            "future",
+            "former",
+            "amalgamated",
+            "dissolved",
+            "superseded"
+          ]
+        },
+        "effectiveFrom": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "effectiveTo": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
+        }
+      }
+    },
+    "jurisdiction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "jurisdictionId",
+        "countryCode",
+        "versions"
+      ],
+      "properties": {
+        "jurisdictionId": {
+          "$ref": "#/$defs/id"
+        },
+        "countryCode": {
+          "$ref": "#/$defs/countryCode"
+        },
+        "versions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/jurisdictionVersion"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "jurisdictionRelationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relationshipId",
+        "subjectJurisdictionId",
+        "objectJurisdictionId",
+        "kind",
+        "effectiveFrom",
+        "effectiveTo",
+        "attribution"
+      ],
+      "properties": {
+        "relationshipId": {
+          "$ref": "#/$defs/id"
+        },
+        "subjectJurisdictionId": {
+          "$ref": "#/$defs/id"
+        },
+        "objectJurisdictionId": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "enum": [
+            "contained_by",
+            "administered_by",
+            "overlaps",
+            "represented_by",
+            "successor_of"
+          ]
+        },
+        "effectiveFrom": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "effectiveTo": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
+        }
+      }
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "boundaryVersionId",
+        "geometryReference",
+        "geometrySha256",
+        "effectiveFrom",
+        "effectiveTo",
+        "attribution"
+      ],
+      "properties": {
+        "boundaryVersionId": {
+          "$ref": "#/$defs/id"
+        },
+        "geometryReference": {
+          "type": "string",
+          "pattern": "^synthetic://[a-zA-Z0-9./_:-]+$"
+        },
+        "geometrySha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "effectiveFrom": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "effectiveTo": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
+        }
+      }
+    },
+    "districtVersion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "versionId",
+        "name",
+        "slug",
+        "kind",
+        "status",
+        "effectiveFrom",
+        "effectiveTo",
+        "attribution"
+      ],
+      "properties": {
+        "versionId": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "kind": {
+          "enum": [
+            "federal_electoral",
+            "provincial_electoral",
+            "state_legislative",
+            "local_electoral",
+            "special"
+          ]
+        },
+        "status": {
+          "enum": [
+            "active",
+            "future",
+            "former",
+            "superseded"
+          ]
+        },
+        "effectiveFrom": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "effectiveTo": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
+        }
+      }
+    },
+    "district": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "districtId",
+        "countryCode",
+        "versions",
+        "boundaries"
+      ],
+      "properties": {
+        "districtId": {
+          "$ref": "#/$defs/id"
+        },
+        "countryCode": {
+          "$ref": "#/$defs/countryCode"
+        },
+        "versions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/districtVersion"
+          },
+          "minItems": 1
+        },
+        "boundaries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/boundary"
+          }
+        }
+      }
+    },
+    "districtJurisdictionRelationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relationshipId",
+        "districtId",
+        "jurisdictionId",
+        "kind",
+        "effectiveFrom",
+        "effectiveTo",
+        "attribution"
+      ],
+      "properties": {
+        "relationshipId": {
+          "$ref": "#/$defs/id"
+        },
+        "districtId": {
+          "$ref": "#/$defs/id"
+        },
+        "jurisdictionId": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "enum": [
+            "contained_by",
+            "overlaps",
+            "represents",
+            "successor_of"
+          ]
+        },
+        "effectiveFrom": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "effectiveTo": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
+        }
+      }
+    },
+    "districtLineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lineageId",
+        "districtId",
+        "predecessorDistrictId",
+        "kind",
+        "effectiveFrom",
+        "effectiveTo",
+        "attribution"
+      ],
+      "properties": {
+        "lineageId": {
+          "$ref": "#/$defs/id"
+        },
+        "districtId": {
+          "$ref": "#/$defs/id"
+        },
+        "predecessorDistrictId": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "enum": [
+            "redistricted_from",
+            "split_from",
+            "merged_from"
+          ]
+        },
+        "effectiveFrom": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "effectiveTo": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
+        }
+      }
+    },
+    "publicBodyVersion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "versionId",
+        "name",
+        "slug",
+        "kind",
+        "status",
+        "effectiveFrom",
+        "effectiveTo",
+        "attribution"
+      ],
+      "properties": {
+        "versionId": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "kind": {
+          "enum": [
+            "legislature",
+            "council",
+            "board",
+            "agency",
+            "commission"
+          ]
+        },
+        "status": {
+          "enum": [
+            "active",
+            "future",
+            "former",
+            "abolished"
+          ]
+        },
+        "effectiveFrom": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "effectiveTo": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
+        }
+      }
+    },
+    "publicBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "publicBodyId",
+        "countryCode",
+        "versions"
+      ],
+      "properties": {
+        "publicBodyId": {
+          "$ref": "#/$defs/id"
+        },
+        "countryCode": {
+          "$ref": "#/$defs/countryCode"
+        },
+        "versions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/publicBodyVersion"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "bodyJurisdictionRelationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relationshipId",
+        "publicBodyId",
+        "jurisdictionId",
+        "kind",
+        "effectiveFrom",
+        "effectiveTo",
+        "attribution"
+      ],
+      "properties": {
+        "relationshipId": {
+          "$ref": "#/$defs/id"
+        },
+        "publicBodyId": {
+          "$ref": "#/$defs/id"
+        },
+        "jurisdictionId": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "enum": [
+            "governs",
+            "serves",
+            "overlaps"
+          ]
+        },
+        "effectiveFrom": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "effectiveTo": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
+        }
+      }
+    },
+    "officeVersion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "versionId",
+        "publicBodyId",
+        "districtId",
+        "name",
+        "slug",
+        "selectionMethod",
+        "operationalState",
+        "effectiveFrom",
+        "effectiveTo",
+        "attribution"
+      ],
+      "properties": {
+        "versionId": {
+          "$ref": "#/$defs/id"
+        },
+        "publicBodyId": {
+          "$ref": "#/$defs/id"
+        },
+        "districtId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "selectionMethod": {
+          "enum": [
+            "elected",
+            "appointed",
+            "mixed",
+            "ex_officio",
+            "unknown"
+          ]
+        },
+        "operationalState": {
+          "enum": [
+            "active",
+            "vacant",
+            "acting",
+            "future",
+            "abolished"
+          ]
+        },
+        "effectiveFrom": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "effectiveTo": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
+        }
+      }
+    },
+    "office": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "officeId",
+        "countryCode",
+        "versions"
+      ],
+      "properties": {
+        "officeId": {
+          "$ref": "#/$defs/id"
+        },
+        "countryCode": {
+          "$ref": "#/$defs/countryCode"
+        },
+        "versions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/officeVersion"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "externalIdentifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "externalIdentifierId",
+        "entityKind",
+        "entityId",
+        "issuer",
+        "identifier",
+        "effectiveFrom",
+        "effectiveTo",
+        "attribution"
+      ],
+      "properties": {
+        "externalIdentifierId": {
+          "$ref": "#/$defs/id"
+        },
+        "entityKind": {
+          "enum": [
+            "jurisdiction",
+            "district",
+            "public_body",
+            "office"
+          ]
+        },
+        "entityId": {
+          "$ref": "#/$defs/id"
+        },
+        "issuer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "identifier": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "effectiveFrom": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "effectiveTo": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
+        }
+      }
+    },
+    "gap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gapId",
+        "entityKind",
+        "entityId",
+        "code",
+        "message",
+        "effectiveFrom",
+        "effectiveTo",
+        "attribution"
+      ],
+      "properties": {
+        "gapId": {
+          "$ref": "#/$defs/id"
+        },
+        "entityKind": {
+          "enum": [
+            "jurisdiction",
+            "district",
+            "public_body",
+            "office"
+          ]
+        },
+        "entityId": {
+          "$ref": "#/$defs/id"
+        },
+        "code": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]{0,63}$"
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "effectiveFrom": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "effectiveTo": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
         }
       }
     }

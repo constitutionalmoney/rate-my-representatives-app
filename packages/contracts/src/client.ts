@@ -2,13 +2,25 @@ import createClient from 'openapi-fetch';
 
 import type { ApiError as ApiErrorSchema } from './generated/api-error.js';
 import type { HealthStatus as HealthStatusSchema } from './generated/health-status.js';
+import type { JurisdictionRegistry as JurisdictionRegistrySchema } from './generated/jurisdiction-registry.js';
 import type { MobileCompatibilityStatus as MobileCompatibilityStatusSchema } from './generated/mobile-compatibility-status.js';
 import type { paths } from './generated/openapi.js';
-import { parseApiError, parseHealthStatus, parseMobileCompatibilityStatus } from './validators.js';
+import {
+  parseHealthStatus,
+  parseJurisdictionRegistry,
+  parseMobileCompatibilityStatus,
+} from './validators.js';
 
 export type ApiError = ApiErrorSchema;
 export type HealthStatus = HealthStatusSchema;
+export type JurisdictionRegistry = JurisdictionRegistrySchema;
 export type MobileCompatibilityStatus = MobileCompatibilityStatusSchema;
+export interface JurisdictionRegistryQuery {
+  readonly asOf?: string;
+  readonly countryCode?: 'CA' | 'US';
+  readonly jurisdictionId?: string;
+  readonly includeHistorical?: boolean;
+}
 export const OFFICIAL_CLIENT_SURFACES = [
   'mobile',
   'web',
@@ -70,11 +82,22 @@ export async function readApiHealth(client: RmrApiClient): Promise<HealthStatus>
   return parseHealthStatus(data);
 }
 
-export async function readJurisdictionAvailability(client: RmrApiClient): Promise<ApiError> {
-  const { error } = await client.GET('/api/v1/jurisdictions');
-  if (error === undefined)
-    throw new Error('Jurisdiction registry unexpectedly reported operational.');
-  return parseApiError(error);
+export async function readJurisdictionRegistry(
+  client: RmrApiClient,
+  query: JurisdictionRegistryQuery = {},
+): Promise<JurisdictionRegistry> {
+  const { data, error } = await client.GET('/api/v1/jurisdictions', {
+    params: { query },
+  });
+  if (error || data === undefined) throw new Error('Jurisdiction registry request failed.');
+  return parseJurisdictionRegistry(data);
+}
+
+/** @deprecated Use readJurisdictionRegistry. */
+export async function readJurisdictionAvailability(
+  client: RmrApiClient,
+): Promise<JurisdictionRegistry> {
+  return readJurisdictionRegistry(client);
 }
 
 export async function readMobileCompatibility(

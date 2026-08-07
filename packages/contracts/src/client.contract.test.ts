@@ -9,7 +9,7 @@ import {
   createWorkerClient,
   OFFICIAL_CLIENT_SURFACES,
   readApiHealth,
-  readJurisdictionAvailability,
+  readJurisdictionRegistry,
   readMobileCompatibility,
 } from './client.js';
 import { createContractMockFetch } from './mock.js';
@@ -49,13 +49,19 @@ describe('generated v1 clients', () => {
     expect(result.optionalDependencies.verus).toBe('disabled');
   });
 
-  it('returns the typed proposed-state error without inventing registry data', async () => {
+  it('returns typed synthetic Canada and U.S. registry data', async () => {
     const client = createPublicSdkClient('http://127.0.0.1:3000', createContractMockFetch());
 
-    await expect(readJurisdictionAvailability(client)).resolves.toMatchObject({
-      code: 'FEATURE_DISABLED',
-      featureState: 'proposed',
-      retryable: false,
+    await expect(readJurisdictionRegistry(client)).resolves.toMatchObject({
+      dataMode: 'synthetic',
+      deferredFamilies: [
+        'people',
+        'office_terms',
+        'candidacies',
+        'source_ingestion',
+        'location_resolution',
+      ],
+      jurisdictions: [{ countryCode: 'CA' }, { countryCode: 'US' }],
     });
   });
 

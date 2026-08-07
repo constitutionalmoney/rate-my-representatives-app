@@ -1,6 +1,6 @@
 import {
   SYNTHETIC_HEALTH_READY,
-  SYNTHETIC_JURISDICTIONS_PROPOSED,
+  SYNTHETIC_JURISDICTIONS,
   SYNTHETIC_MOBILE_COMPATIBILITY_READY,
   SYNTHETIC_NOT_FOUND,
 } from './generated/contract-fixtures.js';
@@ -27,11 +27,7 @@ export function createContractMockFetch(): typeof globalThis.fetch {
       return jsonResponse(SYNTHETIC_MOBILE_COMPATIBILITY_READY, 200);
     }
     if (request.method === 'GET' && url.pathname === '/api/v1/jurisdictions') {
-      return jsonResponse(
-        SYNTHETIC_JURISDICTIONS_PROPOSED,
-        503,
-        SYNTHETIC_JURISDICTIONS_PROPOSED.correlationId,
-      );
+      return jsonResponse(SYNTHETIC_JURISDICTIONS, 200);
     }
     return jsonResponse(SYNTHETIC_NOT_FOUND, 404, SYNTHETIC_NOT_FOUND.correlationId);
   };

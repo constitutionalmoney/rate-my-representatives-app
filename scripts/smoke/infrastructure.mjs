@@ -89,6 +89,24 @@ const api = await fetch(`http://127.0.0.1:${apiPort}/api/v1/health`).then((respo
 );
 assert(api.status === 'ready', 'API did not report ready.');
 assert(api.optionalDependencies?.verus === 'disabled', 'API incorrectly requires Verus.');
+assert(api.featureStates?.publicRegistry === 'operational', 'Registry did not report operational.');
+
+const registry = await fetch(`http://127.0.0.1:${apiPort}/api/v1/jurisdictions`).then(
+  (response) => {
+    assert(response.status === 200, 'Jurisdiction registry request failed.');
+    return response.json();
+  },
+);
+assert(registry.dataMode === 'synthetic', 'Registry returned non-synthetic data.');
+assert(
+  registry.jurisdictions.some(({ countryCode }) => countryCode === 'CA') &&
+    registry.jurisdictions.some(({ countryCode }) => countryCode === 'US'),
+  'Registry does not contain both country fixtures.',
+);
+assert(
+  !/verus|treasury|reserve|currency/i.test(JSON.stringify(registry)),
+  'Registry conflated a prohibited hierarchy.',
+);
 
 const workerHealth = spawnSync(
   'docker',
@@ -184,6 +202,35 @@ assert(
   auditOutboxSmoke.stderr || 'Audit/outbox PostgreSQL smoke failed.',
 );
 
+const registrySmoke = spawnSync(
+  'docker',
+  [
+    'compose',
+    '-f',
+    'compose.infrastructure.yaml',
+    'exec',
+    '-T',
+    'postgres',
+    'psql',
+    '-U',
+    'rmr',
+    '-d',
+    'rmr',
+    '--set',
+    'ON_ERROR_STOP=1',
+    '--file=-',
+  ],
+  {
+    cwd: root,
+    encoding: 'utf8',
+    input: await readFile(path.join(root, 'scripts', 'smoke', 'jurisdiction-registry.sql'), 'utf8'),
+  },
+);
+assert(
+  registrySmoke.status === 0,
+  registrySmoke.stderr || 'Jurisdiction registry PostgreSQL smoke failed.',
+);
+
 const running = spawnSync(
   'docker',
   ['compose', '-f', 'compose.infrastructure.yaml', 'ps', '--services', '--status', 'running'],
@@ -197,5 +244,5 @@ assert(
 assert(!running.stdout.includes('signer-stub'), 'Core smoke unexpectedly started signer stubs.');
 
 process.stdout.write(
-  'Core infrastructure smoke passed: migration/seed, atomic audit/outbox, leases/retry/DLQ/replay, bucket isolation, mail, API, worker, and Verus-off readiness.\n',
+  'Core infrastructure smoke passed: migration/seed, jurisdiction registry, atomic audit/outbox, leases/retry/DLQ/replay, bucket isolation, mail, API, worker, and Verus-off readiness.\n',
 );

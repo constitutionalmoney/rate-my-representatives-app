@@ -1,9 +1,9 @@
 import {
   createPortalClient,
   readApiHealth,
-  readJurisdictionAvailability,
-  type ApiError,
+  readJurisdictionRegistry,
   type HealthStatus,
+  type JurisdictionRegistry,
 } from '@rmr/contracts';
 
 export function readPortalHealth(
@@ -13,9 +13,9 @@ export function readPortalHealth(
   return readApiHealth(createPortalClient(baseUrl, fetchImplementation));
 }
 
-export function readPortalJurisdictionAvailability(
+export function readPortalJurisdictionRegistry(
   baseUrl: string,
   fetchImplementation?: typeof globalThis.fetch,
-): Promise<ApiError> {
-  return readJurisdictionAvailability(createPortalClient(baseUrl, fetchImplementation));
+): Promise<JurisdictionRegistry> {
+  return readJurisdictionRegistry(createPortalClient(baseUrl, fetchImplementation));
 }

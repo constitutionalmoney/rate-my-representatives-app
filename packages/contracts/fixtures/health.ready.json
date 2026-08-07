@@ -8,12 +8,13 @@
     "supportedVersions": ["v1"]
   },
   "featureStates": {
-    "publicRegistry": "proposed",
+    "publicRegistry": "operational",
     "civicSignal": "disabled",
     "representativeSignals": "disabled",
     "verus": "disabled",
     "provenanceWrites": "disabled"
   },
+  "dataMode": "synthetic",
   "optionalDependencies": {
     "verus": "disabled"
   }

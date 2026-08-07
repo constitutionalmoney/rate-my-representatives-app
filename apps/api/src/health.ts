@@ -16,13 +16,14 @@ export function foundationHealth(): HealthStatus {
       featureStates: {
         civicSignal: 'disabled',
         provenanceWrites: 'disabled',
-        publicRegistry: 'proposed',
+        publicRegistry: 'operational',
         representativeSignals: 'disabled',
         verus: 'disabled',
       },
       optionalDependencies: {
         verus: 'disabled',
       },
+      dataMode: 'synthetic',
       service: 'api',
       status: 'ready',
       version: '1.0.0-contract',

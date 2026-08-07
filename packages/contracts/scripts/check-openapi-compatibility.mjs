@@ -30,7 +30,9 @@ function compareSchema(previous, current, location, findings) {
     findings.push(`${location}:type-changed`);
   }
   if (previous.const !== undefined && previous.const !== current.const) {
-    findings.push(`${location}:const-changed`);
+    const widenedToCompatibleEnum =
+      Array.isArray(current.enum) && current.enum.includes(previous.const);
+    if (!widenedToCompatibleEnum) findings.push(`${location}:const-changed`);
   }
   if (Array.isArray(previous.enum)) {
     for (const value of previous.enum) {

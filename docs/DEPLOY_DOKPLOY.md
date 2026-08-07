@@ -6,7 +6,8 @@ server. It builds from the GitHub repository and contains two services:
 - `web`: the public static web placeholder and same-origin `/api/` reverse proxy;
 - `api`: the internal synthetic health API.
 
-This is not a production civic release. It has no representative data, persistent
+This is not a production civic release. It exposes only deterministic synthetic
+jurisdiction-registry data and has no real representative/person data, persistent
 storage, queue, source ingestion, account flow, scoring, Verus dependency, or mainnet
 capability. Portal and admin placeholders are intentionally not published.
 
@@ -19,8 +20,8 @@ capability. Portal and admin placeholders are intentionally not published.
 5. In **Domains**, route the public hostname to service `web`, container port `8080`.
 6. Preview the resolved Compose configuration, deploy, and confirm both `/healthz` and
    `/api/v1/health` return successfully through the public hostname. The
-   `/api/v1/health/mobile` compatibility response should also return `200`, while
-   `/api/v1/jurisdictions` intentionally returns `503 FEATURE_DISABLED` until issue #49.
+   `/api/v1/health/mobile` compatibility response and the synthetic
+   `/api/v1/jurisdictions` registry should also return `200`.
 
 Dokploy automatically deploys pushes only for the branch selected for the service. A
 production service should therefore track a reviewed protected branch, not a feature
@@ -62,6 +63,7 @@ Verify:
 curl --fail http://127.0.0.1:8080/healthz
 curl --fail http://127.0.0.1:8080/api/v1/health
 curl --fail http://127.0.0.1:8080/api/v1/health/mobile
+curl --fail http://127.0.0.1:8080/api/v1/jurisdictions
 ```
 
 Stop the isolated local stack with:

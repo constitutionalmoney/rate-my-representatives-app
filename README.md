@@ -8,12 +8,12 @@ This repository is the implementation home for the application described at [rat
 
 ## Current status
 
-**Specification and repository-foundation stage — not operational.**
+**Repository-foundation stage — synthetic registry only; not a production civic release.**
 
 The mobile-first TypeScript workspace and CI foundation now exist. The native, web,
-portal, admin, API, and worker surfaces are deliberately limited to placeholder and
-typed health/example behavior. Domain packages that belong to later roadmap issues
-remain explicit non-operational stubs.
+portal, admin, API, and worker surfaces are deliberately limited to placeholder,
+typed health, and synthetic registry behavior. Domain packages that belong to later
+roadmap issues remain explicit non-operational stubs.
 
 Issue #12 adds a synthetic, deny-by-default authentication and authorization core:
 generated passkey/email/session/role contracts, rotating revocable session policy,
@@ -36,8 +36,15 @@ contract—no signer, RPC call, identity operation, or chain write is implemente
 Issue #60 publishes the canonical OpenAPI 3.1 v1 skeleton, versioned JSON Schemas,
 privacy-safe error envelope, runtime validators, compatibility checks, synthetic mock
 server, and generated clients for mobile, web, portal, admin, workers, and the public
-SDK. Health and native-client compatibility discovery are operational. Jurisdiction discovery returns an explicit proposed-state
-`503` with no records; all other initial route families remain proposed or disabled.
+SDK. Health and native-client compatibility discovery are operational.
+
+Issue #49 adds the effective-dated synthetic civic registry for jurisdictions,
+districts, public bodies, offices, external identifiers, and public coverage/conflict
+gaps. Canada and United States fixtures exercise different graph shapes, including
+multiple parents, overlaps, redistricting, rename, and amalgamation. The generated
+`GET /api/v1/jurisdictions` read contract is operational in synthetic mode. People,
+office terms, candidacies, source ingestion, and location resolution remain deferred;
+the registry makes no residence, citizenship, or eligibility determination.
 
 - No production iOS or Android app is released.
 - No public representative profile, category rating, representative signal, Civic Signal briefing, authenticated aggregate, VerusID claim, or Representative Accountability Score is live.
@@ -47,6 +54,7 @@ SDK. Health and native-client compatibility discovery are operational. Jurisdict
   AI, Verus, provenance, and scoring gates are disabled by default.
 - All Verus wallet, identity-update, and provenance work must be developed on **VRSCTEST** before any mainnet decision.
 - The folder tree below exists as a buildable foundation; its presence is not a claim that civic behavior is implemented.
+- Registry records and API examples are synthetic and do not describe real people, offices, or civic conditions.
 - The marketing site owns public explanation, early access, and prelaunch status. This repository owns application code, civic data, workflows, APIs, native clients, moderation, and Verus integration. The two systems must not share a production database.
 
 The project will not label a proposed capability as operational merely because a mockup, schema, issue, or experimental test exists.

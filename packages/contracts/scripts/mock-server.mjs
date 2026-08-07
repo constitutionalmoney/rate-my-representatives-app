@@ -9,7 +9,7 @@ const fixture = async (name) =>
   JSON.parse(await readFile(path.join(packageDirectory, 'fixtures', name), 'utf8'));
 const health = await fixture('health.ready.json');
 const mobileCompatibility = await fixture('mobile-compatibility.ready.json');
-const jurisdictions = await fixture('jurisdictions.proposed.json');
+const jurisdictions = await fixture('jurisdictions.synthetic.json');
 const notFound = await fixture('not-found.json');
 
 function send(response, status, value) {
@@ -33,7 +33,7 @@ export function createContractMockServer() {
       return;
     }
     if (request.method === 'GET' && url.pathname === '/api/v1/jurisdictions') {
-      send(response, 503, jurisdictions);
+      send(response, 200, jurisdictions);
       return;
     }
     send(response, 404, notFound);
@@ -75,7 +75,7 @@ if (isEntrypoint) {
     if (
       healthResponse.status !== 200 ||
       mobileResponse.status !== 200 ||
-      jurisdictionResponse.status !== 503 ||
+      jurisdictionResponse.status !== 200 ||
       missingResponse.status !== 404
     ) {
       throw new Error('Contract mock server returned an unexpected status.');

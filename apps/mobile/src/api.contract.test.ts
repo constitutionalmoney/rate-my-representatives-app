@@ -5,7 +5,7 @@ import { createContractMockFetch } from '@rmr/contracts';
 import {
   readMobileCompatibilityPolicy,
   readMobileHealth,
-  readMobileJurisdictionAvailability,
+  readMobileJurisdictionRegistry,
 } from './api.js';
 
 describe('mobile generated-client wiring', () => {
@@ -15,8 +15,11 @@ describe('mobile generated-client wiring', () => {
       status: 'ready',
     });
     await expect(
-      readMobileJurisdictionAvailability('http://127.0.0.1:3000', mockFetch),
-    ).resolves.toMatchObject({ code: 'FEATURE_DISABLED' });
+      readMobileJurisdictionRegistry('http://127.0.0.1:3000', mockFetch),
+    ).resolves.toMatchObject({
+      dataMode: 'synthetic',
+      jurisdictions: expect.arrayContaining([expect.objectContaining({ countryCode: 'CA' })]),
+    });
     await expect(
       readMobileCompatibilityPolicy('http://127.0.0.1:3000', mockFetch),
     ).resolves.toMatchObject({

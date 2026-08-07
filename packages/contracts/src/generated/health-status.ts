@@ -17,12 +17,13 @@ export interface HealthStatus {
     supportedVersions: ['v1'];
   };
   featureStates: {
-    publicRegistry: 'proposed';
+    publicRegistry: 'proposed' | 'operational';
     civicSignal: 'disabled';
     representativeSignals: 'disabled';
     verus: 'disabled';
     provenanceWrites: 'disabled';
   };
+  dataMode?: 'synthetic';
   optionalDependencies: {
     verus: 'disabled';
   };

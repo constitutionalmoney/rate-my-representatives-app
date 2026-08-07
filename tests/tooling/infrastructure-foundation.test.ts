@@ -94,6 +94,20 @@ describe('issue #9 local infrastructure foundation', () => {
     });
   });
 
+  it('creates portable API and worker deploy directories with injected workspace packages', async () => {
+    const [workspace, apiDockerfile, workerDockerfile] = await Promise.all([
+      read('pnpm-workspace.yaml'),
+      read('infra/docker/api.Dockerfile'),
+      read('infra/docker/worker.Dockerfile'),
+    ]);
+
+    expect(workspace).toContain('injectWorkspacePackages: true');
+    for (const dockerfile of [apiDockerfile, workerDockerfile]) {
+      expect(dockerfile).toContain('--prod deploy /opt/');
+      expect(dockerfile).not.toContain('--legacy');
+    }
+  });
+
   it('provides checksummed migrations, synthetic seed data, and guarded reset behavior', async () => {
     const [runner, seed, manager] = await Promise.all([
       read('infra/postgres/run-migrations.sh'),

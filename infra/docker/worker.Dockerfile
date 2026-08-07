@@ -10,7 +10,7 @@ WORKDIR /workspace
 COPY . .
 RUN pnpm install --frozen-lockfile
 RUN pnpm generate:contracts && pnpm --filter @rmr/worker... build
-RUN pnpm --filter @rmr/worker deploy --prod --legacy /opt/worker
+RUN pnpm --filter @rmr/worker --prod deploy /opt/worker
 
 FROM node:24.19.0-bookworm-slim AS runtime
 

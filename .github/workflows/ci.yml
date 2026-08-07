@@ -92,6 +92,8 @@ jobs:
       - run: pnpm infra:config
       - run: pnpm infra:up
       - run: pnpm infra:smoke
+      - if: failure()
+        run: docker compose -f compose.infrastructure.yaml logs --no-color --tail 200
       - if: always()
         run: pnpm infra:down
 

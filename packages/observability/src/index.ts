@@ -17,6 +17,7 @@ const SENSITIVE_KEYS = new Set([
   'moderatornotes',
   'passphrase',
   'passkey',
+  'preciseaddress',
   'preciselocation',
   'privatekey',
   'recoverytoken',
@@ -30,6 +31,7 @@ const SENSITIVE_KEYS = new Set([
   'sessionid',
   'sessiontoken',
   'token',
+  'walletpayload',
   'wif',
 ]);
 

@@ -222,7 +222,11 @@ importers:
         specifier: 7.13.0
         version: 7.13.0(typescript@5.9.3)
 
-  packages/db: {}
+  packages/db:
+    dependencies:
+      '@rmr/domain':
+        specifier: workspace:*
+        version: link:../domain
 
   packages/domain: {}
 

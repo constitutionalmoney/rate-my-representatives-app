@@ -11,6 +11,7 @@ describe('privacy-safe observability', () => {
         authorization: 'Bearer synthetic',
         email: 'synthetic@example.invalid',
         nested: { precise_location: 'synthetic address', signal: 'concern' },
+        preciseAddress: 'synthetic precise address',
         publicId: 'fixture-1',
         sessionToken: 'synthetic-session-token',
       }),
@@ -20,6 +21,7 @@ describe('privacy-safe observability', () => {
       authorization: '[REDACTED]',
       email: '[REDACTED]',
       nested: { precise_location: '[REDACTED]', signal: '[REDACTED]' },
+      preciseAddress: '[REDACTED]',
       publicId: 'fixture-1',
       sessionToken: '[REDACTED]',
     });

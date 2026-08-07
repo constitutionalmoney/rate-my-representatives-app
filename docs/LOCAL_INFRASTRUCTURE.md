@@ -35,10 +35,12 @@ Run the live acceptance smoke after startup:
 pnpm infra:smoke
 ```
 
-It proves the seed exists, a synthetic message returns from the retry queue and reaches
-the dead-letter queue after rejection, only `approved-manifests/*` is anonymously public,
-quarantine/private objects are denied, Mailpit is ready, and API/worker health remains
-ready with no Verus container running.
+It proves the seed exists; state/audit/outbox atomicity; audit immutability and privacy
+rejection; lease, retry, dead-letter, replay, duplicate-delivery, and safe-metrics
+behavior; a synthetic RabbitMQ message returns from retry and reaches its dead-letter
+queue; only `approved-manifests/*` is anonymously public; quarantine/private objects are
+denied; Mailpit is ready; and API/worker health remains ready with no Verus container
+running. The PostgreSQL acceptance drill rolls back its synthetic rows.
 
 ## Object-storage boundaries
 

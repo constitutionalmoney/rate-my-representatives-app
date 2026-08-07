@@ -11,6 +11,8 @@ OpenAPI v1 surface belongs to issue #60.
 | JSON Schema 2020-12 | `packages/contracts/schemas/health-status.schema.json` | `packages/contracts/src/generated/health-status.ts` |
 | JSON Schema 2020-12 | `packages/contracts/schemas/authentication.schema.json` | `packages/contracts/src/generated/authentication.ts` |
 | JSON Schema 2020-12 | `packages/contracts/schemas/feature-gates.schema.json` | `packages/contracts/src/generated/feature-gates.ts` |
+| JSON Schema 2020-12 | `packages/contracts/schemas/audit-event.schema.json` | `packages/contracts/src/generated/audit-event.ts` |
+| JSON Schema 2020-12 | `packages/contracts/schemas/outbox-event.schema.json` | `packages/contracts/src/generated/outbox-event.ts` |
 
 Run:
 
@@ -31,6 +33,11 @@ Issue #12 adds generated payload types for authentication starts, private sessio
 effective scoped role grants, and the complete false-by-default feature-gate map. These
 schemas are consumed by contract tests without declaring planned auth routes operational.
 See `docs/AUTH_SECURITY_FOUNDATION.md`.
+
+Issue #19 adds generated append-only audit and at-least-once outbox envelopes. They
+declare privacy, idempotency, correlation, schema-version, retry-state, and future
+destination fields without adding any public API route or making a downstream worker
+operational. See `docs/AUDIT_OUTBOX.md`.
 
 Issue #60 may replace or extend this minimal specification, but it must preserve versioned
 generation and update committed outputs in the same change.

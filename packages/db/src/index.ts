@@ -1,7 +1,9 @@
+export * from './audit-outbox.js';
+
 export const databaseFoundation = Object.freeze({
   canonicalStore: 'PostgreSQL',
-  implementationIssue: 9,
+  implementationIssue: 19,
   migrationDirectory: 'packages/db/migrations',
   seedDirectory: 'packages/db/seeds/local',
-  status: 'local-infrastructure-ready',
+  status: 'audit-outbox-ready',
 });

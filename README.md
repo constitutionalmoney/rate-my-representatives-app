@@ -27,6 +27,12 @@ Mailpit, and API/worker container wiring. An optional Compose profile can start 
 `verusd` on VRSCTEST plus disabled signer stubs. No Verus profile or civic write is
 enabled by default, and the application-only Dokploy Compose remains independent.
 
+Issue #19 adds an append-only, privacy-minimized audit ledger and transactional outbox.
+State, audit, and queued effects share one PostgreSQL transaction; workers use safe
+leases, bounded retry, dead letters, controlled replay, and idempotent delivery receipts.
+The live synthetic smoke runs with Verus disabled. Provenance is only a reserved event
+contract—no signer, RPC call, identity operation, or chain write is implemented.
+
 - No production iOS or Android app is released.
 - No public representative profile, category rating, representative signal, Civic Signal briefing, authenticated aggregate, VerusID claim, or Representative Accountability Score is live.
 - No composite score is approved.

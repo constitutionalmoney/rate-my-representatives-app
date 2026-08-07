@@ -57,6 +57,24 @@ const outputs = [
       )
     ).replaceAll('\r\n', '\n'),
   },
+  {
+    path: path.join(generatedDirectory, 'audit-event.ts'),
+    value: (
+      await compileFromFile(path.join(packageDirectory, 'schemas', 'audit-event.schema.json'), {
+        bannerComment: '/* Generated from audit-event.schema.json. Do not edit directly. */',
+        style: { singleQuote: true, trailingComma: 'all' },
+      })
+    ).replaceAll('\r\n', '\n'),
+  },
+  {
+    path: path.join(generatedDirectory, 'outbox-event.ts'),
+    value: (
+      await compileFromFile(path.join(packageDirectory, 'schemas', 'outbox-event.schema.json'), {
+        bannerComment: '/* Generated from outbox-event.schema.json. Do not edit directly. */',
+        style: { singleQuote: true, trailingComma: 'all' },
+      })
+    ).replaceAll('\r\n', '\n'),
+  },
 ];
 
 if (process.argv.includes('--check')) {

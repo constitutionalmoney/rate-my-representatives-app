@@ -16,7 +16,9 @@ additional read access.
 
 An ephemeral core-infrastructure job also starts PostgreSQL, RabbitMQ, isolated object
 storage, Mailpit, API, and worker; runs live migration/seed, retry/DLQ, policy, and
-Verus-off health smoke checks; and always tears down without selecting VRSCTEST.
+Verus-off health smoke checks; and always tears down without selecting VRSCTEST. Issue
+#19 extends that job with transactional audit/outbox rollback, immutability, lease,
+retry/dead-letter/replay, idempotent delivery, role, and safe-metrics checks.
 
 The CI environment contains only synthetic foundation behavior. It does not receive
 database credentials, wallet material, Verus RPC access, production endpoints, or civic

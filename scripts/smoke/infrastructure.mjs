@@ -155,6 +155,35 @@ assert(
   'Database migration or seed fixture is missing.',
 );
 
+const auditOutboxSmoke = spawnSync(
+  'docker',
+  [
+    'compose',
+    '-f',
+    'compose.infrastructure.yaml',
+    'exec',
+    '-T',
+    'postgres',
+    'psql',
+    '-U',
+    'rmr',
+    '-d',
+    'rmr',
+    '--set',
+    'ON_ERROR_STOP=1',
+    '--file=-',
+  ],
+  {
+    cwd: root,
+    encoding: 'utf8',
+    input: await readFile(path.join(root, 'scripts', 'smoke', 'audit-outbox.sql'), 'utf8'),
+  },
+);
+assert(
+  auditOutboxSmoke.status === 0,
+  auditOutboxSmoke.stderr || 'Audit/outbox PostgreSQL smoke failed.',
+);
+
 const running = spawnSync(
   'docker',
   ['compose', '-f', 'compose.infrastructure.yaml', 'ps', '--services', '--status', 'running'],
@@ -168,5 +197,5 @@ assert(
 assert(!running.stdout.includes('signer-stub'), 'Core smoke unexpectedly started signer stubs.');
 
 process.stdout.write(
-  'Core infrastructure smoke passed: migration/seed, retry/DLQ, bucket isolation, mail, API, worker, and Verus-off readiness.\n',
+  'Core infrastructure smoke passed: migration/seed, atomic audit/outbox, leases/retry/DLQ/replay, bucket isolation, mail, API, worker, and Verus-off readiness.\n',
 );

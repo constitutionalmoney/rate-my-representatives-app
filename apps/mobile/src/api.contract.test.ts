@@ -6,6 +6,8 @@ import {
   readMobileCompatibilityPolicy,
   readMobileHealth,
   readMobileJurisdictionRegistry,
+  readMobilePublicProfile,
+  readMobilePublicProfiles,
 } from './api.js';
 
 describe('mobile generated-client wiring', () => {
@@ -28,5 +30,14 @@ describe('mobile generated-client wiring', () => {
         ios: { supportedContractVersions: ['v1'] },
       },
     });
+  });
+
+  it('reads the generated public profile list and detail with Verus absent', async () => {
+    const mockFetch = createContractMockFetch();
+    const list = await readMobilePublicProfiles('http://127.0.0.1:3000', mockFetch);
+    expect(list.items[0]).toMatchObject({ countryCode: 'CA', availability: 'available' });
+    await expect(
+      readMobilePublicProfile('http://127.0.0.1:3000', list.items[0]?.profileId ?? '', mockFetch),
+    ).resolves.toMatchObject({ provenance: null, externalIdentityReferences: [] });
   });
 });

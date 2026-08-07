@@ -1,6 +1,6 @@
 # API v1 contract foundation
 
-**Status:** Contract and synthetic registry foundation, not a public civic-data release
+**Status:** Contract, synthetic registry, and synthetic source-backed profile reads; not a production civic-data release
 **Canonical specification:** `packages/contracts/openapi/v1.yaml`
 
 ## Implemented operations
@@ -14,6 +14,15 @@
 | `GET /api/v1/office-terms` | Operational, synthetic | Current/former/pending term lifecycle and public office contacts | Read only |
 | `GET /api/v1/elections` | Operational, synthetic | Effective-dated elections and related candidacies | Read only |
 | `GET /api/v1/candidacies` | Operational, synthetic | Declared through outcome candidacy lifecycle; winning creates no term | Read only |
+| `GET /api/v1/profiles` | Operational, synthetic | Human-published profile summaries, filterable by country/context | Read only |
+| `GET /api/v1/profiles/{profileId}` | Operational, synthetic | One person in one office-term or candidacy context | Read only |
+| `GET /api/v1/profiles/{profileId}/timeline` | Operational, synthetic | Filterable, cursor-paginated visible history | Read only |
+| `GET /api/v1/profiles/{profileId}/sources` | Operational, synthetic | Reviewed sources, hashes, rights, retrieval, and freshness | Read only |
+| `GET /api/v1/profiles/{profileId}/coverage` | Operational, synthetic | Explicit gaps, stale/unsupported states, and conflicts | Read only |
+| `GET /api/v1/profiles/{profileId}/responses` | Operational, synthetic | Published items or explicit availability state | Read only |
+| `GET /api/v1/profiles/{profileId}/disputes` | Operational, synthetic | Visible items or explicit availability state | Read only |
+| `GET /api/v1/profiles/{profileId}/corrections` | Operational, synthetic | Visible correction/supersession history | Read only |
+| `GET /api/v1/profiles/{profileId}/appeals` | Operational, synthetic | Visible appeal history or explicit availability state | Read only |
 
 The registry accepts optional `asOf`, `countryCode`, `jurisdictionId`, and
 `includeHistorical` filters. Its default timestamp and every returned record are
@@ -27,16 +36,29 @@ route-specific opaque ID. Public output omits reviewer references/private notes 
 returns inert external identity references only. Structural offices stay in
 `/api/v1/jurisdictions`.
 
-The remaining v1 route families for representation, sources, coverage,
-accounts, participation, evidence, due process, Civic Signal, notifications, Verus, and
+Profile reads accept stable application IDs. Timelines accept `cursor`, `limit`, and
+`kind`; profile lists accept `countryCode` and `contextKind`. Detail and section reads
+return a weak ETag derived from the reviewed record version and honor `If-None-Match`
+with `304`. A correction or source refresh increments the record version and therefore
+invalidates the prior ETag.
+
+Every material claim names reviewed sources and freshness. Coverage distinguishes
+`available`, `not_available`, `unsupported`, `stale`, and `coverage_gap`; missing data
+means `coverage_gap_not_misconduct`. Source conflicts remain visible. The server validates
+an exact allowlist that excludes account, precise-location, signal, attestation,
+staff-evidence, moderator-note, and private wallet data.
+
+The remaining v1 route families for representation, global sources/coverage enumeration,
+accounts, participation, evidence writes, due-process writes, Civic Signal, notifications, Verus, and
 provenance are discoverable as empty OpenAPI path items. They do not define callable
 operations until their owning issue implements authorization, domain rules, persistence,
 and tests. Empty discovery entries must not be described as released endpoints.
 
-Issue #55 implements internal source retrieval and review persistence only. Its generated
+Issue #55 implements internal source retrieval and review persistence. Its generated
 connector-capability and coverage schemas are operational contracts between internal
-packages, not HTTP operations. `/api/v1/sources` and `/api/v1/coverage` remain empty and
-proposed until issue #11 defines privacy-reviewed public serializers and reads.
+packages. Issue #11 exposes only profile-scoped reviewed source and coverage reads; the
+global `/api/v1/sources` and `/api/v1/coverage` paths remain non-callable to avoid broad
+enumeration.
 
 ## Required operation policy
 
@@ -78,8 +100,7 @@ versions so installed clients can make compatibility decisions without depending
 Verus or other optional services. `releaseState: foundation` makes clear that this is not
 an app-store release claim.
 
-Each response identifies its deferred families. Public source/profile reads, location
-resolution, participation, public conduct, representative authority, identity proof,
-provenance, and scoring remain unavailable. Public attribution on synthetic records
-includes freshness, coverage, conflict, observation time, source reference, and
-supersession metadata.
+Public profiles work with every Verus flag false. Optional provenance is `null` while
+disabled, external identity references are empty, and neither a composite score nor a
+representative-signal aggregate is exposed. No API operation automatically publishes a
+record. See [PUBLIC_PROFILE_API.md](./PUBLIC_PROFILE_API.md).

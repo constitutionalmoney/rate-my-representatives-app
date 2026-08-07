@@ -13,9 +13,15 @@ record plus a superseding correction, audit/outbox records correlate, history re
 updates, and Verus remains off. Reset/replay rules are documented in
 `docs/runbooks/SOURCE_INGESTION.md`.
 
-**Status:** Issue #9 infrastructure plus issue #55 synthetic source persistence. Local/CI
-data only. This is not a production deployment recipe and it enables no public source,
-civic, identity, scoring, provenance, or Verus write feature.
+Migration `0006_source_backed_public_profile_read.sql` and local seed
+`0005_synthetic_public_profiles.sql` add human-publication decisions, source-linked
+append-only profile versions, stable ETags, and timeline projections. The smoke verifies
+the human gate, prohibited-field rejection, source linkage, and ETag invalidation.
+
+**Status:** Issue #9 infrastructure plus issue #55 source persistence and issue #11
+synthetic profile reads. Local/CI data only. This is not a production deployment recipe
+and it enables no automatic publication, civic write, identity, scoring, provenance, or
+Verus write feature.
 
 ## Core stack
 
@@ -30,8 +36,8 @@ pnpm infra:up
 
 The command starts only:
 
-- PostgreSQL 17 with a migration ledger plus infrastructure, jurisdiction, and
-  public-role synthetic seed markers;
+- PostgreSQL 17 with a migration ledger plus infrastructure, jurisdiction, public-role,
+  source, and public-profile synthetic seed markers;
 - RabbitMQ with durable primary, retry, and dead-letter queues;
 - S3-compatible object storage built from the pinned upstream MinIO source release;
 - isolated `rmr-public`, `rmr-quarantine`, and `rmr-private` buckets;

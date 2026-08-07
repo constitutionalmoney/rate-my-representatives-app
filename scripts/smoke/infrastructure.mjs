@@ -306,6 +306,35 @@ assert(
   sourceIngestionSmoke.stderr || 'Official-source ingestion PostgreSQL smoke failed.',
 );
 
+const publicProfileSmoke = spawnSync(
+  'docker',
+  [
+    'compose',
+    '-f',
+    'compose.infrastructure.yaml',
+    'exec',
+    '-T',
+    'postgres',
+    'psql',
+    '-U',
+    'rmr',
+    '-d',
+    'rmr',
+    '--set',
+    'ON_ERROR_STOP=1',
+    '--file=-',
+  ],
+  {
+    cwd: root,
+    encoding: 'utf8',
+    input: await readFile(path.join(root, 'scripts', 'smoke', 'public-profile.sql'), 'utf8'),
+  },
+);
+assert(
+  publicProfileSmoke.status === 0,
+  publicProfileSmoke.stderr || 'Source-backed public profile PostgreSQL smoke failed.',
+);
+
 const running = spawnSync(
   'docker',
   ['compose', '-f', 'compose.infrastructure.yaml', 'ps', '--services', '--status', 'running'],
@@ -319,5 +348,5 @@ assert(
 assert(!running.stdout.includes('signer-stub'), 'Core smoke unexpectedly started signer stubs.');
 
 process.stdout.write(
-  'Core infrastructure smoke passed: migration/seed, jurisdiction/public-role/source-ingestion registries, atomic audit/outbox, leases/retry/DLQ/replay, bucket isolation, mail, API, worker, and Verus-off readiness.\n',
+  'Core infrastructure smoke passed: migration/seed, jurisdiction/public-role/source-ingestion/profile registries, atomic audit/outbox, leases/retry/DLQ/replay, bucket isolation, mail, API, worker, and Verus-off readiness.\n',
 );

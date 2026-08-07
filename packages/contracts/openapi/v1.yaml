@@ -5,8 +5,9 @@ info:
   summary: Versioned mobile-first public-accountability API contract
   description: >-
     Canonical v1 contract foundation. Health, mobile compatibility, the synthetic
-    effective-dated jurisdiction registry, and public-role lifecycle reads are operational.
-    Every other route family is contract discovery only and has no operation.
+    effective-dated jurisdiction registry, public-role lifecycle reads, and reviewed
+    source-backed public profiles are operational. Every other route family is contract
+    discovery only and has no operation.
   license:
     name: Apache-2.0
     identifier: Apache-2.0
@@ -34,6 +35,8 @@ tags:
     description: Operational synthetic election registry.
   - name: Candidacies
     description: Operational synthetic candidacy lifecycle registry.
+  - name: Profiles
+    description: Operational reviewed, allowlisted, source-backed public-role profiles.
   - name: Sources
     description: Proposed official-source contracts.
   - name: Claims
@@ -364,14 +367,286 @@ paths:
           schema: { $ref: '#/components/schemas/OpaqueId' }
       x-rmr-contract: *publicRoleReadContract
       responses: *publicRoleReadResponses
+  /api/v1/profiles:
+    get:
+      operationId: listPublicRoleProfiles
+      summary: List reviewed source-backed public-role profile summaries
+      description: >-
+        Returns only profiles with an explicit human publication decision. It never
+        includes a composite score, representative-signal aggregate, private account,
+        location, attestation, staff-evidence, moderator-note, or wallet data.
+      tags: [Profiles]
+      deprecated: false
+      security: []
+      parameters:
+        - name: countryCode
+          in: query
+          required: false
+          schema: { type: string, enum: [CA, US] }
+        - name: contextKind
+          in: query
+          required: false
+          schema: { type: string, enum: [office_term, candidacy] }
+      x-rmr-contract: &publicProfileReadContract
+        featureStatus: operational
+        allowedActors: [anonymous, human, representative, staff, reviewer, admin, service, agent]
+        requiredScopes: []
+        authentication: none
+        recentPresence: false
+        privacyClassification: public
+        fieldPrivacy: allowlisted-reviewed-public-fields-only
+        publicSerializer: source-backed-public-profile-v1
+        privateSerializer: not-applicable
+        idempotency: not-applicable
+        concurrency: conditional-get-etag
+        rateLimitClass: public-read
+        errorCodes: [VALIDATION_ERROR, NOT_FOUND, MAINTENANCE]
+        auditEffect: none
+        outboxEffect: none
+        pagination: terminal-cursor
+        filters: [countryCode, contextKind]
+        sort: stable-profile-id
+        cache: public-etag-conditional
+        versionPolicy: additive-v1-record-version
+        sourceMetadata: reviewed-source-and-freshness-per-material-claim
+      responses:
+        '200':
+          description: Reviewed public profile summaries.
+          headers:
+            Cache-Control: { $ref: '#/components/headers/CacheControl' }
+          content:
+            application/json:
+              schema: { $ref: '../schemas/public-role-profile-list.schema.json' }
+  /api/v1/profiles/{profileId}:
+    get:
+      operationId: getPublicRoleProfile
+      summary: Read one reviewed source-backed public-role profile
+      description: >-
+        Returns separate person, office, district, office-term, election, and candidacy
+        objects. Optional provenance metadata is absent when provenance is disabled and
+        never determines factual truth.
+      tags: [Profiles]
+      deprecated: false
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/ProfileId'
+        - $ref: '#/components/parameters/IfNoneMatch'
+      x-rmr-contract: *publicProfileReadContract
+      responses:
+        '200':
+          description: Reviewed source-backed public profile.
+          headers: &publicProfileHeaders
+            Cache-Control: { $ref: '#/components/headers/CacheControl' }
+            ETag: { $ref: '#/components/headers/ETag' }
+          content:
+            application/json:
+              schema: { $ref: '../schemas/public-role-profile.schema.json' }
+              examples:
+                syntheticProfile: { $ref: '#/components/examples/SyntheticPublicRoleProfile' }
+        '304':
+          description: The supplied entity tag matches the current reviewed profile version.
+          headers: *publicProfileHeaders
+        '404': { $ref: '#/components/responses/PublicProfileNotFound' }
+  /api/v1/profiles/{profileId}/timeline:
+    get:
+      operationId: getPublicRoleProfileTimeline
+      summary: Read a cursor-paginated visible profile history
+      tags: [Profiles]
+      deprecated: false
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/ProfileId'
+        - $ref: '#/components/parameters/IfNoneMatch'
+        - name: cursor
+          in: query
+          required: false
+          schema: { $ref: '#/components/schemas/OpaqueId' }
+        - name: limit
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 50, default: 20 }
+        - name: kind
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              [
+                office_term_transition,
+                candidacy_transition,
+                source_refresh,
+                correction,
+                response,
+                dispute,
+                appeal,
+              ]
+      x-rmr-contract:
+        featureStatus: operational
+        allowedActors: [anonymous, human, representative, staff, reviewer, admin, service, agent]
+        requiredScopes: []
+        authentication: none
+        recentPresence: false
+        privacyClassification: public
+        fieldPrivacy: allowlisted-reviewed-public-fields-only
+        publicSerializer: source-backed-public-profile-v1
+        privateSerializer: not-applicable
+        idempotency: not-applicable
+        concurrency: conditional-get-etag
+        rateLimitClass: public-read
+        errorCodes: [VALIDATION_ERROR, NOT_FOUND, MAINTENANCE]
+        auditEffect: none
+        outboxEffect: none
+        pagination: opaque-terminal-cursor
+        filters: [kind]
+        sort: occurred-at-descending-then-stable-id
+        cache: public-etag-conditional
+        versionPolicy: additive-v1-record-version
+        sourceMetadata: reviewed-source-and-freshness-per-material-claim
+      responses:
+        '200':
+          description: Visible reviewed profile history.
+          headers: *publicProfileHeaders
+          content:
+            application/json:
+              schema: { $ref: '../schemas/public-role-profile-timeline.schema.json' }
+        '304':
+          description: The supplied entity tag matches the current reviewed profile version.
+          headers: *publicProfileHeaders
+        '400':
+          description: Timeline cursor, limit, or filter is invalid.
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/ApiError' }
+        '404': { $ref: '#/components/responses/PublicProfileNotFound' }
+  /api/v1/profiles/{profileId}/sources:
+    get:
+      operationId: getPublicRoleProfileSources
+      summary: Read sources and reproducibility metadata for a public profile
+      tags: [Profiles, Sources]
+      deprecated: false
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/ProfileId'
+        - $ref: '#/components/parameters/IfNoneMatch'
+      x-rmr-contract: *publicProfileReadContract
+      responses:
+        '200':
+          description: Reviewed public source records and freshness state.
+          headers: *publicProfileHeaders
+          content:
+            application/json:
+              schema: { $ref: '../schemas/public-role-profile.schema.json#/$defs/sourceSection' }
+        '304': { description: Not modified., headers: *publicProfileHeaders }
+        '404': { $ref: '#/components/responses/PublicProfileNotFound' }
+  /api/v1/profiles/{profileId}/coverage:
+    get:
+      operationId: getPublicRoleProfileCoverage
+      summary: Read explicit profile coverage gaps and source conflicts
+      tags: [Profiles, Coverage]
+      deprecated: false
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/ProfileId'
+        - $ref: '#/components/parameters/IfNoneMatch'
+      x-rmr-contract: *publicProfileReadContract
+      responses:
+        '200':
+          description: Coverage, gap, freshness, and conflict metadata.
+          headers: *publicProfileHeaders
+          content:
+            application/json:
+              schema: { $ref: '../schemas/public-role-profile.schema.json#/$defs/coverageSection' }
+        '304': { description: Not modified., headers: *publicProfileHeaders }
+        '404': { $ref: '#/components/responses/PublicProfileNotFound' }
+  /api/v1/profiles/{profileId}/responses:
+    get:
+      operationId: getPublicRoleProfileResponses
+      summary: Read published representative responses or an explicit availability state
+      tags: [Profiles, Responses]
+      deprecated: false
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/ProfileId'
+        - $ref: '#/components/parameters/IfNoneMatch'
+      x-rmr-contract: *publicProfileReadContract
+      responses:
+        '200':
+          description: Published responses or an explicit unavailable/unsupported state.
+          headers: *publicProfileHeaders
+          content:
+            application/json:
+              schema: { $ref: '../schemas/public-role-profile.schema.json#/$defs/responseSection' }
+        '304': { description: Not modified., headers: *publicProfileHeaders }
+        '404': { $ref: '#/components/responses/PublicProfileNotFound' }
+  /api/v1/profiles/{profileId}/disputes:
+    get:
+      operationId: getPublicRoleProfileDisputes
+      summary: Read visible disputes or an explicit availability state
+      tags: [Profiles, Disputes]
+      deprecated: false
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/ProfileId'
+        - $ref: '#/components/parameters/IfNoneMatch'
+      x-rmr-contract: *publicProfileReadContract
+      responses:
+        '200':
+          description: Visible disputes or an explicit unavailable/unsupported state.
+          headers: *publicProfileHeaders
+          content:
+            application/json:
+              schema: { $ref: '../schemas/public-role-profile.schema.json#/$defs/disputeSection' }
+        '304': { description: Not modified., headers: *publicProfileHeaders }
+        '404': { $ref: '#/components/responses/PublicProfileNotFound' }
+  /api/v1/profiles/{profileId}/corrections:
+    get:
+      operationId: getPublicRoleProfileCorrections
+      summary: Read visible correction and supersession history
+      tags: [Profiles, Corrections]
+      deprecated: false
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/ProfileId'
+        - $ref: '#/components/parameters/IfNoneMatch'
+      x-rmr-contract: *publicProfileReadContract
+      responses:
+        '200':
+          description: Visible corrections or an explicit unavailable/unsupported state.
+          headers: *publicProfileHeaders
+          content:
+            application/json:
+              schema:
+                { $ref: '../schemas/public-role-profile.schema.json#/$defs/correctionSection' }
+        '304': { description: Not modified., headers: *publicProfileHeaders }
+        '404': { $ref: '#/components/responses/PublicProfileNotFound' }
+  /api/v1/profiles/{profileId}/appeals:
+    get:
+      operationId: getPublicRoleProfileAppeals
+      summary: Read visible appeal history or an explicit availability state
+      tags: [Profiles, Appeals]
+      deprecated: false
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/ProfileId'
+        - $ref: '#/components/parameters/IfNoneMatch'
+      x-rmr-contract: *publicProfileReadContract
+      responses:
+        '200':
+          description: Visible appeals or an explicit unavailable/unsupported state.
+          headers: *publicProfileHeaders
+          content:
+            application/json:
+              schema: { $ref: '../schemas/public-role-profile.schema.json#/$defs/appealSection' }
+        '304': { description: Not modified., headers: *publicProfileHeaders }
+        '404': { $ref: '#/components/responses/PublicProfileNotFound' }
   /api/v1/sources:
-    description: Internal issue #55 ingestion is operational; no public source read operation until issue #11.
+    description: Profile-scoped public source reads are operational under /api/v1/profiles/{profileId}/sources; no global enumeration operation exists.
     x-rmr-feature-status: proposed
   /api/v1/claims:
     description: Proposed; no source-backed claim operation in this issue.
     x-rmr-feature-status: proposed
   /api/v1/coverage:
-    description: Proposed; no coverage operation in this issue.
+    description: Profile-scoped coverage reads are operational under /api/v1/profiles/{profileId}/coverage; no global enumeration operation exists.
     x-rmr-feature-status: proposed
   /api/v1/methodologies:
     description: Proposed; no scoring or methodology result operation in this issue.
@@ -436,6 +711,18 @@ paths:
     x-rmr-feature-status: disabled
 components:
   parameters:
+    ProfileId:
+      name: profileId
+      in: path
+      required: true
+      description: Stable application profile identifier for one person and one public-role context.
+      schema: { $ref: '#/components/schemas/OpaqueId' }
+    IfNoneMatch:
+      name: If-None-Match
+      in: header
+      required: false
+      description: Entity tag from a prior read of this profile version.
+      schema: { type: string, maxLength: 200 }
     PublicRoleAsOf:
       name: asOf
       in: query
@@ -462,6 +749,11 @@ components:
       schema:
         type: string
         pattern: '^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$'
+    ETag:
+      description: Weak entity tag derived from the reviewed public profile record version.
+      schema:
+        type: string
+        pattern: '^W/"[a-zA-Z0-9._:-]+"$'
     RetryAfter:
       description: Seconds before a safe retry may be attempted.
       schema:
@@ -483,9 +775,23 @@ components:
       $ref: ../schemas/mobile-compatibility-status.schema.json
     PublicRoleRegistry:
       $ref: ../schemas/public-role-registry.schema.json
+    PublicRoleProfile:
+      $ref: ../schemas/public-role-profile.schema.json
+    PublicRoleProfileList:
+      $ref: ../schemas/public-role-profile-list.schema.json
+    PublicRoleProfileTimeline:
+      $ref: ../schemas/public-role-profile-timeline.schema.json
     RepresentativeSignalCommand:
       $ref: ../schemas/representative-signal-command.schema.json
   responses:
+    PublicProfileNotFound:
+      description: The profile does not exist or has no human-approved publication decision.
+      headers:
+        Cache-Control: { $ref: '#/components/headers/CacheControl' }
+        X-Correlation-ID: { $ref: '#/components/headers/CorrelationId' }
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/ApiError' }
     FeatureDisabled:
       description: The capability is disabled or still proposed.
       headers:
@@ -501,6 +807,9 @@ components:
             proposedJurisdictions:
               $ref: '#/components/examples/SyntheticJurisdictionsProposed'
   examples:
+    SyntheticPublicRoleProfile:
+      summary: Synthetic source-backed public-role profile
+      externalValue: ../fixtures/public-role-profile.synthetic.json
     SyntheticHealthReady:
       summary: Synthetic contract-foundation health
       value:

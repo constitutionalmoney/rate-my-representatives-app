@@ -2008,6 +2008,2000 @@ export const OUTBOX_EVENT_SCHEMA = {
   }
 } as const;
 
+export const PUBLIC_ROLE_PROFILE_LIST_SCHEMA = {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ratemyrepresentatives.com/public-role-profile-list.schema.json",
+  "title": "PublicRoleProfileList",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "dataMode",
+    "generatedAt",
+    "filters",
+    "items",
+    "page"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "public-role-profile-list.v1"
+    },
+    "dataMode": {
+      "const": "synthetic"
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "filters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "countryCode",
+        "contextKind"
+      ],
+      "properties": {
+        "countryCode": {
+          "oneOf": [
+            {
+              "enum": [
+                "CA",
+                "US"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "contextKind": {
+          "oneOf": [
+            {
+              "enum": [
+                "office_term",
+                "candidacy"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/profileSummary"
+      }
+    },
+    "page": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "limit",
+        "nextCursor"
+      ],
+      "properties": {
+        "limit": {
+          "const": 50
+        },
+        "nextCursor": {
+          "type": "null"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$"
+    },
+    "profileSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileId",
+        "personId",
+        "displayName",
+        "countryCode",
+        "governmentLevel",
+        "officeTitle",
+        "districtLabel",
+        "roleStatus",
+        "context",
+        "availability",
+        "recordVersion",
+        "updatedAt"
+      ],
+      "properties": {
+        "profileId": {
+          "$ref": "#/$defs/id"
+        },
+        "personId": {
+          "$ref": "#/$defs/id"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "countryCode": {
+          "enum": [
+            "CA",
+            "US"
+          ]
+        },
+        "governmentLevel": {
+          "enum": [
+            "federal",
+            "provincial",
+            "territorial",
+            "state",
+            "municipal",
+            "local",
+            "special"
+          ]
+        },
+        "officeTitle": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "districtLabel": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "roleStatus": {
+          "enum": [
+            "current",
+            "former",
+            "acting",
+            "appointed",
+            "elected",
+            "declared",
+            "withdrawn",
+            "disqualified",
+            "historical"
+          ]
+        },
+        "context": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "officeTermId",
+            "candidacyId"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "office_term",
+                "candidacy"
+              ]
+            },
+            "officeTermId": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/id"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "candidacyId": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/id"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        "availability": {
+          "enum": [
+            "available",
+            "not_available",
+            "unsupported",
+            "stale",
+            "coverage_gap"
+          ]
+        },
+        "recordVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+} as const;
+
+export const PUBLIC_ROLE_PROFILE_SCHEMA = {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ratemyrepresentatives.com/public-role-profile.schema.json",
+  "title": "PublicRoleProfile",
+  "description": "Allowlisted, source-backed public profile for one person in one office-term or candidacy context.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "dataMode",
+    "profileId",
+    "recordVersion",
+    "updatedAt",
+    "etag",
+    "publication",
+    "summary",
+    "person",
+    "office",
+    "district",
+    "officeTerm",
+    "election",
+    "candidacy",
+    "officialContactRoutes",
+    "claims",
+    "sources",
+    "coverage",
+    "responses",
+    "disputes",
+    "corrections",
+    "appeals",
+    "method",
+    "provenance",
+    "externalIdentityReferences",
+    "timelinePath"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "public-role-profile.v1"
+    },
+    "dataMode": {
+      "const": "synthetic"
+    },
+    "profileId": {
+      "$ref": "#/$defs/id"
+    },
+    "recordVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "updatedAt": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "etag": {
+      "type": "string",
+      "pattern": "^W/\"[a-zA-Z0-9._:-]+\"$"
+    },
+    "publication": {
+      "$ref": "#/$defs/publication"
+    },
+    "summary": {
+      "$ref": "#/$defs/profileSummary"
+    },
+    "person": {
+      "$ref": "#/$defs/person"
+    },
+    "office": {
+      "$ref": "#/$defs/office"
+    },
+    "district": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/district"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "officeTerm": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/officeTerm"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "election": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/election"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "candidacy": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/candidacy"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "officialContactRoutes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/contactRoute"
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/materialClaim"
+      }
+    },
+    "sources": {
+      "$ref": "#/$defs/sourceSection"
+    },
+    "coverage": {
+      "$ref": "#/$defs/coverageSection"
+    },
+    "responses": {
+      "$ref": "#/$defs/responseSection"
+    },
+    "disputes": {
+      "$ref": "#/$defs/disputeSection"
+    },
+    "corrections": {
+      "$ref": "#/$defs/correctionSection"
+    },
+    "appeals": {
+      "$ref": "#/$defs/appealSection"
+    },
+    "method": {
+      "$ref": "#/$defs/methodMetadata"
+    },
+    "provenance": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/provenanceMetadata"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "externalIdentityReferences": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/externalIdentityReference"
+      }
+    },
+    "timelinePath": {
+      "type": "string",
+      "pattern": "^/api/v1/profiles/[^/]+/timeline$"
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "countryCode": {
+      "enum": [
+        "CA",
+        "US"
+      ]
+    },
+    "availabilityState": {
+      "enum": [
+        "available",
+        "not_available",
+        "unsupported",
+        "stale",
+        "coverage_gap"
+      ]
+    },
+    "freshnessState": {
+      "enum": [
+        "current",
+        "stale",
+        "not_available",
+        "unsupported",
+        "coverage_gap"
+      ]
+    },
+    "publication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "method",
+        "decisionId",
+        "decidedAt"
+      ],
+      "properties": {
+        "state": {
+          "const": "published"
+        },
+        "method": {
+          "const": "human_review"
+        },
+        "decisionId": {
+          "$ref": "#/$defs/id"
+        },
+        "decidedAt": {
+          "$ref": "#/$defs/timestamp"
+        }
+      }
+    },
+    "profileContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "officeTermId",
+        "candidacyId"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "office_term",
+            "candidacy"
+          ]
+        },
+        "officeTermId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "candidacyId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "profileSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileId",
+        "personId",
+        "displayName",
+        "countryCode",
+        "governmentLevel",
+        "officeTitle",
+        "districtLabel",
+        "roleStatus",
+        "context",
+        "availability",
+        "recordVersion",
+        "updatedAt"
+      ],
+      "properties": {
+        "profileId": {
+          "$ref": "#/$defs/id"
+        },
+        "personId": {
+          "$ref": "#/$defs/id"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "countryCode": {
+          "$ref": "#/$defs/countryCode"
+        },
+        "governmentLevel": {
+          "enum": [
+            "federal",
+            "provincial",
+            "territorial",
+            "state",
+            "municipal",
+            "local",
+            "special"
+          ]
+        },
+        "officeTitle": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "districtLabel": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "roleStatus": {
+          "enum": [
+            "current",
+            "former",
+            "acting",
+            "appointed",
+            "elected",
+            "declared",
+            "withdrawn",
+            "disqualified",
+            "historical"
+          ]
+        },
+        "context": {
+          "$ref": "#/$defs/profileContext"
+        },
+        "availability": {
+          "$ref": "#/$defs/availabilityState"
+        },
+        "recordVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "updatedAt": {
+          "$ref": "#/$defs/timestamp"
+        }
+      }
+    },
+    "profileSummaryCollection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "dataMode",
+        "generatedAt",
+        "filters",
+        "items",
+        "page"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "public-role-profile-list.v1"
+        },
+        "dataMode": {
+          "const": "synthetic"
+        },
+        "generatedAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "filters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "countryCode",
+            "contextKind"
+          ],
+          "properties": {
+            "countryCode": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/countryCode"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "contextKind": {
+              "oneOf": [
+                {
+                  "enum": [
+                    "office_term",
+                    "candidacy"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/profileSummary"
+          }
+        },
+        "page": {
+          "$ref": "#/$defs/page"
+        }
+      }
+    },
+    "person": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "personId",
+        "displayName",
+        "officialIdentifiers"
+      ],
+      "properties": {
+        "personId": {
+          "$ref": "#/$defs/id"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "officialIdentifiers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "identifierId",
+              "issuer",
+              "value",
+              "sourceIds",
+              "freshness"
+            ],
+            "properties": {
+              "identifierId": {
+                "$ref": "#/$defs/id"
+              },
+              "issuer": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "sourceIds": {
+                "$ref": "#/$defs/sourceIds"
+              },
+              "freshness": {
+                "$ref": "#/$defs/freshnessState"
+              }
+            }
+          }
+        }
+      }
+    },
+    "office": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "officeId",
+        "title",
+        "governmentLevel",
+        "selectionMethod",
+        "sourceIds",
+        "freshness"
+      ],
+      "properties": {
+        "officeId": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "governmentLevel": {
+          "$ref": "#/$defs/profileSummary/properties/governmentLevel"
+        },
+        "selectionMethod": {
+          "enum": [
+            "elected",
+            "appointed",
+            "mixed",
+            "ex_officio",
+            "unknown"
+          ]
+        },
+        "sourceIds": {
+          "$ref": "#/$defs/sourceIds"
+        },
+        "freshness": {
+          "$ref": "#/$defs/freshnessState"
+        }
+      }
+    },
+    "district": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "districtId",
+        "label",
+        "sourceIds",
+        "freshness"
+      ],
+      "properties": {
+        "districtId": {
+          "$ref": "#/$defs/id"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "sourceIds": {
+          "$ref": "#/$defs/sourceIds"
+        },
+        "freshness": {
+          "$ref": "#/$defs/freshnessState"
+        }
+      }
+    },
+    "officeTerm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "officeTermId",
+        "state",
+        "origin",
+        "serviceCapacity",
+        "plannedStart",
+        "plannedEnd",
+        "sourceIds",
+        "freshness"
+      ],
+      "properties": {
+        "officeTermId": {
+          "$ref": "#/$defs/id"
+        },
+        "state": {
+          "enum": [
+            "pending",
+            "active",
+            "cancelled",
+            "ended",
+            "resigned",
+            "removed",
+            "deceased",
+            "disqualified",
+            "superseded"
+          ]
+        },
+        "origin": {
+          "enum": [
+            "scheduled",
+            "election_result",
+            "appointment",
+            "ex_officio"
+          ]
+        },
+        "serviceCapacity": {
+          "enum": [
+            "regular",
+            "acting",
+            "interim"
+          ]
+        },
+        "plannedStart": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "plannedEnd": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sourceIds": {
+          "$ref": "#/$defs/sourceIds"
+        },
+        "freshness": {
+          "$ref": "#/$defs/freshnessState"
+        }
+      }
+    },
+    "election": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "electionId",
+        "name",
+        "kind",
+        "state",
+        "scheduledAt",
+        "sourceIds",
+        "freshness"
+      ],
+      "properties": {
+        "electionId": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "kind": {
+          "enum": [
+            "general",
+            "by_election",
+            "primary",
+            "special",
+            "other"
+          ]
+        },
+        "state": {
+          "enum": [
+            "scheduled",
+            "active",
+            "completed",
+            "cancelled",
+            "superseded"
+          ]
+        },
+        "scheduledAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "sourceIds": {
+          "$ref": "#/$defs/sourceIds"
+        },
+        "freshness": {
+          "$ref": "#/$defs/freshnessState"
+        }
+      }
+    },
+    "candidacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidacyId",
+        "state",
+        "sourceIds",
+        "freshness"
+      ],
+      "properties": {
+        "candidacyId": {
+          "$ref": "#/$defs/id"
+        },
+        "state": {
+          "enum": [
+            "declared",
+            "registered",
+            "qualified",
+            "withdrawn",
+            "suspended",
+            "rejected",
+            "disqualified",
+            "active",
+            "won",
+            "defeated",
+            "cancelled",
+            "superseded"
+          ]
+        },
+        "sourceIds": {
+          "$ref": "#/$defs/sourceIds"
+        },
+        "freshness": {
+          "$ref": "#/$defs/freshnessState"
+        }
+      }
+    },
+    "contactRoute": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contactRouteId",
+        "kind",
+        "value",
+        "sourceIds",
+        "freshness"
+      ],
+      "properties": {
+        "contactRouteId": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "enum": [
+            "office_email",
+            "office_phone",
+            "office_url"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "sourceIds": {
+          "$ref": "#/$defs/sourceIds"
+        },
+        "freshness": {
+          "$ref": "#/$defs/freshnessState"
+        }
+      }
+    },
+    "sourceIds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/id"
+      }
+    },
+    "materialClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claimId",
+        "category",
+        "label",
+        "value",
+        "status",
+        "sourceIds",
+        "freshness",
+        "observedAt",
+        "conflictState",
+        "evidence",
+        "updatedAt"
+      ],
+      "properties": {
+        "claimId": {
+          "$ref": "#/$defs/id"
+        },
+        "category": {
+          "enum": [
+            "vote",
+            "attendance",
+            "committee_work",
+            "expense",
+            "disclosure",
+            "public_statement",
+            "promise_position",
+            "documented_event",
+            "outcome"
+          ]
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "status": {
+          "enum": [
+            "reviewed",
+            "corrected",
+            "disputed"
+          ]
+        },
+        "sourceIds": {
+          "$ref": "#/$defs/sourceIds"
+        },
+        "freshness": {
+          "$ref": "#/$defs/freshnessState"
+        },
+        "observedAt": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "conflictState": {
+          "enum": [
+            "clear",
+            "conflicting"
+          ]
+        },
+        "evidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "supportingSourceIds",
+            "challengingSourceIds",
+            "note"
+          ],
+          "properties": {
+            "supportingSourceIds": {
+              "$ref": "#/$defs/sourceIds"
+            },
+            "challengingSourceIds": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/id"
+              }
+            },
+            "note": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 500
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        "updatedAt": {
+          "$ref": "#/$defs/timestamp"
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceId",
+        "publisher",
+        "sourceType",
+        "originalUrl",
+        "normalizedUrl",
+        "retrievedAt",
+        "contentSha256",
+        "licenceNote",
+        "termsUrl",
+        "freshness",
+        "fetchOutcome",
+        "reviewedRecordVersionId"
+      ],
+      "properties": {
+        "sourceId": {
+          "$ref": "#/$defs/id"
+        },
+        "publisher": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "sourceType": {
+          "enum": [
+            "official_registry",
+            "official_legislative_record",
+            "official_election_record",
+            "official_disclosure",
+            "official_statement"
+          ]
+        },
+        "originalUrl": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "normalizedUrl": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "retrievedAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "licenceNote": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "termsUrl": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "freshness": {
+          "$ref": "#/$defs/freshnessState"
+        },
+        "fetchOutcome": {
+          "enum": [
+            "succeeded",
+            "not_modified",
+            "failed",
+            "blocked",
+            "too_large",
+            "invalid_content",
+            "redirect_rejected"
+          ]
+        },
+        "reviewedRecordVersionId": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "sourceSection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "profileId",
+        "recordVersion",
+        "updatedAt",
+        "items"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "public-role-profile-sources.v1"
+        },
+        "profileId": {
+          "$ref": "#/$defs/id"
+        },
+        "recordVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "updatedAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/source"
+          }
+        }
+      }
+    },
+    "coverageItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "category",
+        "state",
+        "explanation",
+        "lastReviewedAt",
+        "sourceIds"
+      ],
+      "properties": {
+        "category": {
+          "enum": [
+            "identity",
+            "office_context",
+            "contact",
+            "votes",
+            "attendance",
+            "committee_work",
+            "expenses",
+            "disclosures",
+            "public_statements",
+            "promises_positions",
+            "events_outcomes"
+          ]
+        },
+        "state": {
+          "$ref": "#/$defs/availabilityState"
+        },
+        "explanation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "lastReviewedAt": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sourceIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        }
+      }
+    },
+    "sourceConflict": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "conflictId",
+        "field",
+        "state",
+        "sourceIds",
+        "explanation"
+      ],
+      "properties": {
+        "conflictId": {
+          "$ref": "#/$defs/id"
+        },
+        "field": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "state": {
+          "enum": [
+            "open",
+            "resolved",
+            "quarantined"
+          ]
+        },
+        "sourceIds": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "explanation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        }
+      }
+    },
+    "coverageSection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "profileId",
+        "recordVersion",
+        "updatedAt",
+        "methodVersion",
+        "missingDataMeaning",
+        "items",
+        "conflicts"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "public-role-profile-coverage.v1"
+        },
+        "profileId": {
+          "$ref": "#/$defs/id"
+        },
+        "recordVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "updatedAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "methodVersion": {
+          "$ref": "#/$defs/id"
+        },
+        "missingDataMeaning": {
+          "const": "coverage_gap_not_misconduct"
+        },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/coverageItem"
+          }
+        },
+        "conflicts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sourceConflict"
+          }
+        }
+      }
+    },
+    "responseItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "responseId",
+        "publishedAt",
+        "summary",
+        "sourceIds"
+      ],
+      "properties": {
+        "responseId": {
+          "$ref": "#/$defs/id"
+        },
+        "publishedAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "sourceIds": {
+          "$ref": "#/$defs/sourceIds"
+        }
+      }
+    },
+    "responseSection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "profileId",
+        "recordVersion",
+        "updatedAt",
+        "availability",
+        "items"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "public-role-profile-responses.v1"
+        },
+        "profileId": {
+          "$ref": "#/$defs/id"
+        },
+        "recordVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "updatedAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "availability": {
+          "$ref": "#/$defs/availabilityState"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/responseItem"
+          }
+        }
+      }
+    },
+    "disputeItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "disputeId",
+        "state",
+        "openedAt",
+        "summary",
+        "claimIds",
+        "sourceIds"
+      ],
+      "properties": {
+        "disputeId": {
+          "$ref": "#/$defs/id"
+        },
+        "state": {
+          "enum": [
+            "open",
+            "resolved",
+            "withdrawn"
+          ]
+        },
+        "openedAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "claimIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "sourceIds": {
+          "$ref": "#/$defs/sourceIds"
+        }
+      }
+    },
+    "disputeSection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "profileId",
+        "recordVersion",
+        "updatedAt",
+        "availability",
+        "items"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "public-role-profile-disputes.v1"
+        },
+        "profileId": {
+          "$ref": "#/$defs/id"
+        },
+        "recordVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "updatedAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "availability": {
+          "$ref": "#/$defs/availabilityState"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/disputeItem"
+          }
+        }
+      }
+    },
+    "correctionItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "correctionId",
+        "correctedAt",
+        "summary",
+        "supersedesClaimId",
+        "replacementClaimId",
+        "sourceIds"
+      ],
+      "properties": {
+        "correctionId": {
+          "$ref": "#/$defs/id"
+        },
+        "correctedAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "supersedesClaimId": {
+          "$ref": "#/$defs/id"
+        },
+        "replacementClaimId": {
+          "$ref": "#/$defs/id"
+        },
+        "sourceIds": {
+          "$ref": "#/$defs/sourceIds"
+        }
+      }
+    },
+    "correctionSection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "profileId",
+        "recordVersion",
+        "updatedAt",
+        "availability",
+        "items"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "public-role-profile-corrections.v1"
+        },
+        "profileId": {
+          "$ref": "#/$defs/id"
+        },
+        "recordVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "updatedAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "availability": {
+          "$ref": "#/$defs/availabilityState"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/correctionItem"
+          }
+        }
+      }
+    },
+    "appealItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "appealId",
+        "state",
+        "openedAt",
+        "summary",
+        "disputeId",
+        "sourceIds"
+      ],
+      "properties": {
+        "appealId": {
+          "$ref": "#/$defs/id"
+        },
+        "state": {
+          "enum": [
+            "open",
+            "upheld",
+            "denied",
+            "withdrawn"
+          ]
+        },
+        "openedAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "disputeId": {
+          "$ref": "#/$defs/id"
+        },
+        "sourceIds": {
+          "$ref": "#/$defs/sourceIds"
+        }
+      }
+    },
+    "appealSection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "profileId",
+        "recordVersion",
+        "updatedAt",
+        "availability",
+        "items"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "public-role-profile-appeals.v1"
+        },
+        "profileId": {
+          "$ref": "#/$defs/id"
+        },
+        "recordVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "updatedAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "availability": {
+          "$ref": "#/$defs/availabilityState"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/appealItem"
+          }
+        }
+      }
+    },
+    "methodMetadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileMethodVersion",
+        "coverageMethodVersion",
+        "compositeScoreIncluded",
+        "signalAggregateIncluded"
+      ],
+      "properties": {
+        "profileMethodVersion": {
+          "$ref": "#/$defs/id"
+        },
+        "coverageMethodVersion": {
+          "$ref": "#/$defs/id"
+        },
+        "compositeScoreIncluded": {
+          "const": false
+        },
+        "signalAggregateIncluded": {
+          "const": false
+        }
+      }
+    },
+    "provenanceMetadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "network",
+        "anchorId",
+        "truthDisclaimer"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "not_anchored",
+            "pending",
+            "confirmed_unverified",
+            "verified",
+            "verification_failed",
+            "orphaned",
+            "superseded"
+          ]
+        },
+        "network": {
+          "enum": [
+            "VRSCTEST",
+            "VRSC"
+          ]
+        },
+        "anchorId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "truthDisclaimer": {
+          "const": "provenance_commits_to_bytes_not_truth"
+        }
+      }
+    },
+    "externalIdentityReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "referenceId",
+        "kind",
+        "immutableReference",
+        "canonicalAuthority",
+        "grantsAuthorization",
+        "sourceIds",
+        "freshness"
+      ],
+      "properties": {
+        "referenceId": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "enum": [
+            "public_identifier",
+            "verus_id"
+          ]
+        },
+        "immutableReference": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "canonicalAuthority": {
+          "const": false
+        },
+        "grantsAuthorization": {
+          "const": false
+        },
+        "sourceIds": {
+          "$ref": "#/$defs/sourceIds"
+        },
+        "freshness": {
+          "$ref": "#/$defs/freshnessState"
+        }
+      }
+    },
+    "timelineItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "timelineItemId",
+        "kind",
+        "occurredAt",
+        "summary",
+        "sourceIds",
+        "freshness",
+        "recordVersion"
+      ],
+      "properties": {
+        "timelineItemId": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "enum": [
+            "office_term_transition",
+            "candidacy_transition",
+            "source_refresh",
+            "correction",
+            "response",
+            "dispute",
+            "appeal"
+          ]
+        },
+        "occurredAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "sourceIds": {
+          "$ref": "#/$defs/sourceIds"
+        },
+        "freshness": {
+          "$ref": "#/$defs/freshnessState"
+        },
+        "recordVersion": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "profileTimeline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "dataMode",
+        "profileId",
+        "recordVersion",
+        "updatedAt",
+        "filters",
+        "items",
+        "page"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "public-role-profile-timeline.v1"
+        },
+        "dataMode": {
+          "const": "synthetic"
+        },
+        "profileId": {
+          "$ref": "#/$defs/id"
+        },
+        "recordVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "updatedAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "filters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/timelineItem/properties/kind"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/timelineItem"
+          }
+        },
+        "page": {
+          "$ref": "#/$defs/page"
+        }
+      }
+    },
+    "page": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "limit",
+        "nextCursor"
+      ],
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50
+        },
+        "nextCursor": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    }
+  }
+} as const;
+
+export const PUBLIC_ROLE_PROFILE_TIMELINE_SCHEMA = {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ratemyrepresentatives.com/public-role-profile-timeline.schema.json",
+  "title": "PublicRoleProfileTimeline",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "dataMode",
+    "profileId",
+    "recordVersion",
+    "updatedAt",
+    "filters",
+    "items",
+    "page"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "public-role-profile-timeline.v1"
+    },
+    "dataMode": {
+      "const": "synthetic"
+    },
+    "profileId": {
+      "$ref": "#/$defs/id"
+    },
+    "recordVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "filters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timelineKind"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "timelineItemId",
+          "kind",
+          "occurredAt",
+          "summary",
+          "sourceIds",
+          "freshness",
+          "recordVersion"
+        ],
+        "properties": {
+          "timelineItemId": {
+            "$ref": "#/$defs/id"
+          },
+          "kind": {
+            "$ref": "#/$defs/timelineKind"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "sourceIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/$defs/id"
+            }
+          },
+          "freshness": {
+            "enum": [
+              "current",
+              "stale",
+              "not_available",
+              "unsupported",
+              "coverage_gap"
+            ]
+          },
+          "recordVersion": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "page": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "limit",
+        "nextCursor"
+      ],
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50
+        },
+        "nextCursor": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$"
+    },
+    "timelineKind": {
+      "enum": [
+        "office_term_transition",
+        "candidacy_transition",
+        "source_refresh",
+        "correction",
+        "response",
+        "dispute",
+        "appeal"
+      ]
+    }
+  }
+} as const;
+
 export const PUBLIC_ROLE_REGISTRY_SCHEMA = {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schemas.ratemyrepresentatives.com/v1/public-role-registry.schema.json",

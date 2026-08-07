@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ratemyrepresentatives.com/public-role-profile-list.schema.json",
+  "title": "PublicRoleProfileList",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "dataMode", "generatedAt", "filters", "items", "page"],
+  "properties": {
+    "schemaVersion": { "const": "public-role-profile-list.v1" },
+    "dataMode": { "const": "synthetic" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "filters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["countryCode", "contextKind"],
+      "properties": {
+        "countryCode": { "oneOf": [{ "enum": ["CA", "US"] }, { "type": "null" }] },
+        "contextKind": { "oneOf": [{ "enum": ["office_term", "candidacy"] }, { "type": "null" }] }
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/profileSummary" }
+    },
+    "page": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["limit", "nextCursor"],
+      "properties": {
+        "limit": { "const": 50 },
+        "nextCursor": { "type": "null" }
+      }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$" },
+    "profileSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileId",
+        "personId",
+        "displayName",
+        "countryCode",
+        "governmentLevel",
+        "officeTitle",
+        "districtLabel",
+        "roleStatus",
+        "context",
+        "availability",
+        "recordVersion",
+        "updatedAt"
+      ],
+      "properties": {
+        "profileId": { "$ref": "#/$defs/id" },
+        "personId": { "$ref": "#/$defs/id" },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "countryCode": { "enum": ["CA", "US"] },
+        "governmentLevel": {
+          "enum": ["federal", "provincial", "territorial", "state", "municipal", "local", "special"]
+        },
+        "officeTitle": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "districtLabel": {
+          "oneOf": [{ "type": "string", "minLength": 1, "maxLength": 200 }, { "type": "null" }]
+        },
+        "roleStatus": {
+          "enum": [
+            "current",
+            "former",
+            "acting",
+            "appointed",
+            "elected",
+            "declared",
+            "withdrawn",
+            "disqualified",
+            "historical"
+          ]
+        },
+        "context": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "officeTermId", "candidacyId"],
+          "properties": {
+            "kind": { "enum": ["office_term", "candidacy"] },
+            "officeTermId": { "oneOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }] },
+            "candidacyId": { "oneOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }] }
+          }
+        },
+        "availability": {
+          "enum": ["available", "not_available", "unsupported", "stale", "coverage_gap"]
+        },
+        "recordVersion": { "type": "integer", "minimum": 1 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}

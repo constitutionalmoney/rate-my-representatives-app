@@ -3,9 +3,13 @@ import {
   readApiHealth,
   readJurisdictionRegistry,
   readPeople,
+  readPublicProfile,
+  readPublicProfiles,
   type HealthStatus,
   type JurisdictionRegistry,
   type PublicRoleRegistry,
+  type PublicRoleProfile,
+  type PublicRoleProfileList,
 } from '@rmr/contracts';
 
 export async function readFoundationHealth(
@@ -27,4 +31,19 @@ export async function readWebJurisdictionRegistry(
   fetchImplementation?: typeof globalThis.fetch,
 ): Promise<JurisdictionRegistry> {
   return readJurisdictionRegistry(createWebClient(baseUrl, fetchImplementation));
+}
+
+export async function readWebPublicProfiles(
+  baseUrl: string,
+  fetchImplementation?: typeof globalThis.fetch,
+): Promise<PublicRoleProfileList> {
+  return readPublicProfiles(createWebClient(baseUrl, fetchImplementation));
+}
+
+export async function readWebPublicProfile(
+  baseUrl: string,
+  profileId: string,
+  fetchImplementation?: typeof globalThis.fetch,
+): Promise<PublicRoleProfile> {
+  return readPublicProfile(createWebClient(baseUrl, fetchImplementation), profileId);
 }

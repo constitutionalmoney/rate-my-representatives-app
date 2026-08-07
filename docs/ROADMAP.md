@@ -130,10 +130,10 @@ Representative signals, category ratings, community context, composite scoring, 
 
 ### Foundation progress
 
-Issues #49, #59, and #55 now provide the synthetic jurisdiction graph, distinct
-public-role lifecycles, and internal candidate-only source ingestion respectively.
-The source pilots do not constitute production source approval or a public profile API;
-read-only source-backed profiles remain issue #11.
+Issues #49, #59, #55, and #11 now provide the synthetic jurisdiction graph, distinct
+public-role lifecycles, internal candidate-only source ingestion, and reviewed read-only
+profile API respectively. The synthetic pilots do not constitute production source
+approval or pilot release evidence.
 
 ## Phase 3 — Native mobile and web discovery pilot
 

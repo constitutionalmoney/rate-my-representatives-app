@@ -27,6 +27,17 @@ const schemaDefinitions = [
     'INFRASTRUCTURE_SERVICES_SCHEMA',
   ],
   ['outbox-event', 'outbox-event.schema.json', 'OUTBOX_EVENT_SCHEMA'],
+  [
+    'public-role-profile-list',
+    'public-role-profile-list.schema.json',
+    'PUBLIC_ROLE_PROFILE_LIST_SCHEMA',
+  ],
+  ['public-role-profile', 'public-role-profile.schema.json', 'PUBLIC_ROLE_PROFILE_SCHEMA'],
+  [
+    'public-role-profile-timeline',
+    'public-role-profile-timeline.schema.json',
+    'PUBLIC_ROLE_PROFILE_TIMELINE_SCHEMA',
+  ],
   ['public-role-registry', 'public-role-registry.schema.json', 'PUBLIC_ROLE_REGISTRY_SCHEMA'],
   [
     'source-connector-capability',
@@ -48,6 +59,7 @@ const fixtureDefinitions = [
   ['SYNTHETIC_HEALTH_READY', 'health.ready.json'],
   ['SYNTHETIC_MOBILE_COMPATIBILITY_READY', 'mobile-compatibility.ready.json'],
   ['SYNTHETIC_JURISDICTIONS', 'jurisdictions.synthetic.json'],
+  ['SYNTHETIC_PUBLIC_ROLE_PROFILE', 'public-role-profile.synthetic.json'],
   ['SYNTHETIC_PUBLIC_ROLE_REGISTRY', 'public-role-registry.synthetic.json'],
   ['SYNTHETIC_CA_SOURCE_CONNECTOR', 'source-connector-ca.synthetic.json'],
   ['SYNTHETIC_US_SOURCE_CONNECTOR', 'source-connector-us.synthetic.json'],

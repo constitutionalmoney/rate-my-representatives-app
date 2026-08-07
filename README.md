@@ -8,7 +8,7 @@ This repository is the implementation home for the application described at [rat
 
 ## Current status
 
-**Repository-foundation stage — synthetic registry only; not a production civic release.**
+**Repository-foundation stage — synthetic registry and source-backed profile reads only; not a production civic release.**
 
 The mobile-first TypeScript workspace and CI foundation now exist. The native, web,
 portal, admin, API, and worker surfaces are deliberately limited to placeholder,
@@ -59,10 +59,18 @@ capability declarations, SSRF-safe conditional retrieval, immutable hashes/metad
 checkpoint/idempotency/retry/quarantine/dead-letter behavior, reviewer-only canonical
 approval, correction history, and reproducible coverage. Approved Canada and United
 States pilots are synthetic `.invalid` fixtures. `SOURCE_INGESTION_ENABLED` remains
-false, no public source/profile read is added, and no material record is auto-published.
+false and no material record is auto-published.
+
+Issue #11 adds a read-only, reviewed public-role profile API with list, detail,
+cursor-paginated timeline, source, coverage, response, dispute, correction, and appeal views.
+Synthetic Canadian office-term and United States candidacy profiles keep every civic
+entity separate, attach sources and freshness to material claims, disclose gaps and
+conflicts, and use record-version ETags. Only explicit reviewer/admin publication
+decisions enter the public projection. Verus/provenance is absent, no score or signal
+aggregate is returned, and no publication or other civic write route is implemented.
 
 - No production iOS or Android app is released.
-- No public representative profile, category rating, representative signal, Civic Signal briefing, authenticated aggregate, VerusID claim, or Representative Accountability Score is live.
+- No production representative profile, category rating, representative signal, Civic Signal briefing, authenticated aggregate, VerusID claim, or Representative Accountability Score is live; issue #11 responses are synthetic only.
 - No composite score is approved.
 - Checks and Balances Protocol integration is planned and disabled by default.
 - Passkey, verified-email, recovery, privileged access, source ingestion, representative
@@ -336,7 +344,8 @@ scans tracked source for high-confidence secret patterns. It does not require Po
 a queue, object storage, Verus, wallet software, keys, or external civic data.
 
 See [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md),
-[docs/CONTRACTS.md](./docs/CONTRACTS.md), [docs/API_V1.md](./docs/API_V1.md), and
+[docs/CONTRACTS.md](./docs/CONTRACTS.md), [docs/API_V1.md](./docs/API_V1.md),
+[docs/PUBLIC_PROFILE_API.md](./docs/PUBLIC_PROFILE_API.md), and
 [docs/adr/0001-mobile-first-typescript-monorepo.md](./docs/adr/0001-mobile-first-typescript-monorepo.md).
 
 The issue #12 security boundaries and non-operational status are documented in
@@ -344,7 +353,7 @@ The issue #12 security boundaries and non-operational status are documented in
 [ADR 0002](./docs/adr/0002-deny-by-default-auth-boundaries.md).
 
 The application-only [Docker Compose foundation](./compose.yaml) can build the public
-web placeholder and internal synthetic API without Verus or backing services. It is
+web placeholder and synthetic read-only API without Verus or backing services. It is
 prepared for GitHub-sourced Dokploy deployment; see
 [docs/DEPLOY_DOKPLOY.md](./docs/DEPLOY_DOKPLOY.md).
 
@@ -382,6 +391,7 @@ Verus-specific gates apply only when the corresponding feature is enabled. A rea
 - [Codex-ready Product Requirements Document](./docs/PRD.md)
 - [End-to-end roadmap](./docs/ROADMAP.md)
 - [System architecture](./docs/ARCHITECTURE.md)
+- [Source-backed public profile API](./docs/PUBLIC_PROFILE_API.md)
 - [Identity and Verus Mobile integration](./docs/IDENTITY_AND_VERUS_MOBILE.md)
 - [Subdomain and deployment plan](./docs/SUBDOMAINS.md)
 - [Website alignment and product decisions](./docs/WEBSITE_ALIGNMENT.md)

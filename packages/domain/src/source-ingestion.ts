@@ -434,7 +434,6 @@ export function approveCandidate(
 }
 
 export function sourceIngestionDeferredFamilies(): readonly [
-  'public_profile_api',
   'contributor_evidence',
   'runtime_ai_publication',
   'identity_updates',
@@ -442,7 +441,6 @@ export function sourceIngestionDeferredFamilies(): readonly [
   'representative_scoring',
 ] {
   return [
-    'public_profile_api',
     'contributor_evidence',
     'runtime_ai_publication',
     'identity_updates',

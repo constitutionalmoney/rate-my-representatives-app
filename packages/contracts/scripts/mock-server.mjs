@@ -11,13 +11,15 @@ const health = await fixture('health.ready.json');
 const mobileCompatibility = await fixture('mobile-compatibility.ready.json');
 const jurisdictions = await fixture('jurisdictions.synthetic.json');
 const publicRoles = await fixture('public-role-registry.synthetic.json');
+const publicProfile = await fixture('public-role-profile.synthetic.json');
 const notFound = await fixture('not-found.json');
 
-function send(response, status, value) {
+function send(response, status, value, headers = {}) {
   response.writeHead(status, {
     'cache-control': 'no-store',
     'content-type': status >= 400 ? 'application/problem+json' : 'application/json',
     ...(status >= 400 ? { 'x-correlation-id': value.correlationId } : {}),
+    ...headers,
   });
   response.end(JSON.stringify(value));
 }
@@ -49,6 +51,76 @@ export function createContractMockServer() {
       send(response, 200, publicRoles);
       return;
     }
+    if (request.method === 'GET' && url.pathname === '/api/v1/profiles') {
+      send(response, 200, {
+        schemaVersion: 'public-role-profile-list.v1',
+        dataMode: 'synthetic',
+        generatedAt: publicProfile.updatedAt,
+        filters: { countryCode: null, contextKind: null },
+        items: [publicProfile.summary],
+        page: { limit: 50, nextCursor: null },
+      });
+      return;
+    }
+    const prefix = '/api/v1/profiles/';
+    if (request.method === 'GET' && url.pathname.startsWith(prefix)) {
+      const suffixes = [
+        '/timeline',
+        '/sources',
+        '/coverage',
+        '/responses',
+        '/disputes',
+        '/corrections',
+        '/appeals',
+      ];
+      const suffix = suffixes.find((candidate) => url.pathname.endsWith(candidate));
+      const encodedProfileId = url.pathname.slice(
+        prefix.length,
+        suffix === undefined ? undefined : -suffix.length,
+      );
+      if (decodeURIComponent(encodedProfileId) !== publicProfile.profileId) {
+        send(response, 404, notFound);
+        return;
+      }
+      const headers = {
+        'cache-control': 'public, max-age=60, stale-while-revalidate=300',
+        etag: publicProfile.etag,
+      };
+      if (suffix === '/timeline') {
+        send(
+          response,
+          200,
+          {
+            schemaVersion: 'public-role-profile-timeline.v1',
+            dataMode: 'synthetic',
+            profileId: publicProfile.profileId,
+            recordVersion: publicProfile.recordVersion,
+            updatedAt: publicProfile.updatedAt,
+            filters: { kind: null },
+            items: [],
+            page: { limit: 20, nextCursor: null },
+          },
+          headers,
+        );
+        return;
+      }
+      const section =
+        suffix === '/sources'
+          ? publicProfile.sources
+          : suffix === '/coverage'
+            ? publicProfile.coverage
+            : suffix === '/responses'
+              ? publicProfile.responses
+              : suffix === '/disputes'
+                ? publicProfile.disputes
+                : suffix === '/corrections'
+                  ? publicProfile.corrections
+                  : suffix === '/appeals'
+                    ? publicProfile.appeals
+                    : publicProfile;
+      send(response, 200, section, headers);
+      return;
+    }
     send(response, 404, notFound);
   });
 }
@@ -78,19 +150,27 @@ if (isEntrypoint) {
   const baseUrl = `http://127.0.0.1:${address.port}`;
 
   if (smoke) {
-    const [healthResponse, mobileResponse, jurisdictionResponse, peopleResponse, missingResponse] =
-      await Promise.all([
-        fetch(`${baseUrl}/api/v1/health`),
-        fetch(`${baseUrl}/api/v1/health/mobile`),
-        fetch(`${baseUrl}/api/v1/jurisdictions`),
-        fetch(`${baseUrl}/api/v1/people`),
-        fetch(`${baseUrl}/api/v1/missing`),
-      ]);
+    const [
+      healthResponse,
+      mobileResponse,
+      jurisdictionResponse,
+      peopleResponse,
+      profileResponse,
+      missingResponse,
+    ] = await Promise.all([
+      fetch(`${baseUrl}/api/v1/health`),
+      fetch(`${baseUrl}/api/v1/health/mobile`),
+      fetch(`${baseUrl}/api/v1/jurisdictions`),
+      fetch(`${baseUrl}/api/v1/people`),
+      fetch(`${baseUrl}/api/v1/profiles/${encodeURIComponent(publicProfile.profileId)}`),
+      fetch(`${baseUrl}/api/v1/missing`),
+    ]);
     if (
       healthResponse.status !== 200 ||
       mobileResponse.status !== 200 ||
       jurisdictionResponse.status !== 200 ||
       peopleResponse.status !== 200 ||
+      profileResponse.status !== 200 ||
       missingResponse.status !== 404
     ) {
       throw new Error('Contract mock server returned an unexpected status.');

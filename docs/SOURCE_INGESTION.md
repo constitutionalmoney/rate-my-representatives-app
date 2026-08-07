@@ -1,7 +1,7 @@
 # Official-source ingestion foundation
 
 **Status:** Issue #55 internal foundation; synthetic Canada and United States pilots only
-**Public API:** Deferred to issue #11
+**Public API:** Issue #11 exposes reviewed profile-scoped reads only
 **Runtime gate:** `SOURCE_INGESTION_ENABLED=false` by default
 **Verus dependency:** None
 
@@ -115,10 +115,12 @@ publish a material factual record on its own.
 
 ## Scope and dependencies
 
-Issue #55 deliberately does not implement contributor evidence (#39), the public
-source-backed profile API (#11), representative scoring, native UI, Verus identities or
-identity updates, provenance writes, or mainnet work. Source access policy (#7) and the
-security-domain program (#22) remain broader governance dependencies; this issue
+Issue #55 deliberately does not implement contributor evidence (#39), representative
+scoring, native UI, Verus identities or identity updates, provenance writes, or mainnet
+work. Issue #11 now consumes only human-approved records through allowlisted,
+profile-scoped reads; it does not change the ingestion runtime gate or add automatic
+publication. Source access policy (#7) and the security-domain program (#22) remain
+broader governance dependencies; this issue
 implements the smallest safe internal slice with explicit synthetic approvals and
 deny-by-default runtime execution.
 

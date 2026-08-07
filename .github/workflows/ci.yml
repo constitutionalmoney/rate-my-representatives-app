@@ -168,14 +168,17 @@ jobs:
         working-directory: apps/mobile/ios
         run: |
           workspace="$(find . -maxdepth 1 -name '*.xcworkspace' -print -quit)"
-          scheme="$(xcodebuild -workspace "$workspace" -list -json | ruby -rjson -e 'puts JSON.parse(STDIN.read).dig("workspace", "schemes").find { |item| !item.start_with?("Pods-") }')"
-          test -n "$workspace" && test -n "$scheme"
+          project="$(find . -maxdepth 1 -name '*.xcodeproj' ! -name 'Pods.xcodeproj' -print -quit)"
+          scheme_file="$(find "$project/xcshareddata/xcschemes" -maxdepth 1 -name '*.xcscheme' -print -quit)"
+          scheme="$(basename "$scheme_file" .xcscheme)"
+          test -n "$workspace" && test -n "$project" && test -n "$scheme_file" && test -n "$scheme"
           xcodebuild -workspace "$workspace" -scheme "$scheme" -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$PWD/build/DerivedData" CODE_SIGNING_ALLOWED=NO build
+          find "$PWD/build/DerivedData/Build/Products/Debug-iphonesimulator" -maxdepth 1 -type d -name '*.app' -print -quit | grep -q .
       - if: matrix.platform == 'ios'
         uses: actions/upload-artifact@v4
         with:
           name: rmr-ios-development-simulator-app
-          path: apps/mobile/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/*.app
+          path: apps/mobile/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/**/*.app
           if-no-files-found: error
           retention-days: 7
 
@@ -194,7 +197,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm mobile:config:check
-      - run: pnpm --filter @rmr/mobile build
+      - run: pnpm --filter '@rmr/mobile...' build
       - run: pnpm mobile:bundle-budget
       - run: pnpm mobile:sbom > rmr-mobile.cdx.json
       - name: Validate CycloneDX mobile SBOM

@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { SYNTHETIC_HEALTH_READY, SYNTHETIC_JURISDICTIONS } from './generated/contract-fixtures.js';
+import {
+  SYNTHETIC_HEALTH_READY,
+  SYNTHETIC_JURISDICTIONS,
+  SYNTHETIC_PUBLIC_ROLE_REGISTRY,
+} from './generated/contract-fixtures.js';
 import {
   CIVIC_SIGNAL_BRIEFING_SCHEMA,
   REPRESENTATIVE_SIGNAL_COMMAND_SCHEMA,
@@ -10,6 +14,7 @@ import {
   parseApiError,
   parseHealthStatus,
   parseJurisdictionRegistry,
+  parsePublicRoleRegistry,
 } from './validators.js';
 
 describe('runtime contract validators', () => {
@@ -55,5 +60,19 @@ describe('runtime contract validators', () => {
     expect(REPRESENTATIVE_SIGNAL_COMMAND_SCHEMA['x-rmr-allowed-actors']).toEqual(['human']);
     expect(REPRESENTATIVE_SIGNAL_COMMAND_SCHEMA['x-rmr-agent-access']).toBe('forbidden');
     expect(REPRESENTATIVE_SIGNAL_COMMAND_SCHEMA.properties.judgment.enum).not.toContain('skip');
+  });
+
+  it('validates public-role output and rejects restricted review fields at the server boundary', () => {
+    expect(parsePublicRoleRegistry(SYNTHETIC_PUBLIC_ROLE_REGISTRY, 'server')).toEqual(
+      SYNTHETIC_PUBLIC_ROLE_REGISTRY,
+    );
+    const fixture = structuredClone(SYNTHETIC_PUBLIC_ROLE_REGISTRY) as Record<string, unknown>;
+    fixture.people = [
+      {
+        ...(SYNTHETIC_PUBLIC_ROLE_REGISTRY.people[0] as object),
+        privateNotes: 'must not escape',
+      },
+    ];
+    expect(() => parsePublicRoleRegistry(fixture, 'server')).toThrow(ContractValidationError);
   });
 });

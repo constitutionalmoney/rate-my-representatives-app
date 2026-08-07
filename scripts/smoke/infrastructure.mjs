@@ -97,6 +97,17 @@ const registry = await fetch(`http://127.0.0.1:${apiPort}/api/v1/jurisdictions`)
     return response.json();
   },
 );
+
+for (const pathname of ['/people', '/office-terms', '/elections', '/candidacies']) {
+  const response = await fetch(`http://127.0.0.1:${apiPort}/api/v1${pathname}`);
+  assert(response.status === 200, `Public-role API request failed: ${pathname}.`);
+  const body = await response.json();
+  assert(body.dataMode === 'synthetic', `Public-role API was not synthetic: ${pathname}.`);
+  assert(
+    !/actorReference|privateNotes|identityProof|representativeScore/i.test(JSON.stringify(body)),
+    `Public-role API exposed a restricted or deferred field: ${pathname}.`,
+  );
+}
 assert(registry.dataMode === 'synthetic', 'Registry returned non-synthetic data.');
 assert(
   registry.jurisdictions.some(({ countryCode }) => countryCode === 'CA') &&
@@ -231,6 +242,35 @@ assert(
   registrySmoke.stderr || 'Jurisdiction registry PostgreSQL smoke failed.',
 );
 
+const publicRoleSmoke = spawnSync(
+  'docker',
+  [
+    'compose',
+    '-f',
+    'compose.infrastructure.yaml',
+    'exec',
+    '-T',
+    'postgres',
+    'psql',
+    '-U',
+    'rmr',
+    '-d',
+    'rmr',
+    '--set',
+    'ON_ERROR_STOP=1',
+    '--file=-',
+  ],
+  {
+    cwd: root,
+    encoding: 'utf8',
+    input: await readFile(path.join(root, 'scripts', 'smoke', 'public-role-lifecycle.sql'), 'utf8'),
+  },
+);
+assert(
+  publicRoleSmoke.status === 0,
+  publicRoleSmoke.stderr || 'Public-role lifecycle PostgreSQL smoke failed.',
+);
+
 const running = spawnSync(
   'docker',
   ['compose', '-f', 'compose.infrastructure.yaml', 'ps', '--services', '--status', 'running'],
@@ -244,5 +284,5 @@ assert(
 assert(!running.stdout.includes('signer-stub'), 'Core smoke unexpectedly started signer stubs.');
 
 process.stdout.write(
-  'Core infrastructure smoke passed: migration/seed, jurisdiction registry, atomic audit/outbox, leases/retry/DLQ/replay, bucket isolation, mail, API, worker, and Verus-off readiness.\n',
+  'Core infrastructure smoke passed: migration/seed, jurisdiction and public-role registries, atomic audit/outbox, leases/retry/DLQ/replay, bucket isolation, mail, API, worker, and Verus-off readiness.\n',
 );

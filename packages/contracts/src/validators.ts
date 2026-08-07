@@ -5,11 +5,13 @@ import type { ApiError } from './generated/api-error.js';
 import type { HealthStatus } from './generated/health-status.js';
 import type { JurisdictionRegistry } from './generated/jurisdiction-registry.js';
 import type { MobileCompatibilityStatus } from './generated/mobile-compatibility-status.js';
+import type { PublicRoleRegistry } from './generated/public-role-registry.js';
 import {
   API_ERROR_SCHEMA,
   HEALTH_STATUS_SCHEMA,
   JURISDICTION_REGISTRY_SCHEMA,
   MOBILE_COMPATIBILITY_STATUS_SCHEMA,
+  PUBLIC_ROLE_REGISTRY_SCHEMA,
 } from './generated/schema-documents.js';
 
 export type ContractBoundary = 'client' | 'server';
@@ -51,6 +53,8 @@ const serverJurisdictionRegistry = serverAjv.compile(JURISDICTION_REGISTRY_SCHEM
 const clientJurisdictionRegistry = clientAjv.compile(JURISDICTION_REGISTRY_SCHEMA);
 const serverMobileCompatibility = serverAjv.compile(MOBILE_COMPATIBILITY_STATUS_SCHEMA);
 const clientMobileCompatibility = clientAjv.compile(MOBILE_COMPATIBILITY_STATUS_SCHEMA);
+const serverPublicRoleRegistry = serverAjv.compile(PUBLIC_ROLE_REGISTRY_SCHEMA);
+const clientPublicRoleRegistry = clientAjv.compile(PUBLIC_ROLE_REGISTRY_SCHEMA);
 const serverError = serverAjv.compile(API_ERROR_SCHEMA);
 const clientError = clientAjv.compile(API_ERROR_SCHEMA);
 
@@ -110,6 +114,18 @@ export function parseMobileCompatibilityStatus(
   return parseContract<MobileCompatibilityStatus>(
     'MobileCompatibilityStatus',
     boundary === 'client' ? clientMobileCompatibility : serverMobileCompatibility,
+    value,
+    boundary === 'client',
+  );
+}
+
+export function parsePublicRoleRegistry(
+  value: unknown,
+  boundary: ContractBoundary = 'client',
+): PublicRoleRegistry {
+  return parseContract<PublicRoleRegistry>(
+    'PublicRoleRegistry',
+    boundary === 'client' ? clientPublicRoleRegistry : serverPublicRoleRegistry,
     value,
     boundary === 'client',
   );

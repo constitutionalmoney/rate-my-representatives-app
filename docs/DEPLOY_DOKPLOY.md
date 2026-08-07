@@ -7,7 +7,7 @@ server. It builds from the GitHub repository and contains two services:
 - `api`: the internal synthetic health API.
 
 This is not a production civic release. It exposes only deterministic synthetic
-jurisdiction-registry data and has no real representative/person data, persistent
+jurisdiction and public-role registry data and has no real representative/person data, persistent
 storage, queue, source ingestion, account flow, scoring, Verus dependency, or mainnet
 capability. Portal and admin placeholders are intentionally not published.
 
@@ -21,7 +21,8 @@ capability. Portal and admin placeholders are intentionally not published.
 6. Preview the resolved Compose configuration, deploy, and confirm both `/healthz` and
    `/api/v1/health` return successfully through the public hostname. The
    `/api/v1/health/mobile` compatibility response and the synthetic
-   `/api/v1/jurisdictions` registry should also return `200`.
+   `/api/v1/jurisdictions`, `/api/v1/people`, `/api/v1/office-terms`,
+   `/api/v1/elections`, and `/api/v1/candidacies` reads should also return `200`.
 
 Dokploy automatically deploys pushes only for the branch selected for the service. A
 production service should therefore track a reviewed protected branch, not a feature
@@ -64,6 +65,10 @@ curl --fail http://127.0.0.1:8080/healthz
 curl --fail http://127.0.0.1:8080/api/v1/health
 curl --fail http://127.0.0.1:8080/api/v1/health/mobile
 curl --fail http://127.0.0.1:8080/api/v1/jurisdictions
+curl --fail http://127.0.0.1:8080/api/v1/people
+curl --fail http://127.0.0.1:8080/api/v1/office-terms
+curl --fail http://127.0.0.1:8080/api/v1/elections
+curl --fail http://127.0.0.1:8080/api/v1/candidacies
 ```
 
 Stop the isolated local stack with:

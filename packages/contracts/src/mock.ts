@@ -3,6 +3,7 @@ import {
   SYNTHETIC_JURISDICTIONS,
   SYNTHETIC_MOBILE_COMPATIBILITY_READY,
   SYNTHETIC_NOT_FOUND,
+  SYNTHETIC_PUBLIC_ROLE_REGISTRY,
 } from './generated/contract-fixtures.js';
 
 function jsonResponse(value: unknown, status: number, correlationId?: string): Response {
@@ -28,6 +29,17 @@ export function createContractMockFetch(): typeof globalThis.fetch {
     }
     if (request.method === 'GET' && url.pathname === '/api/v1/jurisdictions') {
       return jsonResponse(SYNTHETIC_JURISDICTIONS, 200);
+    }
+    if (
+      request.method === 'GET' &&
+      [
+        '/api/v1/people',
+        '/api/v1/office-terms',
+        '/api/v1/elections',
+        '/api/v1/candidacies',
+      ].includes(url.pathname)
+    ) {
+      return jsonResponse(SYNTHETIC_PUBLIC_ROLE_REGISTRY, 200);
     }
     return jsonResponse(SYNTHETIC_NOT_FOUND, 404, SYNTHETIC_NOT_FOUND.correlationId);
   };

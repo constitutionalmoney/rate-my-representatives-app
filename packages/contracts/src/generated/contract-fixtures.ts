@@ -129,6 +129,85 @@ export const SYNTHETIC_JURISDICTIONS = {
   }
 } as const;
 
+export const SYNTHETIC_PUBLIC_ROLE_REGISTRY = {
+  "schemaVersion": "public-role-registry.v1",
+  "dataMode": "synthetic",
+  "generatedAt": "2026-08-07T12:00:00.000Z",
+  "asOf": "2026-08-07T12:00:00.000Z",
+  "selection": {
+    "kind": "all",
+    "id": null
+  },
+  "people": [
+    {
+      "personId": "person:ca:avery-quill",
+      "recordState": "active",
+      "names": [
+        {
+          "personNameId": "person-name:ca:avery:primary",
+          "displayName": "Avery Quill",
+          "kind": "primary",
+          "languageTag": "en-CA",
+          "effectiveFrom": "2024-01-01T00:00:00Z",
+          "effectiveTo": null,
+          "attribution": {
+            "assertionId": "assertion:public-role:name:ca:avery",
+            "sourceReference": "synthetic://public-role/name/ca/avery",
+            "observedAt": "2026-08-07T12:00:00.000Z",
+            "freshness": "current",
+            "coverage": "supported",
+            "conflict": "clear",
+            "supersedesAssertionId": null
+          }
+        }
+      ]
+    },
+    {
+      "personId": "person:us:morgan-fields",
+      "recordState": "active",
+      "names": [
+        {
+          "personNameId": "person-name:us:morgan-fields:primary",
+          "displayName": "Morgan Fields",
+          "kind": "primary",
+          "languageTag": "en-US",
+          "effectiveFrom": "2020-01-01T00:00:00Z",
+          "effectiveTo": null,
+          "attribution": {
+            "assertionId": "assertion:public-role:name:us:morgan-fields",
+            "sourceReference": "synthetic://public-role/name/us/morgan-fields",
+            "observedAt": "2026-08-07T12:00:00.000Z",
+            "freshness": "current",
+            "coverage": "supported",
+            "conflict": "clear",
+            "supersedesAssertionId": null
+          }
+        }
+      ]
+    }
+  ],
+  "officeTerms": [],
+  "officeTermRelationships": [],
+  "officeTermContacts": [],
+  "elections": [],
+  "candidacies": [],
+  "officialIdentifiers": [],
+  "personResolutions": [],
+  "externalIdentityReferences": [],
+  "deferredFamilies": [
+    "source_ingestion",
+    "public_conduct",
+    "participation",
+    "representative_authorization",
+    "identity_proof",
+    "provenance",
+    "representative_scoring"
+  ],
+  "page": {
+    "nextCursor": null
+  }
+} as const;
+
 export const SYNTHETIC_NOT_FOUND = {
   "schemaVersion": "api-error.v1",
   "code": "NOT_FOUND",

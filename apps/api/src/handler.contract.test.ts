@@ -5,6 +5,7 @@ import {
   parseHealthStatus,
   parseJurisdictionRegistry,
   parseMobileCompatibilityStatus,
+  parsePublicRoleRegistry,
 } from '@rmr/contracts';
 
 import { handleRequest } from './handler.js';
@@ -70,8 +71,46 @@ describe('foundation API', () => {
   });
 
   it('uses the privacy-safe envelope for unknown routes', async () => {
-    const response = await handleRequest(new Request('http://127.0.0.1:3000/api/v1/people'));
+    const response = await handleRequest(new Request('http://127.0.0.1:3000/api/v1/not-real'));
     expect(response.status).toBe(404);
     expect(parseApiError(await response.json(), 'server')).toMatchObject({ code: 'NOT_FOUND' });
+  });
+
+  it.each(['/api/v1/people', '/api/v1/office-terms', '/api/v1/elections', '/api/v1/candidacies'])(
+    'serves the synthetic public-role graph from %s',
+    async (pathname) => {
+      const response = await handleRequest(new Request(`http://127.0.0.1:3000${pathname}`));
+      expect(response.status).toBe(200);
+      const body = parsePublicRoleRegistry(await response.json(), 'server');
+      expect(body.dataMode).toBe('synthetic');
+      expect(JSON.stringify(body)).not.toMatch(/actorReference|privateNotes/);
+      expect(body.externalIdentityReferences).toEqual([]);
+    },
+  );
+
+  it('keeps an election win separate from office-term confirmation', async () => {
+    const response = await handleRequest(
+      new Request(
+        'http://127.0.0.1:3000/api/v1/candidacies?candidacyId=candidacy%3Aca%3Arowan%3Anorth-2025',
+      ),
+    );
+    const body = parsePublicRoleRegistry(await response.json(), 'server');
+    expect(body.candidacies).toHaveLength(1);
+    expect(body.candidacies[0]?.currentState).toBe('won');
+    expect(body.officeTerms).toEqual([]);
+  });
+
+  it('strictly rejects unknown, duplicate, and wrong-route public-role filters', async () => {
+    for (const query of [
+      'personId=person%3Aca%3Aavery&personId=person%3Aca%3Arowan',
+      'officeTermId=term%3Aca%3Aavery',
+      'latitude=49',
+    ]) {
+      const response = await handleRequest(
+        new Request(`http://127.0.0.1:3000/api/v1/people?${query}`),
+      );
+      expect(response.status).toBe(400);
+      expect(parseApiError(await response.json(), 'server').code).toBe('VALIDATION_ERROR');
+    }
   });
 });

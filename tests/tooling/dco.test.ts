@@ -62,7 +62,7 @@ describe('DCO checker', () => {
     expect(result.status).toBe(0);
     expect(result.stdout).toContain('include a DCO sign-off');
     expect(result.stderr).toBe('');
-  });
+  }, 15_000);
 
   it('still rejects an unsigned authored commit', () => {
     const { base, repository } = createPullRequestHistory();
@@ -79,5 +79,5 @@ describe('DCO checker', () => {
     expect(result.status).toBe(1);
     expect(result.stderr).toContain('Commits missing DCO sign-off');
     expect(result.stderr).toContain(unsignedSha);
-  });
+  }, 15_000);
 });

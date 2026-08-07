@@ -42,9 +42,17 @@ Issue #49 adds the effective-dated synthetic civic registry for jurisdictions,
 districts, public bodies, offices, external identifiers, and public coverage/conflict
 gaps. Canada and United States fixtures exercise different graph shapes, including
 multiple parents, overlaps, redistricting, rename, and amalgamation. The generated
-`GET /api/v1/jurisdictions` read contract is operational in synthetic mode. People,
-office terms, candidacies, source ingestion, and location resolution remain deferred;
-the registry makes no residence, citizenship, or eligibility determination.
+`GET /api/v1/jurisdictions` read contract is operational in synthetic mode. Source
+ingestion and location resolution remain deferred; the registry makes no residence,
+citizenship, or eligibility determination.
+
+Issue #59 adds separate synthetic person, office-term, election, candidacy, official-ID,
+and reviewed person-resolution records. Read-only `people`, `office-terms`, `elections`,
+and `candidacies` v1 operations are generated and operational. PostgreSQL remains
+canonical; winning does not create a term; names alone cannot resolve people; and public
+serializers omit private review fields. External identity references are optional,
+empty, and non-authoritative. Source ingestion, Verus identity/proof/update,
+participation, provenance writes, and scoring remain deferred.
 
 - No production iOS or Android app is released.
 - No public representative profile, category rating, representative signal, Civic Signal briefing, authenticated aggregate, VerusID claim, or Representative Accountability Score is live.

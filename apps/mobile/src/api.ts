@@ -3,9 +3,11 @@ import {
   readApiHealth,
   readJurisdictionRegistry,
   readMobileCompatibility,
+  readPeople,
   type HealthStatus,
   type JurisdictionRegistry,
   type MobileCompatibilityStatus,
+  type PublicRoleRegistry,
 } from '@rmr/contracts';
 
 export function readMobileHealth(
@@ -13,6 +15,13 @@ export function readMobileHealth(
   fetchImplementation?: typeof globalThis.fetch,
 ): Promise<HealthStatus> {
   return readApiHealth(createMobileClient(baseUrl, fetchImplementation));
+}
+
+export function readMobilePeople(
+  baseUrl: string,
+  fetchImplementation?: typeof globalThis.fetch,
+): Promise<PublicRoleRegistry> {
+  return readPeople(createMobileClient(baseUrl, fetchImplementation));
 }
 
 export function readMobileJurisdictionRegistry(

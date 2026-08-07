@@ -1,8 +1,8 @@
 # Versioned contract generation
 
-**Status:** Issue #60 contract foundation plus issue #49 synthetic registry read.
-Health, mobile compatibility, and the jurisdiction registry are operational; every
-other initial route family is proposed or disabled.
+**Status:** Issue #60 foundation plus issue #49 and #59 synthetic registry reads.
+Health, mobile compatibility, jurisdiction, and public-role reads are operational;
+remaining route families are proposed or disabled.
 
 ## Canonical sources and committed outputs
 
@@ -23,7 +23,7 @@ pnpm check:api-compat
 pnpm test:contract
 ```
 
-`check:contracts` rejects generated drift and validates the OpenAPI document, all eleven
+`check:contracts` rejects generated drift and validates the OpenAPI document, all twelve
 schemas, synthetic fixtures, operation metadata, privacy fields, and human-intent
 boundaries. `check:api-compat` compares the canonical contract with the parent commit and
 rejects unapproved breaking changes. An intentional break requires a versioned migration
@@ -55,6 +55,7 @@ It serves:
 - `GET /api/v1/health` as `200`;
 - `GET /api/v1/health/mobile` as `200` with foundation native-client compatibility;
 - `GET /api/v1/jurisdictions` as a typed `200` synthetic registry response; and
+- the four public-role lifecycle reads as typed `200` synthetic responses; and
 - all other requests as a typed `404 NOT_FOUND`.
 
 `pnpm --filter @rmr/contracts mock:smoke` starts the mock on an ephemeral local port,
@@ -65,5 +66,8 @@ external civic data, or network services.
 runtime schema document, client path type, and fixture export. The same validator is
 used at the API server boundary and by all six official client surfaces. The schema
 contains no person, term, candidacy, precise-location, account, or wallet fields.
+`public-role-registry.schema.json` separately generates the public person/term/election/
+candidacy graph. It forbids undocumented fields and makes every external identity
+reference explicitly non-canonical and non-authorizing.
 
 See [API_V1.md](./API_V1.md) for operation metadata and compatibility policy.

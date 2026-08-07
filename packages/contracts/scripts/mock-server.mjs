@@ -10,6 +10,7 @@ const fixture = async (name) =>
 const health = await fixture('health.ready.json');
 const mobileCompatibility = await fixture('mobile-compatibility.ready.json');
 const jurisdictions = await fixture('jurisdictions.synthetic.json');
+const publicRoles = await fixture('public-role-registry.synthetic.json');
 const notFound = await fixture('not-found.json');
 
 function send(response, status, value) {
@@ -34,6 +35,18 @@ export function createContractMockServer() {
     }
     if (request.method === 'GET' && url.pathname === '/api/v1/jurisdictions') {
       send(response, 200, jurisdictions);
+      return;
+    }
+    if (
+      request.method === 'GET' &&
+      [
+        '/api/v1/people',
+        '/api/v1/office-terms',
+        '/api/v1/elections',
+        '/api/v1/candidacies',
+      ].includes(url.pathname)
+    ) {
+      send(response, 200, publicRoles);
       return;
     }
     send(response, 404, notFound);
@@ -65,17 +78,19 @@ if (isEntrypoint) {
   const baseUrl = `http://127.0.0.1:${address.port}`;
 
   if (smoke) {
-    const [healthResponse, mobileResponse, jurisdictionResponse, missingResponse] =
+    const [healthResponse, mobileResponse, jurisdictionResponse, peopleResponse, missingResponse] =
       await Promise.all([
         fetch(`${baseUrl}/api/v1/health`),
         fetch(`${baseUrl}/api/v1/health/mobile`),
         fetch(`${baseUrl}/api/v1/jurisdictions`),
+        fetch(`${baseUrl}/api/v1/people`),
         fetch(`${baseUrl}/api/v1/missing`),
       ]);
     if (
       healthResponse.status !== 200 ||
       mobileResponse.status !== 200 ||
       jurisdictionResponse.status !== 200 ||
+      peopleResponse.status !== 200 ||
       missingResponse.status !== 404
     ) {
       throw new Error('Contract mock server returned an unexpected status.');

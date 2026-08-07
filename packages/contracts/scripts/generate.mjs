@@ -27,6 +27,7 @@ const schemaDefinitions = [
     'INFRASTRUCTURE_SERVICES_SCHEMA',
   ],
   ['outbox-event', 'outbox-event.schema.json', 'OUTBOX_EVENT_SCHEMA'],
+  ['public-role-registry', 'public-role-registry.schema.json', 'PUBLIC_ROLE_REGISTRY_SCHEMA'],
   [
     'representative-signal-command',
     'representative-signal-command.schema.json',
@@ -37,6 +38,7 @@ const fixtureDefinitions = [
   ['SYNTHETIC_HEALTH_READY', 'health.ready.json'],
   ['SYNTHETIC_MOBILE_COMPATIBILITY_READY', 'mobile-compatibility.ready.json'],
   ['SYNTHETIC_JURISDICTIONS', 'jurisdictions.synthetic.json'],
+  ['SYNTHETIC_PUBLIC_ROLE_REGISTRY', 'public-role-registry.synthetic.json'],
   ['SYNTHETIC_NOT_FOUND', 'not-found.json'],
 ];
 

@@ -172,7 +172,15 @@ assert(
   api.paths['/api/v1/jurisdictions'].get.responses['200'],
   'Jurisdiction registry must publish its successful read response.',
 );
-assert(operationIds.size === 3, 'Issue #49 must not make another route operation callable.');
+for (const operationId of [
+  'getPeopleRegistry',
+  'getOfficeTermRegistry',
+  'getElectionRegistry',
+  'getCandidacyRegistry',
+]) {
+  assert(operationIds.has(operationId), `Issue #59 operation is missing: ${operationId}.`);
+}
+assert(operationIds.size === 7, 'Issue #59 must expose exactly seven operational reads.');
 
 const publicForbidden = new Set([
   'accountid',
@@ -192,6 +200,7 @@ for (const filename of [
   'health-status.schema.json',
   'jurisdiction-registry.schema.json',
   'mobile-compatibility-status.schema.json',
+  'public-role-registry.schema.json',
 ]) {
   for (const key of propertyKeys(schemas.get(filename))) {
     assert(
@@ -230,6 +239,7 @@ const fixtureSchemas = new Map([
   ['jurisdictions.proposed.json', 'api-error.schema.json'],
   ['jurisdictions.synthetic.json', 'jurisdiction-registry.schema.json'],
   ['not-found.json', 'api-error.schema.json'],
+  ['public-role-registry.synthetic.json', 'public-role-registry.schema.json'],
 ]);
 for (const [fixtureName, schemaName] of fixtureSchemas) {
   const fixture = JSON.parse(await readFile(path.join(fixtureDirectory, fixtureName), 'utf8'));

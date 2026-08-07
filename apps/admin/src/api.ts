@@ -2,8 +2,10 @@ import {
   createAdminClient,
   readApiHealth,
   readJurisdictionRegistry,
+  readPeople,
   type HealthStatus,
   type JurisdictionRegistry,
+  type PublicRoleRegistry,
 } from '@rmr/contracts';
 
 export function readAdminHealth(
@@ -11,6 +13,13 @@ export function readAdminHealth(
   fetchImplementation?: typeof globalThis.fetch,
 ): Promise<HealthStatus> {
   return readApiHealth(createAdminClient(baseUrl, fetchImplementation));
+}
+
+export function readAdminPeople(
+  baseUrl: string,
+  fetchImplementation?: typeof globalThis.fetch,
+): Promise<PublicRoleRegistry> {
+  return readPeople(createAdminClient(baseUrl, fetchImplementation));
 }
 
 export function readAdminJurisdictionRegistry(

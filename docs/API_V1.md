@@ -10,6 +10,10 @@
 | `GET /api/v1/health` | Operational | Typed contract and safe feature-state discovery | None |
 | `GET /api/v1/health/mobile` | Operational | Synthetic native minimum-build and contract-version policy | None |
 | `GET /api/v1/jurisdictions` | Operational, synthetic | Effective-dated jurisdictions, districts, bodies, offices, identifiers, and gaps | Read only |
+| `GET /api/v1/people` | Operational, synthetic | People, names, related terms/candidacies, and reviewed resolution history | Read only |
+| `GET /api/v1/office-terms` | Operational, synthetic | Current/former/pending term lifecycle and public office contacts | Read only |
+| `GET /api/v1/elections` | Operational, synthetic | Effective-dated elections and related candidacies | Read only |
+| `GET /api/v1/candidacies` | Operational, synthetic | Declared through outcome candidacy lifecycle; winning creates no term | Read only |
 
 The registry accepts optional `asOf`, `countryCode`, `jurisdictionId`, and
 `includeHistorical` filters. Its default timestamp and every returned record are
@@ -18,7 +22,12 @@ address, and other location-resolution inputs—return the typed `400 VALIDATION
 envelope. The endpoint does not determine legal residence, citizenship, eligibility,
 or the district for a precise location.
 
-The initial v1 route families for representation, civic records, sources, coverage,
+The public-role reads accept `asOf`, `countryCode`, `includeHistorical`, and their one
+route-specific opaque ID. Public output omits reviewer references/private notes and
+returns inert external identity references only. Structural offices stay in
+`/api/v1/jurisdictions`.
+
+The remaining v1 route families for representation, sources, coverage,
 accounts, participation, evidence, due process, Civic Signal, notifications, Verus, and
 provenance are discoverable as empty OpenAPI path items. They do not define callable
 operations until their owning issue implements authorization, domain rules, persistence,
@@ -64,8 +73,8 @@ versions so installed clients can make compatibility decisions without depending
 Verus or other optional services. `releaseState: foundation` makes clear that this is not
 an app-store release claim.
 
-The jurisdiction response identifies deferred route families in `deferredFamilies`.
-People, office terms, candidacies, official-source ingestion, and location resolution
-remain unavailable until their owning issues implement them. Public attribution on
-synthetic records includes freshness, coverage, conflict, observation time, source
-reference, and supersession metadata.
+Each response identifies its deferred families. Official-source ingestion, location
+resolution, participation, public conduct, representative authority, identity proof,
+provenance, and scoring remain unavailable. Public attribution on synthetic records
+includes freshness, coverage, conflict, observation time, source reference, and
+supersession metadata.

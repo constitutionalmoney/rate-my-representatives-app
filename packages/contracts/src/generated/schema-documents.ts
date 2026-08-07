@@ -2003,6 +2003,1054 @@ export const OUTBOX_EVENT_SCHEMA = {
   }
 } as const;
 
+export const PUBLIC_ROLE_REGISTRY_SCHEMA = {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ratemyrepresentatives.com/v1/public-role-registry.schema.json",
+  "title": "PublicRoleRegistry",
+  "description": "Synthetic public people, office-term, election, candidacy, and reviewed person-resolution read model. PostgreSQL remains canonical and external identity references are inert.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "dataMode",
+    "generatedAt",
+    "asOf",
+    "selection",
+    "people",
+    "officeTerms",
+    "officeTermRelationships",
+    "officeTermContacts",
+    "elections",
+    "candidacies",
+    "officialIdentifiers",
+    "personResolutions",
+    "externalIdentityReferences",
+    "deferredFamilies",
+    "page"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "public-role-registry.v1"
+    },
+    "dataMode": {
+      "const": "synthetic"
+    },
+    "generatedAt": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "asOf": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "selection": {
+      "$ref": "#/$defs/selection"
+    },
+    "people": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/person"
+      }
+    },
+    "officeTerms": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/officeTerm"
+      }
+    },
+    "officeTermRelationships": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/termRelationship"
+      }
+    },
+    "officeTermContacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/termContact"
+      }
+    },
+    "elections": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/election"
+      }
+    },
+    "candidacies": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/candidacy"
+      }
+    },
+    "officialIdentifiers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/officialIdentifier"
+      }
+    },
+    "personResolutions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/personResolution"
+      }
+    },
+    "externalIdentityReferences": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/externalIdentityReference"
+      }
+    },
+    "deferredFamilies": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "const": "source_ingestion"
+        },
+        {
+          "const": "public_conduct"
+        },
+        {
+          "const": "participation"
+        },
+        {
+          "const": "representative_authorization"
+        },
+        {
+          "const": "identity_proof"
+        },
+        {
+          "const": "provenance"
+        },
+        {
+          "const": "representative_scoring"
+        }
+      ],
+      "items": false,
+      "minItems": 7,
+      "maxItems": 7
+    },
+    "page": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "nextCursor"
+      ],
+      "properties": {
+        "nextCursor": {
+          "type": "null"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "nullableTimestamp": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "nullableId": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "countryCode": {
+      "enum": [
+        "CA",
+        "US"
+      ]
+    },
+    "attribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assertionId",
+        "sourceReference",
+        "observedAt",
+        "freshness",
+        "coverage",
+        "conflict",
+        "supersedesAssertionId"
+      ],
+      "properties": {
+        "assertionId": {
+          "$ref": "#/$defs/id"
+        },
+        "sourceReference": {
+          "type": "string",
+          "pattern": "^synthetic://[a-zA-Z0-9./_:-]+$"
+        },
+        "observedAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "freshness": {
+          "enum": [
+            "current",
+            "stale",
+            "unknown",
+            "unavailable"
+          ]
+        },
+        "coverage": {
+          "enum": [
+            "supported",
+            "partial",
+            "gap",
+            "unsupported"
+          ]
+        },
+        "conflict": {
+          "enum": [
+            "clear",
+            "conflicting",
+            "unsupported"
+          ]
+        },
+        "supersedesAssertionId": {
+          "$ref": "#/$defs/nullableId"
+        }
+      }
+    },
+    "publicReview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "actorType",
+        "process",
+        "reasonCode",
+        "recordedAt"
+      ],
+      "properties": {
+        "actorType": {
+          "enum": [
+            "reviewer",
+            "admin",
+            "source_process"
+          ]
+        },
+        "process": {
+          "enum": [
+            "manual_review",
+            "reviewed_import",
+            "synthetic_seed"
+          ]
+        },
+        "reasonCode": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]{0,63}$"
+        },
+        "recordedAt": {
+          "$ref": "#/$defs/timestamp"
+        }
+      }
+    },
+    "personName": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "personNameId",
+        "displayName",
+        "kind",
+        "languageTag",
+        "effectiveFrom",
+        "effectiveTo",
+        "attribution"
+      ],
+      "properties": {
+        "personNameId": {
+          "$ref": "#/$defs/id"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "kind": {
+          "enum": [
+            "primary",
+            "alias",
+            "previous",
+            "transliteration"
+          ]
+        },
+        "languageTag": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 64
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "effectiveFrom": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "effectiveTo": {
+          "$ref": "#/$defs/nullableTimestamp"
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
+        }
+      }
+    },
+    "person": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "personId",
+        "recordState",
+        "names"
+      ],
+      "properties": {
+        "personId": {
+          "$ref": "#/$defs/id"
+        },
+        "recordState": {
+          "enum": [
+            "active",
+            "historical",
+            "superseded"
+          ]
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/personName"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "termTransition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "transitionId",
+        "fromState",
+        "toState",
+        "effectiveAt",
+        "attribution",
+        "review"
+      ],
+      "properties": {
+        "transitionId": {
+          "$ref": "#/$defs/id"
+        },
+        "fromState": {
+          "oneOf": [
+            {
+              "enum": [
+                "pending",
+                "active",
+                "cancelled",
+                "ended",
+                "resigned",
+                "removed",
+                "deceased",
+                "disqualified",
+                "superseded"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "toState": {
+          "enum": [
+            "pending",
+            "active",
+            "cancelled",
+            "ended",
+            "resigned",
+            "removed",
+            "deceased",
+            "disqualified",
+            "superseded"
+          ]
+        },
+        "effectiveAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
+        },
+        "review": {
+          "$ref": "#/$defs/publicReview"
+        }
+      }
+    },
+    "officeTerm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "officeTermId",
+        "personId",
+        "countryCode",
+        "jurisdictionId",
+        "districtId",
+        "publicBodyId",
+        "officeId",
+        "origin",
+        "selectionMethod",
+        "serviceCapacity",
+        "plannedStart",
+        "plannedEnd",
+        "currentState",
+        "tenureClassification",
+        "transitions"
+      ],
+      "properties": {
+        "officeTermId": {
+          "$ref": "#/$defs/id"
+        },
+        "personId": {
+          "$ref": "#/$defs/id"
+        },
+        "countryCode": {
+          "$ref": "#/$defs/countryCode"
+        },
+        "jurisdictionId": {
+          "$ref": "#/$defs/id"
+        },
+        "districtId": {
+          "$ref": "#/$defs/nullableId"
+        },
+        "publicBodyId": {
+          "$ref": "#/$defs/id"
+        },
+        "officeId": {
+          "$ref": "#/$defs/id"
+        },
+        "origin": {
+          "enum": [
+            "scheduled",
+            "election_result",
+            "appointment",
+            "ex_officio"
+          ]
+        },
+        "selectionMethod": {
+          "enum": [
+            "elected",
+            "appointed",
+            "mixed",
+            "ex_officio",
+            "unknown"
+          ]
+        },
+        "serviceCapacity": {
+          "enum": [
+            "regular",
+            "acting",
+            "interim"
+          ]
+        },
+        "plannedStart": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "plannedEnd": {
+          "$ref": "#/$defs/nullableTimestamp"
+        },
+        "currentState": {
+          "enum": [
+            "pending",
+            "active",
+            "cancelled",
+            "ended",
+            "resigned",
+            "removed",
+            "deceased",
+            "disqualified",
+            "superseded"
+          ]
+        },
+        "tenureClassification": {
+          "enum": [
+            "current",
+            "former",
+            "historical",
+            "pending"
+          ]
+        },
+        "transitions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/termTransition"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "termRelationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relationshipId",
+        "officeTermId",
+        "relatedOfficeTermId",
+        "kind",
+        "effectiveFrom",
+        "effectiveTo",
+        "attribution"
+      ],
+      "properties": {
+        "relationshipId": {
+          "$ref": "#/$defs/id"
+        },
+        "officeTermId": {
+          "$ref": "#/$defs/id"
+        },
+        "relatedOfficeTermId": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "enum": [
+            "predecessor_of",
+            "successor_of",
+            "supersedes"
+          ]
+        },
+        "effectiveFrom": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "effectiveTo": {
+          "$ref": "#/$defs/nullableTimestamp"
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
+        }
+      }
+    },
+    "termContact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contactId",
+        "officeTermId",
+        "kind",
+        "value",
+        "effectiveFrom",
+        "effectiveTo",
+        "attribution"
+      ],
+      "properties": {
+        "contactId": {
+          "$ref": "#/$defs/id"
+        },
+        "officeTermId": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "enum": [
+            "office_email",
+            "office_phone",
+            "office_url"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "effectiveFrom": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "effectiveTo": {
+          "$ref": "#/$defs/nullableTimestamp"
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
+        }
+      }
+    },
+    "electionVersion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "versionId",
+        "name",
+        "kind",
+        "state",
+        "scheduledAt",
+        "effectiveFrom",
+        "effectiveTo",
+        "attribution"
+      ],
+      "properties": {
+        "versionId": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "kind": {
+          "enum": [
+            "general",
+            "by_election",
+            "primary",
+            "special",
+            "other"
+          ]
+        },
+        "state": {
+          "enum": [
+            "scheduled",
+            "active",
+            "completed",
+            "cancelled",
+            "superseded"
+          ]
+        },
+        "scheduledAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "effectiveFrom": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "effectiveTo": {
+          "$ref": "#/$defs/nullableTimestamp"
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
+        }
+      }
+    },
+    "election": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "electionId",
+        "countryCode",
+        "jurisdictionId",
+        "districtId",
+        "publicBodyId",
+        "officeId",
+        "versions"
+      ],
+      "properties": {
+        "electionId": {
+          "$ref": "#/$defs/id"
+        },
+        "countryCode": {
+          "$ref": "#/$defs/countryCode"
+        },
+        "jurisdictionId": {
+          "$ref": "#/$defs/id"
+        },
+        "districtId": {
+          "$ref": "#/$defs/nullableId"
+        },
+        "publicBodyId": {
+          "$ref": "#/$defs/id"
+        },
+        "officeId": {
+          "$ref": "#/$defs/id"
+        },
+        "versions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/electionVersion"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "candidacyTransition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "transitionId",
+        "fromState",
+        "toState",
+        "effectiveAt",
+        "attribution",
+        "review"
+      ],
+      "properties": {
+        "transitionId": {
+          "$ref": "#/$defs/id"
+        },
+        "fromState": {
+          "oneOf": [
+            {
+              "enum": [
+                "declared",
+                "registered",
+                "qualified",
+                "withdrawn",
+                "suspended",
+                "rejected",
+                "disqualified",
+                "active",
+                "won",
+                "defeated",
+                "cancelled",
+                "superseded"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "toState": {
+          "enum": [
+            "declared",
+            "registered",
+            "qualified",
+            "withdrawn",
+            "suspended",
+            "rejected",
+            "disqualified",
+            "active",
+            "won",
+            "defeated",
+            "cancelled",
+            "superseded"
+          ]
+        },
+        "effectiveAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
+        },
+        "review": {
+          "$ref": "#/$defs/publicReview"
+        }
+      }
+    },
+    "candidacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidacyId",
+        "personId",
+        "electionId",
+        "countryCode",
+        "jurisdictionId",
+        "districtId",
+        "officeId",
+        "currentState",
+        "transitions"
+      ],
+      "properties": {
+        "candidacyId": {
+          "$ref": "#/$defs/id"
+        },
+        "personId": {
+          "$ref": "#/$defs/id"
+        },
+        "electionId": {
+          "$ref": "#/$defs/id"
+        },
+        "countryCode": {
+          "$ref": "#/$defs/countryCode"
+        },
+        "jurisdictionId": {
+          "$ref": "#/$defs/id"
+        },
+        "districtId": {
+          "$ref": "#/$defs/nullableId"
+        },
+        "officeId": {
+          "$ref": "#/$defs/id"
+        },
+        "currentState": {
+          "enum": [
+            "declared",
+            "registered",
+            "qualified",
+            "withdrawn",
+            "suspended",
+            "rejected",
+            "disqualified",
+            "active",
+            "won",
+            "defeated",
+            "cancelled",
+            "superseded"
+          ]
+        },
+        "transitions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/candidacyTransition"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "officialIdentifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "officialIdentifierId",
+        "entityKind",
+        "entityId",
+        "issuer",
+        "identifier",
+        "effectiveFrom",
+        "effectiveTo",
+        "attribution"
+      ],
+      "properties": {
+        "officialIdentifierId": {
+          "$ref": "#/$defs/id"
+        },
+        "entityKind": {
+          "enum": [
+            "person",
+            "office_term",
+            "election",
+            "candidacy"
+          ]
+        },
+        "entityId": {
+          "$ref": "#/$defs/id"
+        },
+        "issuer": {
+          "$ref": "#/$defs/id"
+        },
+        "identifier": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "effectiveFrom": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "effectiveTo": {
+          "$ref": "#/$defs/nullableTimestamp"
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
+        }
+      }
+    },
+    "resolutionEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidenceId",
+        "kind",
+        "reference",
+        "attribution"
+      ],
+      "properties": {
+        "evidenceId": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "enum": [
+            "name",
+            "official_identifier",
+            "office_context",
+            "district_context",
+            "effective_date",
+            "source_conflict"
+          ]
+        },
+        "reference": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
+        }
+      }
+    },
+    "personResolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decisionId",
+        "kind",
+        "inputPersonIds",
+        "outputPersonIds",
+        "effectiveAt",
+        "evidence",
+        "attribution",
+        "review",
+        "supersedesDecisionId"
+      ],
+      "properties": {
+        "decisionId": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "enum": [
+            "merge",
+            "split",
+            "distinct"
+          ]
+        },
+        "inputPersonIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "outputPersonIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "effectiveAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/resolutionEvidence"
+          },
+          "minItems": 2
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
+        },
+        "review": {
+          "$ref": "#/$defs/publicReview"
+        },
+        "supersedesDecisionId": {
+          "$ref": "#/$defs/nullableId"
+        }
+      }
+    },
+    "externalIdentityReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "externalIdentityReferenceId",
+        "personId",
+        "kind",
+        "immutableReference",
+        "displayNameSnapshot",
+        "canonicalAuthority",
+        "grantsAuthorization",
+        "effectiveFrom",
+        "effectiveTo",
+        "attribution"
+      ],
+      "properties": {
+        "externalIdentityReferenceId": {
+          "$ref": "#/$defs/id"
+        },
+        "personId": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "enum": [
+            "public_identifier",
+            "verus_id"
+          ]
+        },
+        "immutableReference": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "displayNameSnapshot": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "canonicalAuthority": {
+          "const": false
+        },
+        "grantsAuthorization": {
+          "const": false
+        },
+        "effectiveFrom": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "effectiveTo": {
+          "$ref": "#/$defs/nullableTimestamp"
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
+        }
+      }
+    },
+    "selection": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "id"
+          ],
+          "properties": {
+            "kind": {
+              "const": "all"
+            },
+            "id": {
+              "type": "null"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "id"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "person",
+                "office",
+                "office_term",
+                "election",
+                "candidacy"
+              ]
+            },
+            "id": {
+              "$ref": "#/$defs/id"
+            }
+          }
+        }
+      ]
+    }
+  }
+} as const;
+
 export const REPRESENTATIVE_SIGNAL_COMMAND_SCHEMA = {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schemas.ratemyrepresentatives.com/v1/representative-signal-command.schema.json",

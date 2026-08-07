@@ -141,6 +141,11 @@ Owns accounts, authenticators, sessions, roles, staff delegations, representativ
 
 Authentication tier and actor role remain separate. A linked VerusID is not a verified human, resident, representative, or truth source by itself.
 
+Issue #12 implements only the storage-independent security core: verifier ports, hashed
+rotating session policy, scoped effective-dated role grants, route/domain authorization,
+and typed audited feature gates. Its in-memory stores are synthetic test adapters, not a
+hosted account database. See `docs/AUTH_SECURITY_FOUNDATION.md`.
+
 ### 5.4 Civic Signal
 
 Owns subscriptions, follow rules, briefing generation, notification preferences, delivery state, corrections to earlier briefings, and source links.

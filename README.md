@@ -15,10 +15,18 @@ portal, admin, API, and worker surfaces are deliberately limited to placeholder 
 typed health/example behavior. Domain packages that belong to later roadmap issues
 remain explicit non-operational stubs.
 
+Issue #12 adds a synthetic, deny-by-default authentication and authorization core:
+generated passkey/email/session/role contracts, rotating revocable session policy,
+scoped role checks, service-agent prohibitions, and audited feature gates. Every account
+and high-risk gate remains false; no public account route, credential provider, database,
+or civic write is operational.
+
 - No production iOS or Android app is released.
 - No public representative profile, category rating, representative signal, Civic Signal briefing, authenticated aggregate, VerusID claim, or Representative Accountability Score is live.
 - No composite score is approved.
 - Checks and Balances Protocol integration is planned and disabled by default.
+- Passkey, verified-email, recovery, privileged access, representative claims, evidence,
+  AI, Verus, provenance, and scoring gates are disabled by default.
 - All Verus wallet, identity-update, and provenance work must be developed on **VRSCTEST** before any mainnet decision.
 - The folder tree below exists as a buildable foundation; its presence is not a claim that civic behavior is implemented.
 - The marketing site owns public explanation, early access, and prelaunch status. This repository owns application code, civic data, workflows, APIs, native clients, moderation, and Verus integration. The two systems must not share a production database.
@@ -289,6 +297,10 @@ a queue, object storage, Verus, wallet software, keys, or external civic data.
 See [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md),
 [docs/CONTRACTS.md](./docs/CONTRACTS.md), and
 [docs/adr/0001-mobile-first-typescript-monorepo.md](./docs/adr/0001-mobile-first-typescript-monorepo.md).
+
+The issue #12 security boundaries and non-operational status are documented in
+[docs/AUTH_SECURITY_FOUNDATION.md](./docs/AUTH_SECURITY_FOUNDATION.md) and
+[ADR 0002](./docs/adr/0002-deny-by-default-auth-boundaries.md).
 
 The application-only [Docker Compose foundation](./compose.yaml) can build the public
 web placeholder and internal synthetic API without Verus or backing services. It is

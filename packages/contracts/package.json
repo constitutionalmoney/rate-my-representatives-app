@@ -23,6 +23,7 @@
     "openapi-fetch": "0.17.0"
   },
   "devDependencies": {
+    "@rmr/config": "workspace:*",
     "json-schema-to-typescript": "15.0.4",
     "openapi-typescript": "7.13.0"
   }

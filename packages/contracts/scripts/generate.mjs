@@ -26,6 +26,24 @@ const outputs = [
       })
     ).replaceAll('\r\n', '\n'),
   },
+  {
+    path: path.join(generatedDirectory, 'authentication.ts'),
+    value: (
+      await compileFromFile(path.join(packageDirectory, 'schemas', 'authentication.schema.json'), {
+        bannerComment: '/* Generated from authentication.schema.json. Do not edit directly. */',
+        style: { singleQuote: true, trailingComma: 'all' },
+      })
+    ).replaceAll('\r\n', '\n'),
+  },
+  {
+    path: path.join(generatedDirectory, 'feature-gates.ts'),
+    value: (
+      await compileFromFile(path.join(packageDirectory, 'schemas', 'feature-gates.schema.json'), {
+        bannerComment: '/* Generated from feature-gates.schema.json. Do not edit directly. */',
+        style: { singleQuote: true, trailingComma: 'all' },
+      })
+    ).replaceAll('\r\n', '\n'),
+  },
 ];
 
 if (process.argv.includes('--check')) {

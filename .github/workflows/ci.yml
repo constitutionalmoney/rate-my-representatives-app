@@ -35,6 +35,8 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test:unit
       - run: pnpm test:contract
+      - run: pnpm test:integration
+      - run: pnpm test:security
       - run: pnpm check:contracts
       - run: pnpm check:dependencies
       - run: pnpm check:licenses

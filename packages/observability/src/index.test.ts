@@ -6,14 +6,22 @@ describe('privacy-safe observability', () => {
   it('redacts civic, identity, location, wallet, and authorization fields recursively', () => {
     expect(
       redactSensitive({
+        accountId: 'account-synthetic',
+        actorId: 'actor-synthetic',
         authorization: 'Bearer synthetic',
+        email: 'synthetic@example.invalid',
         nested: { precise_location: 'synthetic address', signal: 'concern' },
         publicId: 'fixture-1',
+        sessionToken: 'synthetic-session-token',
       }),
     ).toEqual({
+      accountId: '[REDACTED]',
+      actorId: '[REDACTED]',
       authorization: '[REDACTED]',
+      email: '[REDACTED]',
       nested: { precise_location: '[REDACTED]', signal: '[REDACTED]' },
       publicId: 'fixture-1',
+      sessionToken: '[REDACTED]',
     });
   });
 

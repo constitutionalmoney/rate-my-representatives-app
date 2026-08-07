@@ -3,6 +3,8 @@ import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
+import { FEATURE_FLAG_NAMES } from '../../packages/config/src/index.js';
+
 const root = process.cwd();
 const expectedDirectories = [
   'apps/mobile',
@@ -52,7 +54,9 @@ describe('issue #8 workspace foundation', () => {
     const example = await readFile(path.join(root, '.env.example'), 'utf8');
     const highRiskLines = example.split(/\r?\n/).filter((line) => /^[A-Z_]+_ENABLED=/.test(line));
 
-    expect(highRiskLines).toHaveLength(13);
+    expect(highRiskLines.map((line) => line.split('=')[0]).sort()).toEqual(
+      [...FEATURE_FLAG_NAMES].sort(),
+    );
     expect(highRiskLines.every((line) => line.endsWith('=false'))).toBe(true);
     expect(example).not.toMatch(/mainnet/i);
   });
@@ -62,7 +66,10 @@ describe('issue #8 workspace foundation', () => {
 
     expect(compose).toContain('dockerfile: infra/docker/api.Dockerfile');
     expect(compose).toContain('dockerfile: infra/docker/web.Dockerfile');
-    expect(compose.match(/[A-Z_]+_ENABLED: ['"]false['"]/g)).toHaveLength(13);
+    const composeFlags = compose.match(/[A-Z_]+_ENABLED: ['"]false['"]/g) ?? [];
+    expect(composeFlags.map((line) => line.split(':')[0]).sort()).toEqual(
+      [...FEATURE_FLAG_NAMES].sort(),
+    );
     expect(compose).not.toMatch(/postgres|redis|rabbitmq|minio/i);
     expect(compose).not.toMatch(/image:\s*[^\n]*verus/i);
     expect(compose).not.toContain('container_name:');

@@ -5,7 +5,8 @@ additional read access.
 
 ## Required checks
 
-- formatting, ESLint, strict type checking, unit/contract tests, and boundary tests;
+- formatting, ESLint, strict type checking, unit/contract/integration/security tests, and
+  boundary tests;
 - generated OpenAPI/JSON Schema drift;
 - server and web build matrix;
 - iOS and Android Expo prebuild matrix on platform-appropriate runners;
@@ -16,3 +17,8 @@ additional read access.
 The CI environment contains only synthetic foundation behavior. It does not receive
 database credentials, wallet material, Verus RPC access, production endpoints, or civic
 data. A successful check does not make an application feature operational.
+
+Issue #12 security checks cover one-time authentication challenges, session rotation and
+replay revocation, recovery, scoped roles, route/domain authorization, privileged-session
+requirements, secure client storage policy, audited feature gates, privacy redaction, and
+No Social Credit prohibitions.

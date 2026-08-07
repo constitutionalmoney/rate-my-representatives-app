@@ -84,6 +84,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@rmr/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@rmr/config':
         specifier: workspace:*
         version: link:../../packages/config
@@ -190,7 +193,11 @@ importers:
         specifier: workspace:*
         version: link:../../packages/observability
 
-  packages/auth: {}
+  packages/auth:
+    dependencies:
+      '@rmr/config':
+        specifier: workspace:*
+        version: link:../config
 
   packages/civic-signal: {}
 
@@ -204,6 +211,9 @@ importers:
         specifier: 0.17.0
         version: 0.17.0
     devDependencies:
+      '@rmr/config':
+        specifier: workspace:*
+        version: link:../config
       json-schema-to-typescript:
         specifier: 15.0.4
         version: 15.0.4

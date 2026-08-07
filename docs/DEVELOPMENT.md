@@ -1,6 +1,7 @@
 # Development foundation
 
-**Status:** Issue #8 repository foundation only. No civic feature is operational.
+**Status:** Issues #8 and #12 foundation. No civic feature or public account service is
+operational.
 
 ## Prerequisites
 
@@ -27,6 +28,8 @@ Do not use `npm install` or commit another package-manager lockfile.
 | `pnpm lint` | Run ESLint and workspace-boundary enforcement |
 | `pnpm typecheck` | Strictly type-check every workspace |
 | `pnpm test` | Run unit, contract, privacy/redaction, and tooling tests |
+| `pnpm test:integration` | Run synthetic authentication/session integration tests |
+| `pnpm test:security` | Run abuse, recovery, authorization, gates, and No Social Credit tests |
 | `pnpm build` | Build packages, server workers, native bundles, and web surfaces |
 | `pnpm check:contracts` | Reject uncommitted generated-contract drift |
 | `pnpm check:dependencies` | Fail on high or critical production dependency advisories |
@@ -37,6 +40,10 @@ Do not use `npm install` or commit another package-manager lockfile.
 The core workspace requires no database, queue, object storage, mail catcher, Verus node,
 wallet, identity, key, external endpoint, or real civic record. Those dependencies belong
 to later issues and must remain optional when introduced.
+
+Issue #12 authentication tests use only synthetic verifier/delivery ports and in-memory
+stores. Every account and privileged-access gate remains false in `.env.example` and the
+Dokploy Compose foundation.
 
 The initial Expo toolchain currently reports one moderate advisory in the transitive
 `xcode -> uuid@7.0.3` native-project generator path. RMR does not call that UUID API or

@@ -1,6 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
-import { mkdir, open, rm } from 'node:fs/promises';
+import { chmod, mkdir, open, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
@@ -22,10 +22,17 @@ const secretNames = [
 async function writeNewSecret(name, value) {
   try {
     const handle = await open(path.join(secretDirectory, name), 'wx', 0o600);
-    await handle.writeFile(`${value}\n`, 'utf8');
+    await handle.writeFile(value, 'utf8');
     await handle.close();
   } catch (error) {
-    if (error instanceof Error && 'code' in error && error.code === 'EEXIST') return;
+    if (error instanceof Error && 'code' in error && error.code === 'EEXIST') {
+      const secretPath = path.join(secretDirectory, name);
+      const current = (await readFile(secretPath, 'utf8')).trim();
+      if (current.length === 0) throw new Error(`Local secret ${name} is empty.`);
+      await writeFile(secretPath, current, { encoding: 'utf8', mode: 0o600 });
+      await chmod(secretPath, 0o600);
+      return;
+    }
     throw error;
   }
 }

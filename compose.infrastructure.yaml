@@ -129,7 +129,6 @@ services:
 
   queue-init:
     image: node:24.19.0-bookworm-slim
-    user: node
     environment:
       RABBITMQ_MANAGEMENT_URL: http://rabbitmq:15672
       RABBITMQ_USERNAME: rmr-local

@@ -14,10 +14,15 @@ SQL
 
 for migration in /opt/rmr/migrations/*.sql; do
   version="$(basename "${migration}")"
+  case "${version}" in
+    *[!A-Za-z0-9._-]*)
+      echo "Unsafe migration filename: ${version}." >&2
+      exit 65
+      ;;
+  esac
   checksum="$(sha256sum "${migration}" | cut -d ' ' -f 1)"
   existing="$(psql --tuples-only --no-align \
-    --set version="${version}" \
-    --command "SELECT sha256 FROM rmr_internal.schema_migration WHERE version = :'version'")"
+    --command "SELECT sha256 FROM rmr_internal.schema_migration WHERE version = '${version}'")"
 
   if [ -n "${existing}" ] && [ "${existing}" != "${checksum}" ]; then
     echo "Migration checksum mismatch for ${version}." >&2

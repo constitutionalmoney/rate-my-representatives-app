@@ -46,7 +46,9 @@ contract comparison; it does not contact a production API.
 
 Issue #61 makes native checks compile generated projects rather than stopping at prebuild.
 The iOS build disables code signing and the Android build uses only a debug key generated
-inside the runner. No signing or push secret is available to pull-request jobs. Mobile
+inside the runner. Seven-day development artifacts support isolated emulator/simulator
+review; they are not store candidates. No signing or push secret is available to
+pull-request jobs. Mobile
 policy tests cover malicious links, secure cleanup, minimal push payloads and token
 rotation, compatibility/minimum versions, accessibility rules, crash redaction, and the
 disabled VRSCTEST wallet transport harness. Dependency/licence review and both secret

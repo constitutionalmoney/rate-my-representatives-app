@@ -152,6 +152,13 @@ jobs:
         name: Compile unsigned Android debug APK
         working-directory: apps/mobile/android
         run: ./gradlew :app:assembleDebug --no-daemon
+      - if: matrix.platform == 'android'
+        uses: actions/upload-artifact@v4
+        with:
+          name: rmr-android-development-apk
+          path: apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 7
       - if: matrix.platform == 'ios'
         name: Install generated iOS pods
         working-directory: apps/mobile/ios
@@ -163,7 +170,14 @@ jobs:
           workspace="$(find . -maxdepth 1 -name '*.xcworkspace' -print -quit)"
           scheme="$(xcodebuild -workspace "$workspace" -list -json | ruby -rjson -e 'puts JSON.parse(STDIN.read).dig("workspace", "schemes").find { |item| !item.start_with?("Pods-") }')"
           test -n "$workspace" && test -n "$scheme"
-          xcodebuild -workspace "$workspace" -scheme "$scheme" -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
+          xcodebuild -workspace "$workspace" -scheme "$scheme" -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$PWD/build/DerivedData" CODE_SIGNING_ALLOWED=NO build
+      - if: matrix.platform == 'ios'
+        uses: actions/upload-artifact@v4
+        with:
+          name: rmr-ios-development-simulator-app
+          path: apps/mobile/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/*.app
+          if-no-files-found: error
+          retention-days: 7
 
   native-policy:
     name: Mobile configuration, SBOM, and security policy

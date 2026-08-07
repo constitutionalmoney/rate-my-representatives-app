@@ -365,7 +365,7 @@ paths:
       x-rmr-contract: *publicRoleReadContract
       responses: *publicRoleReadResponses
   /api/v1/sources:
-    description: Proposed; no source ingestion or read operation until issues #55 and #11.
+    description: Internal issue #55 ingestion is operational; no public source read operation until issue #11.
     x-rmr-feature-status: proposed
   /api/v1/claims:
     description: Proposed; no source-backed claim operation in this issue.

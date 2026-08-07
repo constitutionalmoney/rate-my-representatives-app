@@ -24,6 +24,8 @@ export {
   parseJurisdictionRegistry,
   parseMobileCompatibilityStatus,
   parsePublicRoleRegistry,
+  parseSourceConnectorCapability,
+  parseSourceCoverageSnapshot,
 } from './validators.js';
 export { LOCAL_INFRASTRUCTURE_CONTRACT } from './infrastructure.js';
 export type {
@@ -42,6 +44,8 @@ export type { HealthStatus as HealthStatusSchema } from './generated/health-stat
 export type { JurisdictionRegistry as JurisdictionRegistrySchema } from './generated/jurisdiction-registry.js';
 export type { MobileCompatibilityStatus as MobileCompatibilityStatusSchema } from './generated/mobile-compatibility-status.js';
 export type { PublicRoleRegistry as PublicRoleRegistrySchema } from './generated/public-role-registry.js';
+export type { SourceConnectorCapabilityV1 } from './generated/source-connector-capability.js';
+export type { SourceCoverageSnapshotV1 } from './generated/source-coverage-snapshot.js';
 export type {
   AuthenticatedSession as AuthenticatedSessionSchema,
   AuthenticationContract,

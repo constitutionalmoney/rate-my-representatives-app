@@ -1,8 +1,20 @@
 # Versioned contract generation
 
-**Status:** Issue #60 foundation plus issue #49 and #59 synthetic registry reads.
-Health, mobile compatibility, jurisdiction, and public-role reads are operational;
-remaining route families are proposed or disabled.
+## Official-source internal contracts
+
+Issue #55 adds generated TypeScript and runtime validators for
+`source-connector-capability.v1` and `source-coverage-snapshot.v1`. Synthetic Canada and
+United States connector fixtures plus a deterministic coverage fixture are validated in
+CI. These are internal package contracts; they add no OpenAPI operation. Public
+`/api/v1/sources` and `/api/v1/coverage` reads remain proposed for issue #11.
+
+Connector contract changes follow the same generated-drift and compatibility discipline
+as other schemas. A material access, rights, parser, schema, schedule, or safety-policy
+change creates a new connector version rather than mutating stored capability history.
+
+**Status:** Issue #60 foundation plus issue #49/#59 synthetic registry reads and issue
+#55 internal source contracts. Health, mobile compatibility, jurisdiction, and
+public-role reads are operational; remaining HTTP route families are proposed or disabled.
 
 ## Canonical sources and committed outputs
 
@@ -23,12 +35,16 @@ pnpm check:api-compat
 pnpm test:contract
 ```
 
-`check:contracts` rejects generated drift and validates the OpenAPI document, all twelve
+`check:contracts` rejects generated drift and validates the OpenAPI document, all fourteen
 schemas, synthetic fixtures, operation metadata, privacy fields, and human-intent
 boundaries. `check:api-compat` compares the canonical contract with the parent commit and
 rejects unapproved breaking changes. An intentional break requires a versioned migration
 and an exact reviewed finding in `packages/contracts/compatibility-approvals.json`; an
 approval is not a substitute for publishing the new API version.
+
+Issue #55 explicitly approves the required `SOURCE_INGESTION_ENABLED` field addition.
+All typed consumers receive the field as `false` by default; omitting it is rejected so
+older deployments cannot accidentally bypass the new deny-by-default execution gate.
 
 ## Generated clients and runtime validation
 

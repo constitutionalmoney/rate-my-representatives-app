@@ -222,7 +222,11 @@ importers:
 
   packages/config: {}
 
-  packages/connectors: {}
+  packages/connectors:
+    dependencies:
+      '@rmr/domain':
+        specifier: workspace:*
+        version: link:../domain
 
   packages/contracts:
     dependencies:

@@ -1,0 +1,278 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ratemyrepresentatives.com/source-connector-capability.schema.json",
+  "title": "SourceConnectorCapabilityV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "connectorId",
+    "connectorVersion",
+    "dataMode",
+    "approval",
+    "source",
+    "access",
+    "rights",
+    "identity",
+    "schedule",
+    "pagination",
+    "parser",
+    "content",
+    "behavior",
+    "owner"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "source-connector-capability.v1" },
+    "connectorId": { "$ref": "#/$defs/id" },
+    "connectorVersion": { "$ref": "#/$defs/id" },
+    "dataMode": { "enum": ["synthetic", "production"] },
+    "approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "reviewReference", "reviewedAt"],
+      "properties": {
+        "state": { "enum": ["synthetic_approved", "production_approved", "suspended"] },
+        "reviewReference": { "type": "string", "minLength": 1, "maxLength": 300 },
+        "reviewedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceId",
+        "publisher",
+        "authoritativeScope",
+        "countries",
+        "jurisdictionIds",
+        "recordTypes"
+      ],
+      "properties": {
+        "sourceId": { "$ref": "#/$defs/id" },
+        "publisher": { "type": "string", "minLength": 1, "maxLength": 300 },
+        "authoritativeScope": { "type": "string", "minLength": 1, "maxLength": 2000 },
+        "countries": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["CA", "US"] }
+        },
+        "jurisdictionIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "recordTypes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/recordType" }
+        }
+      }
+    },
+    "access": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "authentication",
+        "endpointOrigin",
+        "rateLimitPerMinute",
+        "obeyRobotsPolicy"
+      ],
+      "properties": {
+        "method": { "enum": ["https_json", "https_csv"] },
+        "authentication": { "enum": ["none", "api_key", "oauth_client", "client_certificate"] },
+        "endpointOrigin": { "type": "string", "format": "uri", "pattern": "^https://" },
+        "rateLimitPerMinute": { "type": "integer", "minimum": 1 },
+        "obeyRobotsPolicy": { "type": "boolean" }
+      }
+    },
+    "rights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "licenseName",
+        "termsUrl",
+        "attributionText",
+        "retentionDays",
+        "redistribution",
+        "snapshotStorage"
+      ],
+      "properties": {
+        "licenseName": { "type": "string", "minLength": 1 },
+        "termsUrl": { "type": "string", "format": "uri", "pattern": "^https://" },
+        "attributionText": { "type": "string", "minLength": 1 },
+        "retentionDays": { "type": "integer", "minimum": 0 },
+        "redistribution": { "enum": ["metadata_only", "permitted_snapshots"] },
+        "snapshotStorage": { "enum": ["prohibited", "quarantine_only", "permitted"] }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["externalIdentifierTypes", "effectiveDateSemantics"],
+      "properties": {
+        "externalIdentifierTypes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "effectiveDateSemantics": { "type": "string", "minLength": 1 }
+      }
+    },
+    "schedule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cadenceMinutes", "freshnessExpectedMinutes", "freshnessStaleMinutes"],
+      "properties": {
+        "cadenceMinutes": { "type": "integer", "minimum": 1 },
+        "freshnessExpectedMinutes": { "type": "integer", "minimum": 1 },
+        "freshnessStaleMinutes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "pagination": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["style", "checkpointVersion"],
+      "properties": {
+        "style": { "enum": ["none", "cursor", "page"] },
+        "checkpointVersion": { "$ref": "#/$defs/id" }
+      }
+    },
+    "parser": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["parserVersion", "schemaVersion"],
+      "properties": {
+        "parserVersion": { "$ref": "#/$defs/id" },
+        "schemaVersion": { "$ref": "#/$defs/id" }
+      }
+    },
+    "content": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "expectedContentTypes",
+        "permittedContentEncodings",
+        "maximumWireBytes",
+        "maximumDecodedBytes",
+        "maximumExpansionRatio",
+        "timeoutMs",
+        "maximumRedirects"
+      ],
+      "properties": {
+        "expectedContentTypes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "permittedContentEncodings": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["identity", "gzip", "br"] }
+        },
+        "maximumWireBytes": { "type": "integer", "minimum": 1 },
+        "maximumDecodedBytes": { "type": "integer", "minimum": 1 },
+        "maximumExpansionRatio": { "type": "number", "minimum": 1 },
+        "timeoutMs": { "type": "integer", "minimum": 1 },
+        "maximumRedirects": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "behavior": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["conflicts", "deletions", "retractions", "outages"],
+      "properties": {
+        "conflicts": { "const": "quarantine" },
+        "deletions": { "const": "review" },
+        "retractions": { "const": "review" },
+        "outages": { "const": "retry_then_dead_letter" }
+      }
+    },
+    "owner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["team", "incidentRunbook"],
+      "properties": {
+        "team": { "type": "string", "minLength": 1 },
+        "incidentRunbook": { "type": "string", "pattern": "^docs/runbooks/" }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "dataMode": { "const": "synthetic" } } },
+      "then": {
+        "properties": {
+          "approval": {
+            "type": "object",
+            "properties": { "state": { "enum": ["synthetic_approved", "suspended"] } }
+          },
+          "access": {
+            "type": "object",
+            "properties": {
+              "endpointOrigin": { "type": "string", "pattern": "^https://[^/]+\\.invalid/?$" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "dataMode": { "const": "production" } } },
+      "then": {
+        "properties": {
+          "approval": {
+            "type": "object",
+            "properties": { "state": { "enum": ["production_approved", "suspended"] } }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "rights": {
+            "type": "object",
+            "properties": { "redistribution": { "const": "metadata_only" } }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "rights": {
+            "type": "object",
+            "properties": { "snapshotStorage": { "const": "prohibited" } }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,191}$" },
+    "recordType": {
+      "enum": [
+        "jurisdiction",
+        "person",
+        "office",
+        "office_term",
+        "candidacy",
+        "election",
+        "vote",
+        "attendance",
+        "committee",
+        "expense",
+        "disclosure",
+        "statement",
+        "promise_position",
+        "event",
+        "outcome",
+        "correction"
+      ]
+    }
+  }
+}

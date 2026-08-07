@@ -59,26 +59,32 @@ await waitFor(async () => {
   return queue?.messages_ready === 1;
 }, 'Retry queue did not return the fixture to the primary queue.');
 
-const rejected = await jsonRequest(`/api/queues/${vhost}/rmr.jobs/get`, 'POST', {
-  ackmode: 'reject_requeue_false',
-  count: 1,
-  encoding: 'auto',
-  truncate: 50_000,
-});
-assert(Array.isArray(rejected) && rejected.length === 1, 'Primary fixture could not be rejected.');
+let rejected;
+await waitFor(async () => {
+  rejected = await jsonRequest(`/api/queues/${vhost}/rmr.jobs/get`, 'POST', {
+    ackmode: 'reject_requeue_false',
+    count: 1,
+    encoding: 'auto',
+    truncate: 50_000,
+  });
+  return Array.isArray(rejected) && rejected.length === 1;
+}, 'Primary fixture could not be rejected.');
 
 await waitFor(async () => {
   const queue = await jsonRequest(`/api/queues/${vhost}/rmr.jobs.dead`);
   return queue?.messages_ready === 1;
 }, 'Rejected fixture did not reach the dead-letter queue.');
 
-const dead = await jsonRequest(`/api/queues/${vhost}/rmr.jobs.dead/get`, 'POST', {
-  ackmode: 'ack_requeue_false',
-  count: 1,
-  encoding: 'auto',
-  truncate: 50_000,
-});
-assert(Array.isArray(dead) && dead[0]?.payload === fixture, 'Dead-letter payload changed.');
+let dead;
+await waitFor(async () => {
+  dead = await jsonRequest(`/api/queues/${vhost}/rmr.jobs.dead/get`, 'POST', {
+    ackmode: 'ack_requeue_false',
+    count: 1,
+    encoding: 'auto',
+    truncate: 50_000,
+  });
+  return Array.isArray(dead) && dead[0]?.payload === fixture;
+}, 'Dead-letter payload changed.');
 
 const apiPort = process.env.RMR_API_PORT ?? '3000';
 const storagePort = process.env.RMR_OBJECT_STORAGE_PORT ?? '9000';
@@ -271,6 +277,35 @@ assert(
   publicRoleSmoke.stderr || 'Public-role lifecycle PostgreSQL smoke failed.',
 );
 
+const sourceIngestionSmoke = spawnSync(
+  'docker',
+  [
+    'compose',
+    '-f',
+    'compose.infrastructure.yaml',
+    'exec',
+    '-T',
+    'postgres',
+    'psql',
+    '-U',
+    'rmr',
+    '-d',
+    'rmr',
+    '--set',
+    'ON_ERROR_STOP=1',
+    '--file=-',
+  ],
+  {
+    cwd: root,
+    encoding: 'utf8',
+    input: await readFile(path.join(root, 'scripts', 'smoke', 'source-ingestion.sql'), 'utf8'),
+  },
+);
+assert(
+  sourceIngestionSmoke.status === 0,
+  sourceIngestionSmoke.stderr || 'Official-source ingestion PostgreSQL smoke failed.',
+);
+
 const running = spawnSync(
   'docker',
   ['compose', '-f', 'compose.infrastructure.yaml', 'ps', '--services', '--status', 'running'],
@@ -284,5 +319,5 @@ assert(
 assert(!running.stdout.includes('signer-stub'), 'Core smoke unexpectedly started signer stubs.');
 
 process.stdout.write(
-  'Core infrastructure smoke passed: migration/seed, jurisdiction and public-role registries, atomic audit/outbox, leases/retry/DLQ/replay, bucket isolation, mail, API, worker, and Verus-off readiness.\n',
+  'Core infrastructure smoke passed: migration/seed, jurisdiction/public-role/source-ingestion registries, atomic audit/outbox, leases/retry/DLQ/replay, bucket isolation, mail, API, worker, and Verus-off readiness.\n',
 );

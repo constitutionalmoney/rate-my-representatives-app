@@ -54,12 +54,19 @@ serializers omit private review fields. External identity references are optiona
 empty, and non-authoritative. Source ingestion, Verus identity/proof/update,
 participation, provenance writes, and scoring remain deferred.
 
+Issue #55 adds an internal, candidate-only official-source framework with versioned
+capability declarations, SSRF-safe conditional retrieval, immutable hashes/metadata,
+checkpoint/idempotency/retry/quarantine/dead-letter behavior, reviewer-only canonical
+approval, correction history, and reproducible coverage. Approved Canada and United
+States pilots are synthetic `.invalid` fixtures. `SOURCE_INGESTION_ENABLED` remains
+false, no public source/profile read is added, and no material record is auto-published.
+
 - No production iOS or Android app is released.
 - No public representative profile, category rating, representative signal, Civic Signal briefing, authenticated aggregate, VerusID claim, or Representative Accountability Score is live.
 - No composite score is approved.
 - Checks and Balances Protocol integration is planned and disabled by default.
-- Passkey, verified-email, recovery, privileged access, representative claims, evidence,
-  AI, Verus, provenance, and scoring gates are disabled by default.
+- Passkey, verified-email, recovery, privileged access, source ingestion, representative
+  claims, evidence, AI, Verus, provenance, and scoring gates are disabled by default.
 - All Verus wallet, identity-update, and provenance work must be developed on **VRSCTEST** before any mainnet decision.
 - The folder tree below exists as a buildable foundation; its presence is not a claim that civic behavior is implemented.
 - Registry records and API examples are synthetic and do not describe real people, offices, or civic conditions.

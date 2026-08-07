@@ -240,6 +240,9 @@ const fixtureSchemas = new Map([
   ['jurisdictions.synthetic.json', 'jurisdiction-registry.schema.json'],
   ['not-found.json', 'api-error.schema.json'],
   ['public-role-registry.synthetic.json', 'public-role-registry.schema.json'],
+  ['source-connector-ca.synthetic.json', 'source-connector-capability.schema.json'],
+  ['source-connector-us.synthetic.json', 'source-connector-capability.schema.json'],
+  ['source-coverage.synthetic.json', 'source-coverage-snapshot.schema.json'],
 ]);
 for (const [fixtureName, schemaName] of fixtureSchemas) {
   const fixture = JSON.parse(await readFile(path.join(fixtureDirectory, fixtureName), 'utf8'));

@@ -1,8 +1,21 @@
 # Local and CI infrastructure
 
-**Status:** Issue #9 development foundation. Synthetic local/CI data only. This is not a
-production deployment recipe and it enables no civic, identity, scoring, provenance, or
-Verus write feature.
+## Source-ingestion persistence
+
+Migration `0005_official_source_ingestion.sql` and local seed
+`0004_synthetic_source_ingestion.sql` add two synthetic connector capabilities,
+retrieval/run/checkpoint metadata, review candidates, matching/transformation history,
+and explicit coverage gaps. No raw response bytes or real civic records are seeded.
+
+`pnpm infra:smoke` verifies that the seed publishes nothing automatically, a source
+process cannot approve, private fields fail closed, a reviewer can append an approved
+record plus a superseding correction, audit/outbox records correlate, history rejects
+updates, and Verus remains off. Reset/replay rules are documented in
+`docs/runbooks/SOURCE_INGESTION.md`.
+
+**Status:** Issue #9 infrastructure plus issue #55 synthetic source persistence. Local/CI
+data only. This is not a production deployment recipe and it enables no public source,
+civic, identity, scoring, provenance, or Verus write feature.
 
 ## Core stack
 

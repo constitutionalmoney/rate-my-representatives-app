@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "pilot-feed.v1",
+  "nextCursor": "us-page-2",
+  "records": [
+    {
+      "sourceRecordId": "us-person-001",
+      "countryCode": "US",
+      "jurisdictionId": "jurisdiction:us:example-state",
+      "recordType": "person",
+      "effectiveAt": "2026-08-01T00:00:00Z",
+      "availability": "available",
+      "subject": { "kind": "person", "id": "person:us:morgan-fields" },
+      "publicPayload": { "displayName": "Morgan Fields", "recordStatus": "candidate" },
+      "matchingHints": [
+        { "kind": "name", "value": "Morgan Fields" },
+        { "kind": "official_identifier", "value": "MORGAN-FIELDS-001" },
+        { "kind": "district_context", "value": "district:us:state-senate" }
+      ]
+    },
+    {
+      "sourceRecordId": "us-person-name-only",
+      "countryCode": "US",
+      "jurisdictionId": "jurisdiction:us:example-state",
+      "recordType": "person",
+      "effectiveAt": "2026-08-01T00:00:00Z",
+      "availability": "available",
+      "subject": { "kind": "unresolved", "id": "publisher-record:name-only" },
+      "publicPayload": { "displayName": "Morgan Field", "recordStatus": "candidate" },
+      "matchingHints": [{ "kind": "name", "value": "Morgan Field" }]
+    }
+  ]
+}

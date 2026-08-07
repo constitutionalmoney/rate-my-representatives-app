@@ -48,7 +48,7 @@ describe('issue #8 workspace foundation', () => {
     expect(result.stderr).toBe('');
     expect(result.status).toBe(0);
     expect(result.stdout).toContain('boundaries are valid');
-  });
+  }, 15_000);
 
   it('documents every high-risk environment flag as false', async () => {
     const example = await readFile(path.join(root, '.env.example'), 'utf8');

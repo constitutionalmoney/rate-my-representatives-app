@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "pilot-feed.v1",
+  "nextCursor": "ca-page-2",
+  "records": [
+    {
+      "sourceRecordId": "ca-person-001",
+      "countryCode": "CA",
+      "jurisdictionId": "jurisdiction:ca:maple",
+      "recordType": "person",
+      "effectiveAt": "2026-08-01T00:00:00Z",
+      "availability": "available",
+      "subject": { "kind": "person", "id": "person:ca:avery-quill" },
+      "publicPayload": { "displayName": "Avery Quill", "recordStatus": "current" },
+      "matchingHints": [
+        { "kind": "name", "value": "Avery Quill" },
+        { "kind": "official_identifier", "value": "SYN-CA-PERSON-001" },
+        { "kind": "office_context", "value": "office:ca:maple-member" }
+      ]
+    }
+  ]
+}

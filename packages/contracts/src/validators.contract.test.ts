@@ -4,6 +4,9 @@ import {
   SYNTHETIC_HEALTH_READY,
   SYNTHETIC_JURISDICTIONS,
   SYNTHETIC_PUBLIC_ROLE_REGISTRY,
+  SYNTHETIC_CA_SOURCE_CONNECTOR,
+  SYNTHETIC_SOURCE_COVERAGE,
+  SYNTHETIC_US_SOURCE_CONNECTOR,
 } from './generated/contract-fixtures.js';
 import {
   CIVIC_SIGNAL_BRIEFING_SCHEMA,
@@ -15,6 +18,8 @@ import {
   parseHealthStatus,
   parseJurisdictionRegistry,
   parsePublicRoleRegistry,
+  parseSourceConnectorCapability,
+  parseSourceCoverageSnapshot,
 } from './validators.js';
 
 describe('runtime contract validators', () => {
@@ -74,5 +79,23 @@ describe('runtime contract validators', () => {
       },
     ];
     expect(() => parsePublicRoleRegistry(fixture, 'server')).toThrow(ContractValidationError);
+  });
+
+  it('validates both synthetic connector capabilities and reproducible coverage', () => {
+    expect(parseSourceConnectorCapability(SYNTHETIC_CA_SOURCE_CONNECTOR, 'server')).toEqual(
+      SYNTHETIC_CA_SOURCE_CONNECTOR,
+    );
+    expect(parseSourceConnectorCapability(SYNTHETIC_US_SOURCE_CONNECTOR, 'server')).toEqual(
+      SYNTHETIC_US_SOURCE_CONNECTOR,
+    );
+    expect(parseSourceCoverageSnapshot(SYNTHETIC_SOURCE_COVERAGE, 'server')).toEqual(
+      SYNTHETIC_SOURCE_COVERAGE,
+    );
+    expect(() =>
+      parseSourceConnectorCapability(
+        { ...SYNTHETIC_CA_SOURCE_CONNECTOR, privateKey: 'forbidden' },
+        'server',
+      ),
+    ).toThrow(ContractValidationError);
   });
 });

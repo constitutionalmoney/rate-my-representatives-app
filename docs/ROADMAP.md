@@ -1,7 +1,7 @@
 # Rate My Representatives — End-to-End Roadmap
 
 **Status:** Build sequence for the official repository  
-**Last updated:** 2026-08-05  
+**Last updated:** 2026-08-07
 **Rule:** A merged feature is not operational until its release gates pass.
 
 ## Roadmap model
@@ -127,6 +127,13 @@ Build the canonical civic record before adding human opinion.
 ### Disabled
 
 Representative signals, category ratings, community context, composite scoring, public AI conclusions, and mainnet writes.
+
+### Foundation progress
+
+Issues #49, #59, and #55 now provide the synthetic jurisdiction graph, distinct
+public-role lifecycles, and internal candidate-only source ingestion respectively.
+The source pilots do not constitute production source approval or a public profile API;
+read-only source-backed profiles remain issue #11.
 
 ## Phase 3 — Native mobile and web discovery pilot
 

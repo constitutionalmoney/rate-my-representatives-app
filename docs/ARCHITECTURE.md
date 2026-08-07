@@ -1,7 +1,21 @@
 # Rate My Representatives — Target Architecture
 
-**Status:** Approved target; implementation remains pending  
-**Last updated:** 2026-08-05
+## Issue #55 source-ingestion boundary
+
+Official-source adapters are an internal candidate pipeline, not a public truth engine.
+An approved, versioned connector retrieves through an SSRF-safe resolver/transport
+boundary; PostgreSQL records immutable retrieval metadata/hash, transformations,
+matching evidence, explicit availability, review state, checkpoint history,
+quarantine/dead-letter state, and coverage. Raw source bytes do not enter PostgreSQL.
+
+The source process can stage or quarantine candidates only. Reviewer/admin approval is
+required before a candidate becomes a canonical reviewed record, and that state change
+shares a transaction with redacted audit and outbox records. Corrections append a
+superseding version. The issue #55 pilots are synthetic, execute without Verus, and add
+no public API. See `docs/SOURCE_INGESTION.md` and ADR 0008.
+
+**Status:** Approved target; issues through #55 are synthetic foundations
+**Last updated:** 2026-08-07
 
 ## 1. Architecture goals
 

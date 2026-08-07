@@ -6,12 +6,16 @@ import type { HealthStatus } from './generated/health-status.js';
 import type { JurisdictionRegistry } from './generated/jurisdiction-registry.js';
 import type { MobileCompatibilityStatus } from './generated/mobile-compatibility-status.js';
 import type { PublicRoleRegistry } from './generated/public-role-registry.js';
+import type { SourceConnectorCapabilityV1 } from './generated/source-connector-capability.js';
+import type { SourceCoverageSnapshotV1 } from './generated/source-coverage-snapshot.js';
 import {
   API_ERROR_SCHEMA,
   HEALTH_STATUS_SCHEMA,
   JURISDICTION_REGISTRY_SCHEMA,
   MOBILE_COMPATIBILITY_STATUS_SCHEMA,
   PUBLIC_ROLE_REGISTRY_SCHEMA,
+  SOURCE_CONNECTOR_CAPABILITY_SCHEMA,
+  SOURCE_COVERAGE_SNAPSHOT_SCHEMA,
 } from './generated/schema-documents.js';
 
 export type ContractBoundary = 'client' | 'server';
@@ -55,6 +59,10 @@ const serverMobileCompatibility = serverAjv.compile(MOBILE_COMPATIBILITY_STATUS_
 const clientMobileCompatibility = clientAjv.compile(MOBILE_COMPATIBILITY_STATUS_SCHEMA);
 const serverPublicRoleRegistry = serverAjv.compile(PUBLIC_ROLE_REGISTRY_SCHEMA);
 const clientPublicRoleRegistry = clientAjv.compile(PUBLIC_ROLE_REGISTRY_SCHEMA);
+const serverSourceConnector = serverAjv.compile(SOURCE_CONNECTOR_CAPABILITY_SCHEMA);
+const clientSourceConnector = clientAjv.compile(SOURCE_CONNECTOR_CAPABILITY_SCHEMA);
+const serverSourceCoverage = serverAjv.compile(SOURCE_COVERAGE_SNAPSHOT_SCHEMA);
+const clientSourceCoverage = clientAjv.compile(SOURCE_COVERAGE_SNAPSHOT_SCHEMA);
 const serverError = serverAjv.compile(API_ERROR_SCHEMA);
 const clientError = clientAjv.compile(API_ERROR_SCHEMA);
 
@@ -126,6 +134,30 @@ export function parsePublicRoleRegistry(
   return parseContract<PublicRoleRegistry>(
     'PublicRoleRegistry',
     boundary === 'client' ? clientPublicRoleRegistry : serverPublicRoleRegistry,
+    value,
+    boundary === 'client',
+  );
+}
+
+export function parseSourceConnectorCapability(
+  value: unknown,
+  boundary: ContractBoundary = 'client',
+): SourceConnectorCapabilityV1 {
+  return parseContract<SourceConnectorCapabilityV1>(
+    'SourceConnectorCapabilityV1',
+    boundary === 'client' ? clientSourceConnector : serverSourceConnector,
+    value,
+    boundary === 'client',
+  );
+}
+
+export function parseSourceCoverageSnapshot(
+  value: unknown,
+  boundary: ContractBoundary = 'client',
+): SourceCoverageSnapshotV1 {
+  return parseContract<SourceCoverageSnapshotV1>(
+    'SourceCoverageSnapshotV1',
+    boundary === 'client' ? clientSourceCoverage : serverSourceCoverage,
     value,
     boundary === 'client',
   );

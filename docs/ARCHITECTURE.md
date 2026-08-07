@@ -133,9 +133,17 @@ Issue #49 implements the first bounded slice of this context: stable jurisdictio
 district, public-body, and office IDs; effective-dated versions and graph edges;
 boundary references/digests; external identifiers; and public attribution/gap state.
 The graph permits multiple parents and overlaps and is not derived from a treasury,
-currency, VerusID, or other universal hierarchy. People, office terms, candidacies,
-source ingestion, and location resolution remain with their owning later issues. See
+currency, VerusID, or other universal hierarchy. Source ingestion and location
+resolution remain with their owning later issues. See
 `docs/JURISDICTION_REGISTRY.md`.
+
+Issue #59 implements the next bounded slice: separate people, office terms, elections,
+candidacies, official identifiers, and reviewed person-resolution history. PostgreSQL
+is canonical and structural offices remain in the issue #49 graph. Term and candidacy
+history is append-only and source-attributed; a candidacy win never creates a term.
+Public views omit reviewer references/private notes, and optional external identity
+references cannot overwrite facts or grant authorization. See
+`docs/PUBLIC_ROLE_LIFECYCLE.md`.
 
 ### 5.2 Source and coverage
 

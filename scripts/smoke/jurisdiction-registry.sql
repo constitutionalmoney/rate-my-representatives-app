@@ -86,7 +86,7 @@ BEGIN
   SELECT count(*) INTO forbidden_table_count
   FROM information_schema.tables
   WHERE table_schema = 'rmr_registry'
-    AND table_name ~ '(person|candidacy|office_term|treasury|reserve|currency|verus)';
+    AND table_name ~ '(treasury|reserve|currency|verus|score|rating)';
   IF forbidden_table_count <> 0 THEN
     RAISE EXCEPTION 'A deferred or prohibited table family was created';
   END IF;

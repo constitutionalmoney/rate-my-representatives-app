@@ -1,8 +1,9 @@
 # Development foundation
 
-**Status:** Issues #8, #12, #9, #19, #60, and #49 foundation. The effective-dated
-registry read is operational with synthetic data only. No public account service,
-Verus write, source ingestion, person/term/candidacy lifecycle, or production civic data is operational.
+**Status:** Issues #8, #12, #9, #19, #60, #49, and #59 foundation. Effective-dated
+jurisdiction and public-role reads are operational with synthetic data only. No public
+account service, Verus write, source ingestion, participation, scoring, or production
+civic data is operational.
 
 ## Prerequisites
 
@@ -32,7 +33,7 @@ Do not use `npm install` or commit another package-manager lockfile.
 | `pnpm test:integration` | Run synthetic authentication/session, infrastructure, audit/outbox, and registry integration tests |
 | `pnpm test:security` | Run abuse, recovery, authorization, gates, and No Social Credit tests |
 | `pnpm infra:up` | Generate local secrets and start the core PostgreSQL/queue/storage/mail/API/worker stack |
-| `pnpm infra:smoke` | Exercise migrations, registry constraints, retry/DLQ, storage isolation, and Verus-off health |
+| `pnpm infra:smoke` | Exercise migrations, jurisdiction/public-role constraints, retry/DLQ, storage isolation, and Verus-off health |
 | `pnpm infra:down` | Stop the local stack while preserving named volumes and generated secrets |
 | `pnpm build` | Build packages, server workers, native bundles, and web surfaces |
 | `pnpm check:contracts` | Reject generated drift and validate OpenAPI, schemas, fixtures, and policy metadata |
@@ -64,8 +65,8 @@ override is applied.
 - `apps/web`: responsive public-app placeholder and generated-client consumer.
 - `apps/portal`: representative portal placeholder.
 - `apps/admin`: administration/moderation placeholder.
-- `apps/api`: built-in Node HTTP adapter exposing health plus the typed, read-only
-  synthetic jurisdiction registry.
+- `apps/api`: built-in Node HTTP adapter exposing health plus typed, read-only synthetic
+  jurisdiction and public-role registries.
 - `apps/worker`: no-job worker process proving the worker build boundary.
 
 Start local placeholder surfaces with `pnpm dev:web`, `pnpm dev:api`, or

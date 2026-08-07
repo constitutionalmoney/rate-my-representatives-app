@@ -54,7 +54,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * Read source-attributed candidacy lifecycle records
+         * @description A won candidacy is not an office term and never creates one through this read operation.
+         */
+        get: operations["getCandidacyRegistry"];
         put?: never;
         post?: never;
         delete?: never;
@@ -182,7 +186,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Read effective election records */
+        get: operations["getElectionRegistry"];
         put?: never;
         post?: never;
         delete?: never;
@@ -306,7 +311,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Read effective office-term lifecycle records */
+        get: operations["getOfficeTermRegistry"];
         put?: never;
         post?: never;
         delete?: never;
@@ -338,7 +344,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Read public people and reviewed person-resolution history */
+        get: operations["getPeopleRegistry"];
         put?: never;
         post?: never;
         delete?: never;
@@ -479,6 +486,18 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        "$defs-attribution": {
+            assertionId: components["schemas"]["id"];
+            /** @enum {unknown} */
+            conflict: "clear" | "conflicting" | "unsupported";
+            /** @enum {unknown} */
+            coverage: "supported" | "partial" | "gap" | "unsupported";
+            /** @enum {unknown} */
+            freshness: "current" | "stale" | "unknown" | "unavailable";
+            observedAt: components["schemas"]["timestamp"];
+            sourceReference: string;
+            supersedesAssertionId: components["schemas"]["nullableId"];
+        };
         /**
          * ApiError
          * @description Privacy-safe v1 API error envelope that prevents account and authority enumeration.
@@ -531,6 +550,27 @@ export interface components {
             effectiveTo: components["schemas"]["timestamp"] | null;
             geometryReference: string;
             geometrySha256: string;
+        };
+        candidacy: {
+            candidacyId: components["schemas"]["id"];
+            countryCode: components["schemas"]["countryCode"];
+            /** @enum {unknown} */
+            currentState: "declared" | "registered" | "qualified" | "withdrawn" | "suspended" | "rejected" | "disqualified" | "active" | "won" | "defeated" | "cancelled" | "superseded";
+            districtId: components["schemas"]["nullableId"];
+            electionId: components["schemas"]["id"];
+            jurisdictionId: components["schemas"]["id"];
+            officeId: components["schemas"]["id"];
+            personId: components["schemas"]["id"];
+            transitions: components["schemas"]["candidacyTransition"][];
+        };
+        candidacyTransition: {
+            attribution: components["schemas"]["$defs-attribution"];
+            effectiveAt: components["schemas"]["timestamp"];
+            fromState: ("declared" | "registered" | "qualified" | "withdrawn" | "suspended" | "rejected" | "disqualified" | "active" | "won" | "defeated" | "cancelled" | "superseded") | null;
+            review: components["schemas"]["publicReview"];
+            /** @enum {unknown} */
+            toState: "declared" | "registered" | "qualified" | "withdrawn" | "suspended" | "rejected" | "disqualified" | "active" | "won" | "defeated" | "cancelled" | "superseded";
+            transitionId: components["schemas"]["id"];
         };
         /**
          * CivicSignalBriefing
@@ -588,6 +628,27 @@ export interface components {
             status: "active" | "future" | "former" | "superseded";
             versionId: components["schemas"]["id"];
         };
+        election: {
+            countryCode: components["schemas"]["countryCode"];
+            districtId: components["schemas"]["nullableId"];
+            electionId: components["schemas"]["id"];
+            jurisdictionId: components["schemas"]["id"];
+            officeId: components["schemas"]["id"];
+            publicBodyId: components["schemas"]["id"];
+            versions: components["schemas"]["electionVersion"][];
+        };
+        electionVersion: {
+            attribution: components["schemas"]["$defs-attribution"];
+            effectiveFrom: components["schemas"]["timestamp"];
+            effectiveTo: components["schemas"]["nullableTimestamp"];
+            /** @enum {unknown} */
+            kind: "general" | "by_election" | "primary" | "special" | "other";
+            name: string;
+            scheduledAt: components["schemas"]["timestamp"];
+            /** @enum {unknown} */
+            state: "scheduled" | "active" | "completed" | "cancelled" | "superseded";
+            versionId: components["schemas"]["id"];
+        };
         externalIdentifier: {
             attribution: components["schemas"]["attribution"];
             effectiveFrom: components["schemas"]["timestamp"];
@@ -598,6 +659,21 @@ export interface components {
             externalIdentifierId: components["schemas"]["id"];
             identifier: string;
             issuer: string;
+        };
+        externalIdentityReference: {
+            attribution: components["schemas"]["$defs-attribution"];
+            /** @constant */
+            canonicalAuthority: false;
+            displayNameSnapshot: string | null;
+            effectiveFrom: components["schemas"]["timestamp"];
+            effectiveTo: components["schemas"]["nullableTimestamp"];
+            externalIdentityReferenceId: components["schemas"]["id"];
+            /** @constant */
+            grantsAuthorization: false;
+            immutableReference: string;
+            /** @enum {unknown} */
+            kind: "public_identifier" | "verus_id";
+            personId: components["schemas"]["id"];
         };
         gap: {
             attribution: components["schemas"]["attribution"];
@@ -894,10 +970,34 @@ export interface components {
             };
         };
         MobileCompatibilityStatus: components["schemas"]["mobile-compatibility-status.schema"];
+        nullableId: components["schemas"]["id"] | null;
+        nullableTimestamp: components["schemas"]["timestamp"] | null;
         office: {
             countryCode: components["schemas"]["countryCode"];
             officeId: components["schemas"]["id"];
             versions: components["schemas"]["officeVersion"][];
+        };
+        officeTerm: {
+            countryCode: components["schemas"]["countryCode"];
+            /** @enum {unknown} */
+            currentState: "pending" | "active" | "cancelled" | "ended" | "resigned" | "removed" | "deceased" | "disqualified" | "superseded";
+            districtId: components["schemas"]["nullableId"];
+            jurisdictionId: components["schemas"]["id"];
+            officeId: components["schemas"]["id"];
+            officeTermId: components["schemas"]["id"];
+            /** @enum {unknown} */
+            origin: "scheduled" | "election_result" | "appointment" | "ex_officio";
+            personId: components["schemas"]["id"];
+            plannedEnd: components["schemas"]["nullableTimestamp"];
+            plannedStart: components["schemas"]["timestamp"];
+            publicBodyId: components["schemas"]["id"];
+            /** @enum {unknown} */
+            selectionMethod: "elected" | "appointed" | "mixed" | "ex_officio" | "unknown";
+            /** @enum {unknown} */
+            serviceCapacity: "regular" | "acting" | "interim";
+            /** @enum {unknown} */
+            tenureClassification: "current" | "former" | "historical" | "pending";
+            transitions: components["schemas"]["termTransition"][];
         };
         officeVersion: {
             attribution: components["schemas"]["attribution"];
@@ -913,6 +1013,46 @@ export interface components {
             slug: string;
             versionId: components["schemas"]["id"];
         };
+        officialIdentifier: {
+            attribution: components["schemas"]["$defs-attribution"];
+            effectiveFrom: components["schemas"]["timestamp"];
+            effectiveTo: components["schemas"]["nullableTimestamp"];
+            entityId: components["schemas"]["id"];
+            /** @enum {unknown} */
+            entityKind: "person" | "office_term" | "election" | "candidacy";
+            identifier: string;
+            issuer: components["schemas"]["id"];
+            officialIdentifierId: components["schemas"]["id"];
+        };
+        OpaqueId: string;
+        person: {
+            names: components["schemas"]["personName"][];
+            personId: components["schemas"]["id"];
+            /** @enum {unknown} */
+            recordState: "active" | "historical" | "superseded";
+        };
+        personName: {
+            attribution: components["schemas"]["$defs-attribution"];
+            displayName: string;
+            effectiveFrom: components["schemas"]["timestamp"];
+            effectiveTo: components["schemas"]["nullableTimestamp"];
+            /** @enum {unknown} */
+            kind: "primary" | "alias" | "previous" | "transliteration";
+            languageTag: string | null;
+            personNameId: components["schemas"]["id"];
+        };
+        personResolution: {
+            attribution: components["schemas"]["$defs-attribution"];
+            decisionId: components["schemas"]["id"];
+            effectiveAt: components["schemas"]["timestamp"];
+            evidence: components["schemas"]["resolutionEvidence"][];
+            inputPersonIds: components["schemas"]["id"][];
+            /** @enum {unknown} */
+            kind: "merge" | "split" | "distinct";
+            outputPersonIds: components["schemas"]["id"][];
+            review: components["schemas"]["publicReview"];
+            supersedesDecisionId: components["schemas"]["nullableId"];
+        };
         platformPolicy: {
             /** @constant */
             minimumAppVersion: "0.0.0-foundation";
@@ -921,6 +1061,232 @@ export interface components {
             /** @constant */
             releaseState: "foundation";
             supportedContractVersions: "v1"[];
+        };
+        /**
+         * PublicRoleRegistry
+         * @description Synthetic public people, office-term, election, candidacy, and reviewed person-resolution read model. PostgreSQL remains canonical and external identity references are inert.
+         */
+        "public-role-registry.schema": {
+            asOf: components["schemas"]["timestamp"];
+            candidacies: components["schemas"]["candidacy"][];
+            /** @constant */
+            dataMode: "synthetic";
+            deferredFamilies: [
+                "source_ingestion",
+                "public_conduct",
+                "participation",
+                "representative_authorization",
+                "identity_proof",
+                "provenance",
+                "representative_scoring"
+            ];
+            elections: components["schemas"]["election"][];
+            externalIdentityReferences: components["schemas"]["externalIdentityReference"][];
+            generatedAt: components["schemas"]["timestamp"];
+            officeTermContacts: components["schemas"]["termContact"][];
+            officeTermRelationships: components["schemas"]["termRelationship"][];
+            officeTerms: components["schemas"]["officeTerm"][];
+            officialIdentifiers: components["schemas"]["officialIdentifier"][];
+            page: {
+                nextCursor: null;
+            };
+            people: components["schemas"]["person"][];
+            personResolutions: components["schemas"]["personResolution"][];
+            /** @constant */
+            schemaVersion: "public-role-registry.v1";
+            selection: components["schemas"]["selection"];
+            $defs: {
+                id: string;
+                /** Format: date-time */
+                timestamp: string;
+                nullableTimestamp: components["schemas"]["timestamp"] | null;
+                nullableId: components["schemas"]["id"] | null;
+                /** @enum {unknown} */
+                countryCode: "CA" | "US";
+                attribution: {
+                    assertionId: components["schemas"]["id"];
+                    /** @enum {unknown} */
+                    conflict: "clear" | "conflicting" | "unsupported";
+                    /** @enum {unknown} */
+                    coverage: "supported" | "partial" | "gap" | "unsupported";
+                    /** @enum {unknown} */
+                    freshness: "current" | "stale" | "unknown" | "unavailable";
+                    observedAt: components["schemas"]["timestamp"];
+                    sourceReference: string;
+                    supersedesAssertionId: components["schemas"]["nullableId"];
+                };
+                publicReview: {
+                    /** @enum {unknown} */
+                    actorType: "reviewer" | "admin" | "source_process";
+                    /** @enum {unknown} */
+                    process: "manual_review" | "reviewed_import" | "synthetic_seed";
+                    reasonCode: string;
+                    recordedAt: components["schemas"]["timestamp"];
+                };
+                personName: {
+                    attribution: components["schemas"]["$defs-attribution"];
+                    displayName: string;
+                    effectiveFrom: components["schemas"]["timestamp"];
+                    effectiveTo: components["schemas"]["nullableTimestamp"];
+                    /** @enum {unknown} */
+                    kind: "primary" | "alias" | "previous" | "transliteration";
+                    languageTag: string | null;
+                    personNameId: components["schemas"]["id"];
+                };
+                person: {
+                    names: components["schemas"]["personName"][];
+                    personId: components["schemas"]["id"];
+                    /** @enum {unknown} */
+                    recordState: "active" | "historical" | "superseded";
+                };
+                termTransition: {
+                    attribution: components["schemas"]["$defs-attribution"];
+                    effectiveAt: components["schemas"]["timestamp"];
+                    fromState: ("pending" | "active" | "cancelled" | "ended" | "resigned" | "removed" | "deceased" | "disqualified" | "superseded") | null;
+                    review: components["schemas"]["publicReview"];
+                    /** @enum {unknown} */
+                    toState: "pending" | "active" | "cancelled" | "ended" | "resigned" | "removed" | "deceased" | "disqualified" | "superseded";
+                    transitionId: components["schemas"]["id"];
+                };
+                officeTerm: {
+                    countryCode: components["schemas"]["countryCode"];
+                    /** @enum {unknown} */
+                    currentState: "pending" | "active" | "cancelled" | "ended" | "resigned" | "removed" | "deceased" | "disqualified" | "superseded";
+                    districtId: components["schemas"]["nullableId"];
+                    jurisdictionId: components["schemas"]["id"];
+                    officeId: components["schemas"]["id"];
+                    officeTermId: components["schemas"]["id"];
+                    /** @enum {unknown} */
+                    origin: "scheduled" | "election_result" | "appointment" | "ex_officio";
+                    personId: components["schemas"]["id"];
+                    plannedEnd: components["schemas"]["nullableTimestamp"];
+                    plannedStart: components["schemas"]["timestamp"];
+                    publicBodyId: components["schemas"]["id"];
+                    /** @enum {unknown} */
+                    selectionMethod: "elected" | "appointed" | "mixed" | "ex_officio" | "unknown";
+                    /** @enum {unknown} */
+                    serviceCapacity: "regular" | "acting" | "interim";
+                    /** @enum {unknown} */
+                    tenureClassification: "current" | "former" | "historical" | "pending";
+                    transitions: components["schemas"]["termTransition"][];
+                };
+                termRelationship: {
+                    attribution: components["schemas"]["$defs-attribution"];
+                    effectiveFrom: components["schemas"]["timestamp"];
+                    effectiveTo: components["schemas"]["nullableTimestamp"];
+                    /** @enum {unknown} */
+                    kind: "predecessor_of" | "successor_of" | "supersedes";
+                    officeTermId: components["schemas"]["id"];
+                    relatedOfficeTermId: components["schemas"]["id"];
+                    relationshipId: components["schemas"]["id"];
+                };
+                termContact: {
+                    attribution: components["schemas"]["$defs-attribution"];
+                    contactId: components["schemas"]["id"];
+                    effectiveFrom: components["schemas"]["timestamp"];
+                    effectiveTo: components["schemas"]["nullableTimestamp"];
+                    /** @enum {unknown} */
+                    kind: "office_email" | "office_phone" | "office_url";
+                    officeTermId: components["schemas"]["id"];
+                    value: string;
+                };
+                electionVersion: {
+                    attribution: components["schemas"]["$defs-attribution"];
+                    effectiveFrom: components["schemas"]["timestamp"];
+                    effectiveTo: components["schemas"]["nullableTimestamp"];
+                    /** @enum {unknown} */
+                    kind: "general" | "by_election" | "primary" | "special" | "other";
+                    name: string;
+                    scheduledAt: components["schemas"]["timestamp"];
+                    /** @enum {unknown} */
+                    state: "scheduled" | "active" | "completed" | "cancelled" | "superseded";
+                    versionId: components["schemas"]["id"];
+                };
+                election: {
+                    countryCode: components["schemas"]["countryCode"];
+                    districtId: components["schemas"]["nullableId"];
+                    electionId: components["schemas"]["id"];
+                    jurisdictionId: components["schemas"]["id"];
+                    officeId: components["schemas"]["id"];
+                    publicBodyId: components["schemas"]["id"];
+                    versions: components["schemas"]["electionVersion"][];
+                };
+                candidacyTransition: {
+                    attribution: components["schemas"]["$defs-attribution"];
+                    effectiveAt: components["schemas"]["timestamp"];
+                    fromState: ("declared" | "registered" | "qualified" | "withdrawn" | "suspended" | "rejected" | "disqualified" | "active" | "won" | "defeated" | "cancelled" | "superseded") | null;
+                    review: components["schemas"]["publicReview"];
+                    /** @enum {unknown} */
+                    toState: "declared" | "registered" | "qualified" | "withdrawn" | "suspended" | "rejected" | "disqualified" | "active" | "won" | "defeated" | "cancelled" | "superseded";
+                    transitionId: components["schemas"]["id"];
+                };
+                candidacy: {
+                    candidacyId: components["schemas"]["id"];
+                    countryCode: components["schemas"]["countryCode"];
+                    /** @enum {unknown} */
+                    currentState: "declared" | "registered" | "qualified" | "withdrawn" | "suspended" | "rejected" | "disqualified" | "active" | "won" | "defeated" | "cancelled" | "superseded";
+                    districtId: components["schemas"]["nullableId"];
+                    electionId: components["schemas"]["id"];
+                    jurisdictionId: components["schemas"]["id"];
+                    officeId: components["schemas"]["id"];
+                    personId: components["schemas"]["id"];
+                    transitions: components["schemas"]["candidacyTransition"][];
+                };
+                officialIdentifier: {
+                    attribution: components["schemas"]["$defs-attribution"];
+                    effectiveFrom: components["schemas"]["timestamp"];
+                    effectiveTo: components["schemas"]["nullableTimestamp"];
+                    entityId: components["schemas"]["id"];
+                    /** @enum {unknown} */
+                    entityKind: "person" | "office_term" | "election" | "candidacy";
+                    identifier: string;
+                    issuer: components["schemas"]["id"];
+                    officialIdentifierId: components["schemas"]["id"];
+                };
+                resolutionEvidence: {
+                    attribution: components["schemas"]["$defs-attribution"];
+                    evidenceId: components["schemas"]["id"];
+                    /** @enum {unknown} */
+                    kind: "name" | "official_identifier" | "office_context" | "district_context" | "effective_date" | "source_conflict";
+                    reference: string;
+                };
+                personResolution: {
+                    attribution: components["schemas"]["$defs-attribution"];
+                    decisionId: components["schemas"]["id"];
+                    effectiveAt: components["schemas"]["timestamp"];
+                    evidence: components["schemas"]["resolutionEvidence"][];
+                    inputPersonIds: components["schemas"]["id"][];
+                    /** @enum {unknown} */
+                    kind: "merge" | "split" | "distinct";
+                    outputPersonIds: components["schemas"]["id"][];
+                    review: components["schemas"]["publicReview"];
+                    supersedesDecisionId: components["schemas"]["nullableId"];
+                };
+                externalIdentityReference: {
+                    attribution: components["schemas"]["$defs-attribution"];
+                    /** @constant */
+                    canonicalAuthority: false;
+                    displayNameSnapshot: string | null;
+                    effectiveFrom: components["schemas"]["timestamp"];
+                    effectiveTo: components["schemas"]["nullableTimestamp"];
+                    externalIdentityReferenceId: components["schemas"]["id"];
+                    /** @constant */
+                    grantsAuthorization: false;
+                    immutableReference: string;
+                    /** @enum {unknown} */
+                    kind: "public_identifier" | "verus_id";
+                    personId: components["schemas"]["id"];
+                };
+                selection: {
+                    id: null;
+                    /** @constant */
+                    kind: "all";
+                } | {
+                    id: components["schemas"]["id"];
+                    /** @enum {unknown} */
+                    kind: "person" | "office" | "office_term" | "election" | "candidacy";
+                };
+            };
         };
         publicBody: {
             countryCode: components["schemas"]["countryCode"];
@@ -939,6 +1305,15 @@ export interface components {
             status: "active" | "future" | "former" | "abolished";
             versionId: components["schemas"]["id"];
         };
+        publicReview: {
+            /** @enum {unknown} */
+            actorType: "reviewer" | "admin" | "source_process";
+            /** @enum {unknown} */
+            process: "manual_review" | "reviewed_import" | "synthetic_seed";
+            reasonCode: string;
+            recordedAt: components["schemas"]["timestamp"];
+        };
+        PublicRoleRegistry: components["schemas"]["public-role-registry.schema"];
         /**
          * RepresentativeSignalCommand
          * @description Disabled future human-intent command contract. No API operation accepts it in issue #60.
@@ -955,6 +1330,51 @@ export interface components {
             schemaVersion: "representative-signal-command.v1";
         };
         RepresentativeSignalCommand: components["schemas"]["representative-signal-command.schema"];
+        resolutionEvidence: {
+            attribution: components["schemas"]["$defs-attribution"];
+            evidenceId: components["schemas"]["id"];
+            /** @enum {unknown} */
+            kind: "name" | "official_identifier" | "office_context" | "district_context" | "effective_date" | "source_conflict";
+            reference: string;
+        };
+        selection: {
+            id: null;
+            /** @constant */
+            kind: "all";
+        } | {
+            id: components["schemas"]["id"];
+            /** @enum {unknown} */
+            kind: "person" | "office" | "office_term" | "election" | "candidacy";
+        };
+        termContact: {
+            attribution: components["schemas"]["$defs-attribution"];
+            contactId: components["schemas"]["id"];
+            effectiveFrom: components["schemas"]["timestamp"];
+            effectiveTo: components["schemas"]["nullableTimestamp"];
+            /** @enum {unknown} */
+            kind: "office_email" | "office_phone" | "office_url";
+            officeTermId: components["schemas"]["id"];
+            value: string;
+        };
+        termRelationship: {
+            attribution: components["schemas"]["$defs-attribution"];
+            effectiveFrom: components["schemas"]["timestamp"];
+            effectiveTo: components["schemas"]["nullableTimestamp"];
+            /** @enum {unknown} */
+            kind: "predecessor_of" | "successor_of" | "supersedes";
+            officeTermId: components["schemas"]["id"];
+            relatedOfficeTermId: components["schemas"]["id"];
+            relationshipId: components["schemas"]["id"];
+        };
+        termTransition: {
+            attribution: components["schemas"]["$defs-attribution"];
+            effectiveAt: components["schemas"]["timestamp"];
+            fromState: ("pending" | "active" | "cancelled" | "ended" | "resigned" | "removed" | "deceased" | "disqualified" | "superseded") | null;
+            review: components["schemas"]["publicReview"];
+            /** @enum {unknown} */
+            toState: "pending" | "active" | "cancelled" | "ended" | "resigned" | "removed" | "deceased" | "disqualified" | "superseded";
+            transitionId: components["schemas"]["id"];
+        };
         /** Format: date-time */
         timestamp: string;
     };
@@ -971,7 +1391,12 @@ export interface components {
             };
         };
     };
-    parameters: never;
+    parameters: {
+        /** @description Effective timestamp; defaults to the deterministic synthetic fixture timestamp. */
+        PublicRoleAsOf: string;
+        PublicRoleCountryCode: "CA" | "US";
+        PublicRoleIncludeHistorical: boolean;
+    };
     requestBodies: never;
     headers: {
         /** @description Explicit response cache policy. */
@@ -985,6 +1410,78 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    getCandidacyRegistry: {
+        parameters: {
+            query?: {
+                /** @description Effective timestamp; defaults to the deterministic synthetic fixture timestamp. */
+                asOf?: components["parameters"]["PublicRoleAsOf"];
+                candidacyId?: components["schemas"]["OpaqueId"];
+                countryCode?: components["parameters"]["PublicRoleCountryCode"];
+                includeHistorical?: components["parameters"]["PublicRoleIncludeHistorical"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Synthetic public-role lifecycle read model. */
+            200: {
+                headers: {
+                    "Cache-Control": components["headers"]["CacheControl"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["public-role-registry.schema"];
+                };
+            };
+            /** @description One or more query parameters are invalid. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["api-error.schema"];
+                };
+            };
+        };
+    };
+    getElectionRegistry: {
+        parameters: {
+            query?: {
+                /** @description Effective timestamp; defaults to the deterministic synthetic fixture timestamp. */
+                asOf?: components["parameters"]["PublicRoleAsOf"];
+                countryCode?: components["parameters"]["PublicRoleCountryCode"];
+                electionId?: components["schemas"]["OpaqueId"];
+                includeHistorical?: components["parameters"]["PublicRoleIncludeHistorical"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Synthetic public-role lifecycle read model. */
+            200: {
+                headers: {
+                    "Cache-Control": components["headers"]["CacheControl"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["public-role-registry.schema"];
+                };
+            };
+            /** @description One or more query parameters are invalid. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["api-error.schema"];
+                };
+            };
+        };
+    };
     getApiHealth: {
         parameters: {
             query?: never;
@@ -1067,6 +1564,78 @@ export interface operations {
                 };
             };
             503: components["responses"]["FeatureDisabled"];
+        };
+    };
+    getOfficeTermRegistry: {
+        parameters: {
+            query?: {
+                /** @description Effective timestamp; defaults to the deterministic synthetic fixture timestamp. */
+                asOf?: components["parameters"]["PublicRoleAsOf"];
+                countryCode?: components["parameters"]["PublicRoleCountryCode"];
+                includeHistorical?: components["parameters"]["PublicRoleIncludeHistorical"];
+                officeTermId?: components["schemas"]["OpaqueId"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Synthetic public-role lifecycle read model. */
+            200: {
+                headers: {
+                    "Cache-Control": components["headers"]["CacheControl"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["public-role-registry.schema"];
+                };
+            };
+            /** @description One or more query parameters are invalid. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["api-error.schema"];
+                };
+            };
+        };
+    };
+    getPeopleRegistry: {
+        parameters: {
+            query?: {
+                /** @description Effective timestamp; defaults to the deterministic synthetic fixture timestamp. */
+                asOf?: components["parameters"]["PublicRoleAsOf"];
+                countryCode?: components["parameters"]["PublicRoleCountryCode"];
+                includeHistorical?: components["parameters"]["PublicRoleIncludeHistorical"];
+                personId?: components["schemas"]["OpaqueId"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Synthetic public-role lifecycle read model. */
+            200: {
+                headers: {
+                    "Cache-Control": components["headers"]["CacheControl"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["public-role-registry.schema"];
+                };
+            };
+            /** @description One or more query parameters are invalid. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["api-error.schema"];
+                };
+            };
         };
     };
 }

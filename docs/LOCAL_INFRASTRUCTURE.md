@@ -17,8 +17,8 @@ pnpm infra:up
 
 The command starts only:
 
-- PostgreSQL 17 with a migration ledger and the
-  `synthetic.infrastructure.foundation.v1` seed marker;
+- PostgreSQL 17 with a migration ledger plus infrastructure, jurisdiction, and
+  public-role synthetic seed markers;
 - RabbitMQ with durable primary, retry, and dead-letter queues;
 - S3-compatible object storage built from the pinned upstream MinIO source release;
 - isolated `rmr-public`, `rmr-quarantine`, and `rmr-private` buckets;
@@ -35,14 +35,17 @@ Run the live acceptance smoke after startup:
 pnpm infra:smoke
 ```
 
-It proves both synthetic seed markers exist; effective-dated jurisdiction overlap and
+It proves all synthetic seed markers exist; effective-dated jurisdiction overlap and
 containment-cycle rejection; stable rename/external-ID history; public-view isolation;
 Canada/United States graph fixtures and public coverage/conflict gaps; state/audit/outbox atomicity; audit immutability and privacy
 rejection; lease, retry, dead-letter, replay, duplicate-delivery, and safe-metrics
 behavior; a synthetic RabbitMQ message returns from retry and reaches its dead-letter
 queue; only `approved-manifests/*` is anonymously public; quarantine/private objects are
 denied; Mailpit is ready; and API/worker health remains ready with no Verus container
-running. The PostgreSQL acceptance drills roll back their temporary synthetic rows.
+running. It also verifies separate person/term/election/candidacy records, lifecycle
+transition guards, non-name person resolution, non-authoritative external references,
+public-view privacy, and won-candidacy/term separation. The PostgreSQL acceptance drills
+roll back their temporary synthetic rows.
 
 ## Object-storage boundaries
 

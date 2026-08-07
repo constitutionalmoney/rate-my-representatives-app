@@ -11,6 +11,7 @@ import {
   readApiHealth,
   readJurisdictionRegistry,
   readMobileCompatibility,
+  readPeople,
 } from './client.js';
 import { createContractMockFetch } from './mock.js';
 
@@ -74,6 +75,22 @@ describe('generated v1 clients', () => {
         android: { releaseState: 'foundation', supportedContractVersions: ['v1'] },
         ios: { releaseState: 'foundation', supportedContractVersions: ['v1'] },
       },
+    });
+  });
+
+  it.each([
+    ['mobile', createMobileClient],
+    ['web', createWebClient],
+    ['portal', createPortalClient],
+    ['admin', createAdminClient],
+    ['worker', createWorkerClient],
+    ['public-sdk', createPublicSdkClient],
+  ] as const)('makes the public-role contract available to the %s client', async (_, factory) => {
+    const client = factory('http://127.0.0.1:3000', createContractMockFetch());
+    await expect(readPeople(client)).resolves.toMatchObject({
+      schemaVersion: 'public-role-registry.v1',
+      dataMode: 'synthetic',
+      externalIdentityReferences: [],
     });
   });
 });

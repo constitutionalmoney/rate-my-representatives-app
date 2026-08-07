@@ -4,8 +4,8 @@ info:
   version: 1.0.0-contract
   summary: Versioned mobile-first public-accountability API contract
   description: >-
-    Canonical v1 contract foundation. GET /api/v1/health, mobile compatibility,
-    and the synthetic effective-dated jurisdiction registry are operational.
+    Canonical v1 contract foundation. Health, mobile compatibility, the synthetic
+    effective-dated jurisdiction registry, and public-role lifecycle reads are operational.
     Every other route family is contract discovery only and has no operation.
   license:
     name: Apache-2.0
@@ -25,15 +25,15 @@ tags:
   - name: Representation
     description: Proposed representation resolution.
   - name: People
-    description: Proposed public-role people registry.
+    description: Operational synthetic public people and reviewed resolution history.
   - name: Offices
     description: Proposed public office registry.
   - name: Office terms
-    description: Proposed office-term registry.
+    description: Operational synthetic office-term lifecycle registry.
   - name: Elections
-    description: Proposed election registry.
+    description: Operational synthetic election registry.
   - name: Candidacies
-    description: Proposed candidacy lifecycle.
+    description: Operational synthetic candidacy lifecycle registry.
   - name: Sources
     description: Proposed official-source contracts.
   - name: Claims
@@ -258,20 +258,112 @@ paths:
     description: Proposed; no operation until the representation-resolution issue is implemented.
     x-rmr-feature-status: proposed
   /api/v1/people:
-    description: Proposed; no public-role person operation until issue #59.
-    x-rmr-feature-status: proposed
+    get:
+      operationId: getPeopleRegistry
+      summary: Read public people and reviewed person-resolution history
+      tags: [People]
+      deprecated: false
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/PublicRoleAsOf'
+        - $ref: '#/components/parameters/PublicRoleCountryCode'
+        - $ref: '#/components/parameters/PublicRoleIncludeHistorical'
+        - name: personId
+          in: query
+          required: false
+          schema: { $ref: '#/components/schemas/OpaqueId' }
+      x-rmr-contract: &publicRoleReadContract
+        featureStatus: operational
+        allowedActors: [anonymous, human, representative, staff, reviewer, admin, service, agent]
+        requiredScopes: []
+        authentication: none
+        recentPresence: false
+        privacyClassification: public
+        fieldPrivacy: public-fields-only
+        publicSerializer: public-role-registry-v1
+        privateSerializer: not-applicable
+        idempotency: not-applicable
+        concurrency: none
+        rateLimitClass: public-read
+        errorCodes: [VALIDATION_ERROR, FEATURE_DISABLED, MAINTENANCE]
+        auditEffect: none
+        outboxEffect: none
+        pagination: terminal-cursor
+        filters: [asOf, countryCode, includeHistorical, entityId]
+        sort: stable-id
+        cache: no-store
+        versionPolicy: additive-v1
+        sourceMetadata: synthetic-attribution-per-record
+      responses: &publicRoleReadResponses
+        '200':
+          description: Synthetic public-role lifecycle read model.
+          headers:
+            Cache-Control: { $ref: '#/components/headers/CacheControl' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PublicRoleRegistry' }
+              examples:
+                syntheticPublicRoles: { $ref: '#/components/examples/SyntheticPublicRoleRegistry' }
+        '400':
+          description: One or more query parameters are invalid.
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/ApiError' }
   /api/v1/offices:
-    description: Proposed; no office operation until issue #59.
+    description: Structural offices remain operational through the nested /api/v1/jurisdictions graph; no duplicate office operation is added.
     x-rmr-feature-status: proposed
   /api/v1/office-terms:
-    description: Proposed; no office-term operation until issue #59.
-    x-rmr-feature-status: proposed
+    get:
+      operationId: getOfficeTermRegistry
+      summary: Read effective office-term lifecycle records
+      tags: [Office terms]
+      deprecated: false
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/PublicRoleAsOf'
+        - $ref: '#/components/parameters/PublicRoleCountryCode'
+        - $ref: '#/components/parameters/PublicRoleIncludeHistorical'
+        - name: officeTermId
+          in: query
+          required: false
+          schema: { $ref: '#/components/schemas/OpaqueId' }
+      x-rmr-contract: *publicRoleReadContract
+      responses: *publicRoleReadResponses
   /api/v1/elections:
-    description: Proposed; no election operation in this issue.
-    x-rmr-feature-status: proposed
+    get:
+      operationId: getElectionRegistry
+      summary: Read effective election records
+      tags: [Elections]
+      deprecated: false
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/PublicRoleAsOf'
+        - $ref: '#/components/parameters/PublicRoleCountryCode'
+        - $ref: '#/components/parameters/PublicRoleIncludeHistorical'
+        - name: electionId
+          in: query
+          required: false
+          schema: { $ref: '#/components/schemas/OpaqueId' }
+      x-rmr-contract: *publicRoleReadContract
+      responses: *publicRoleReadResponses
   /api/v1/candidacies:
-    description: Proposed; no candidacy operation until issue #59.
-    x-rmr-feature-status: proposed
+    get:
+      operationId: getCandidacyRegistry
+      summary: Read source-attributed candidacy lifecycle records
+      description: A won candidacy is not an office term and never creates one through this read operation.
+      tags: [Candidacies]
+      deprecated: false
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/PublicRoleAsOf'
+        - $ref: '#/components/parameters/PublicRoleCountryCode'
+        - $ref: '#/components/parameters/PublicRoleIncludeHistorical'
+        - name: candidacyId
+          in: query
+          required: false
+          schema: { $ref: '#/components/schemas/OpaqueId' }
+      x-rmr-contract: *publicRoleReadContract
+      responses: *publicRoleReadResponses
   /api/v1/sources:
     description: Proposed; no source ingestion or read operation until issues #55 and #11.
     x-rmr-feature-status: proposed
@@ -343,6 +435,23 @@ paths:
     description: Disabled provenance route family; issue #35 owns any future VRSCTEST writer.
     x-rmr-feature-status: disabled
 components:
+  parameters:
+    PublicRoleAsOf:
+      name: asOf
+      in: query
+      required: false
+      description: Effective timestamp; defaults to the deterministic synthetic fixture timestamp.
+      schema: { type: string, format: date-time }
+    PublicRoleCountryCode:
+      name: countryCode
+      in: query
+      required: false
+      schema: { type: string, enum: [CA, US] }
+    PublicRoleIncludeHistorical:
+      name: includeHistorical
+      in: query
+      required: false
+      schema: { type: boolean, default: false }
   headers:
     CacheControl:
       description: Explicit response cache policy.
@@ -359,6 +468,9 @@ components:
         type: integer
         minimum: 0
   schemas:
+    OpaqueId:
+      type: string
+      pattern: '^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$'
     ApiError:
       $ref: ../schemas/api-error.schema.json
     CivicSignalBriefing:
@@ -369,6 +481,8 @@ components:
       $ref: ../schemas/jurisdiction-registry.schema.json
     MobileCompatibilityStatus:
       $ref: ../schemas/mobile-compatibility-status.schema.json
+    PublicRoleRegistry:
+      $ref: ../schemas/public-role-registry.schema.json
     RepresentativeSignalCommand:
       $ref: ../schemas/representative-signal-command.schema.json
   responses:
@@ -440,3 +554,6 @@ components:
             minimumAppVersion: 0.0.0-foundation
             minimumBuildNumber: 1
             supportedContractVersions: [v1]
+    SyntheticPublicRoleRegistry:
+      summary: Synthetic public-role lifecycle fixture
+      externalValue: ../fixtures/public-role-registry.synthetic.json

@@ -73,6 +73,27 @@ describe('issue #9 local infrastructure foundation', () => {
     expect(privatePolicy).not.toMatch(/rmr-quarantine|rmr-public/);
   });
 
+  it('applies prefix conditions only to MinIO actions that support them', async () => {
+    const publicPolicy = JSON.parse(
+      await read('infra/object-storage/policies/api-public-reader.json'),
+    ) as {
+      Statement: Array<{ Action: string[]; Condition?: unknown }>;
+    };
+    const bucketLocationStatement = publicPolicy.Statement.find((statement) =>
+      statement.Action.includes('s3:GetBucketLocation'),
+    );
+    const listStatement = publicPolicy.Statement.find((statement) =>
+      statement.Action.includes('s3:ListBucket'),
+    );
+
+    expect(bucketLocationStatement?.Condition).toBeUndefined();
+    expect(listStatement?.Condition).toEqual({
+      StringLike: {
+        's3:prefix': ['approved-manifests', 'approved-manifests/*'],
+      },
+    });
+  });
+
   it('provides checksummed migrations, synthetic seed data, and guarded reset behavior', async () => {
     const [runner, seed, manager] = await Promise.all([
       read('infra/postgres/run-migrations.sh'),

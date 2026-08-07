@@ -1,0 +1,162 @@
+name: Foundation CI
+
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+    branches: [main, 'codex/**']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: foundation-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: true
+
+jobs:
+  quality:
+    name: Format, lint, types, and tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.20.0
+          run_install: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm format:check
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test:unit
+      - run: pnpm test:contract
+      - run: pnpm test:integration
+      - run: pnpm test:security
+      - run: pnpm check:contracts
+      - run: pnpm check:api-compat
+      - run: pnpm check:dependencies
+      - run: pnpm check:licenses
+      - run: pnpm check:secrets
+
+  build:
+    name: Build ${{ matrix.component }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - component: server
+            filter: '@rmr/api...'
+          - component: worker
+            filter: '@rmr/worker...'
+          - component: public-web
+            filter: '@rmr/web...'
+          - component: portal
+            filter: '@rmr/portal...'
+          - component: admin
+            filter: '@rmr/admin...'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.20.0
+          run_install: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm generate:contracts
+      - run: pnpm --filter "${{ matrix.filter }}" build
+
+  core-infrastructure:
+    name: Ephemeral core infrastructure
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.20.0
+          run_install: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm infra:config
+      - run: pnpm infra:up
+      - run: pnpm infra:smoke
+      - if: failure()
+        run: docker compose -f compose.infrastructure.yaml logs --no-color --tail 200
+      - if: always()
+        run: pnpm infra:down
+
+  dokploy-compose:
+    name: Dokploy application Compose
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - run: docker compose -f compose.yaml config --quiet
+      - run: docker compose -f compose.yaml -f compose.local.yaml up --build --wait
+      - name: Smoke public application routes
+        run: |
+          node --input-type=module -e "const base='http://127.0.0.1:8080'; const [health,mobile,jurisdictions]=await Promise.all([fetch(base+'/api/v1/health'),fetch(base+'/api/v1/health/mobile'),fetch(base+'/api/v1/jurisdictions')]); if(health.status!==200||mobile.status!==200||jurisdictions.status!==200) process.exit(1);"
+      - if: failure()
+        run: docker compose -f compose.yaml -f compose.local.yaml logs --no-color --tail 200
+      - if: always()
+        run: docker compose -f compose.yaml -f compose.local.yaml down --volumes
+
+  native-generation:
+    name: Generate ${{ matrix.platform }} native project
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: android
+            os: ubuntu-latest
+          - platform: ios
+            os: macos-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.20.0
+          run_install: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm "mobile:prebuild:${{ matrix.platform }}"
+
+  dependency-review:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

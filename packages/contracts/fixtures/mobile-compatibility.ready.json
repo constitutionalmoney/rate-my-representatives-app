@@ -1,0 +1,22 @@
+{
+  "status": "compatible",
+  "contract": {
+    "currentVersion": "v1",
+    "minimumSupportedVersion": "v1",
+    "supportedVersions": ["v1"]
+  },
+  "platforms": {
+    "ios": {
+      "releaseState": "foundation",
+      "minimumAppVersion": "0.0.0-foundation",
+      "minimumBuildNumber": 1,
+      "supportedContractVersions": ["v1"]
+    },
+    "android": {
+      "releaseState": "foundation",
+      "minimumAppVersion": "0.0.0-foundation",
+      "minimumBuildNumber": 1,
+      "supportedContractVersions": ["v1"]
+    }
+  }
+}

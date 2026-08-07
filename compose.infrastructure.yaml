@@ -1,0 +1,464 @@
+name: rate-my-representatives-local
+
+x-disabled-features: &disabled-features
+  PASSKEY_AUTH_ENABLED: 'false'
+  VERIFIED_EMAIL_AUTH_ENABLED: 'false'
+  ACCOUNT_RECOVERY_ENABLED: 'false'
+  ACCOUNT_DATA_ACCESS_ENABLED: 'false'
+  ACCOUNT_EXPORT_ENABLED: 'false'
+  ACCOUNT_CORRECTION_ENABLED: 'false'
+  ACCOUNT_DELETION_ENABLED: 'false'
+  PRIVILEGED_ACCESS_ENABLED: 'false'
+  NATIVE_PARTICIPATION_ENABLED: 'false'
+  CIVIC_SIGNAL_ENABLED: 'false'
+  REPRESENTATIVE_SIGNALS_ENABLED: 'false'
+  CATEGORY_RATINGS_ENABLED: 'false'
+  COMMUNITY_CONTEXT_ENABLED: 'false'
+  EVIDENCE_SUBMISSION_ENABLED: 'false'
+  AI_RESEARCH_ENABLED: 'false'
+  VERUS_ID_LINKING_ENABLED: 'false'
+  VERUS_AUTH_ENABLED: 'false'
+  REPRESENTATIVE_CLAIMS_ENABLED: 'false'
+  REPRESENTATIVE_VERUS_CLAIMS_ENABLED: 'false'
+  VERUS_IDENTITY_UPDATE_ENABLED: 'false'
+  CBC_ATTESTATION_ENABLED: 'false'
+  PROVENANCE_WRITES_ENABLED: 'false'
+  VERUS_ANCHORING_ENABLED: 'false'
+  COMPOSITE_SCORE_ENABLED: 'false'
+
+x-core-application-environment: &core-application-environment
+  NODE_ENV: development
+  DATABASE_HOST: postgres
+  DATABASE_PORT: '5432'
+  DATABASE_NAME: rmr
+  DATABASE_USER: rmr
+  DATABASE_PASSWORD_FILE: /run/secrets/postgres_password
+  QUEUE_HOST: rabbitmq
+  QUEUE_PORT: '5672'
+  QUEUE_USERNAME: rmr-local
+  QUEUE_VHOST: /
+  QUEUE_PASSWORD_FILE: /run/secrets/rabbitmq_password
+  OBJECT_STORAGE_ENDPOINT: http://object-storage:9000
+  OBJECT_STORAGE_PUBLIC_BUCKET: rmr-public
+  OBJECT_STORAGE_QUARANTINE_BUCKET: rmr-quarantine
+  OBJECT_STORAGE_PRIVATE_BUCKET: rmr-private
+  SMTP_HOST: mailpit
+  SMTP_PORT: '1025'
+  VERUS_NETWORK: VRSCTEST
+  <<: *disabled-features
+
+services:
+  postgres:
+    image: postgres:17.10-alpine
+    environment:
+      POSTGRES_DB: rmr
+      POSTGRES_USER: rmr
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    secrets:
+      - postgres_password
+    ports:
+      - '127.0.0.1:${RMR_POSTGRES_PORT:-5432}:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - core-internal
+      - local-access
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U rmr -d rmr']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
+    restart: unless-stopped
+
+  migrations:
+    image: postgres:17.10-alpine
+    environment:
+      PGDATABASE: rmr
+      PGHOST: postgres
+      PGUSER: rmr
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    secrets:
+      - postgres_password
+    volumes:
+      - ./infra/postgres/run-migrations.sh:/opt/rmr/run-migrations.sh:ro
+      - ./packages/db/migrations:/opt/rmr/migrations:ro
+      - ./packages/db/seeds/local:/opt/rmr/seeds:ro
+    command: ['/bin/sh', '/opt/rmr/run-migrations.sh']
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - core-internal
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    restart: 'no'
+
+  rabbitmq:
+    image: rabbitmq:4.3.4-management-alpine
+    hostname: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: rmr-local
+      RABBITMQ_DEFAULT_VHOST: /
+    entrypoint:
+      - /bin/sh
+      - -ec
+      - |
+        export RABBITMQ_DEFAULT_PASS="$$(cat /run/secrets/rabbitmq_password)"
+        exec docker-entrypoint.sh rabbitmq-server
+    secrets:
+      - rabbitmq_password
+    ports:
+      - '127.0.0.1:${RMR_RABBITMQ_PORT:-5672}:5672'
+      - '127.0.0.1:${RMR_RABBITMQ_MANAGEMENT_PORT:-15672}:15672'
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - core-internal
+      - local-access
+    healthcheck:
+      test: ['CMD-SHELL', 'rabbitmq-diagnostics -q ping && rabbitmq-diagnostics -q check_running']
+      interval: 5s
+      timeout: 10s
+      retries: 24
+      start_period: 10s
+    restart: unless-stopped
+
+  queue-init:
+    image: node:24.19.0-bookworm-slim
+    environment:
+      RABBITMQ_MANAGEMENT_URL: http://rabbitmq:15672
+      RABBITMQ_USERNAME: rmr-local
+      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq_password
+    secrets:
+      - rabbitmq_password
+    volumes:
+      - ./infra/rabbitmq/configure.mjs:/opt/rmr/configure.mjs:ro
+    command: ['node', '/opt/rmr/configure.mjs']
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - core-internal
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    restart: 'no'
+
+  object-storage:
+    build:
+      context: .
+      dockerfile: infra/docker/minio.Dockerfile
+      args:
+        MINIO_VERSION: RELEASE.2025-10-15T17-29-55Z
+    environment:
+      MINIO_ROOT_USER: rmr-local-root
+      MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio_root_password
+      MINIO_BROWSER_REDIRECT_URL: http://127.0.0.1:${RMR_OBJECT_STORAGE_CONSOLE_PORT:-9001}
+    secrets:
+      - minio_root_password
+    ports:
+      - '127.0.0.1:${RMR_OBJECT_STORAGE_PORT:-9000}:9000'
+      - '127.0.0.1:${RMR_OBJECT_STORAGE_CONSOLE_PORT:-9001}:9001'
+    volumes:
+      - object-storage-data:/data
+    networks:
+      - core-internal
+      - local-access
+    healthcheck:
+      test: ['CMD', 'curl', '--fail', '--silent', 'http://127.0.0.1:9000/minio/health/ready']
+      interval: 5s
+      timeout: 5s
+      retries: 24
+      start_period: 10s
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+
+  object-storage-init:
+    image: minio/mc:RELEASE.2025-08-13T08-35-41Z
+    entrypoint: ['/bin/sh', '/opt/rmr/configure-storage.sh']
+    environment:
+      MINIO_ENDPOINT: http://object-storage:9000
+      MINIO_ROOT_USER: rmr-local-root
+      MINIO_API_USER: rmr-api
+      MINIO_QUARANTINE_USER: rmr-quarantine-worker
+      MINIO_PRIVATE_USER: rmr-private-worker
+      MC_CONFIG_DIR: /tmp/.mc
+    secrets:
+      - minio_root_password
+      - minio_api_password
+      - minio_quarantine_password
+      - minio_private_password
+    volumes:
+      - ./infra/object-storage/configure-storage.sh:/opt/rmr/configure-storage.sh:ro
+      - ./infra/object-storage/policies:/opt/rmr/policies:ro
+      - ./infra/object-storage/fixtures:/opt/rmr/fixtures:ro
+    depends_on:
+      object-storage:
+        condition: service_healthy
+    networks:
+      - core-internal
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    restart: 'no'
+
+  mailpit:
+    image: axllent/mailpit:v1.30.6
+    environment:
+      MP_MAX_MESSAGES: '500'
+      MP_SMTP_AUTH_ACCEPT_ANY: '0'
+      MP_SMTP_AUTH_ALLOW_INSECURE: '0'
+    ports:
+      - '127.0.0.1:${RMR_MAILPIT_SMTP_PORT:-1025}:1025'
+      - '127.0.0.1:${RMR_MAILPIT_UI_PORT:-8025}:8025'
+    networks:
+      - core-internal
+      - local-access
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: infra/docker/api.Dockerfile
+    environment:
+      <<: *core-application-environment
+      HOST: 0.0.0.0
+      PORT: '3000'
+      OBJECT_STORAGE_ACCESS_KEY: rmr-api
+      OBJECT_STORAGE_SECRET_KEY_FILE: /run/secrets/minio_api_password
+    secrets:
+      - postgres_password
+      - rabbitmq_password
+      - minio_api_password
+    ports:
+      - '127.0.0.1:${RMR_API_PORT:-3000}:3000'
+    networks:
+      - public-edge
+      - core-internal
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+      queue-init:
+        condition: service_completed_successfully
+      object-storage-init:
+        condition: service_completed_successfully
+      mailpit:
+        condition: service_healthy
+    read_only: true
+    tmpfs:
+      - /tmp
+    init: true
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:3000/api/v1/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: .
+      dockerfile: infra/docker/worker.Dockerfile
+    environment:
+      <<: *core-application-environment
+      HOST: 0.0.0.0
+      PORT: '3001'
+      OBJECT_STORAGE_ACCESS_KEY: rmr-private-worker
+      OBJECT_STORAGE_SECRET_KEY_FILE: /run/secrets/minio_private_password
+    secrets:
+      - postgres_password
+      - rabbitmq_password
+      - minio_private_password
+    networks:
+      - core-internal
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+      queue-init:
+        condition: service_completed_successfully
+      object-storage-init:
+        condition: service_completed_successfully
+      mailpit:
+        condition: service_healthy
+    read_only: true
+    tmpfs:
+      - /tmp
+    init: true
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:3001/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
+    restart: unless-stopped
+
+  verus-params:
+    profiles: ['verus']
+    build:
+      context: .
+      dockerfile: infra/docker/verus.Dockerfile
+      args:
+        VERUS_VERSION: ${VERUS_DAEMON_VERSION:-v1.2.16-1}
+    command: ['fetch-params']
+    volumes:
+      - verus-params:/home/verus/.zcash-params
+    networks:
+      - verus-egress
+    restart: 'no'
+
+  verus-node:
+    profiles: ['verus']
+    build:
+      context: .
+      dockerfile: infra/docker/verus.Dockerfile
+      args:
+        VERUS_VERSION: ${VERUS_DAEMON_VERSION:-v1.2.16-1}
+    environment:
+      VERUS_NETWORK: VRSCTEST
+    secrets:
+      - verus_rpc_user
+      - verus_rpc_password
+    expose:
+      - '27486'
+    volumes:
+      - verus-data:/var/lib/verus
+      - verus-params:/home/verus/.zcash-params:ro
+    tmpfs:
+      - /run/verus
+    networks:
+      - verus-rpc
+      - verus-egress
+    depends_on:
+      verus-params:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - /opt/verus/verus -chain=VRSCTEST -conf=/run/verus/verus.conf -datadir=/var/lib/verus getinfo >/dev/null 2>&1
+      interval: 15s
+      timeout: 10s
+      retries: 40
+      start_period: 30s
+    restart: unless-stopped
+
+  wallet-request-signer-stub:
+    profiles: ['verus']
+    build:
+      context: .
+      dockerfile: infra/docker/stub.Dockerfile
+    environment:
+      PORT: '3100'
+      STUB_KIND: wallet-request-signer-stub
+      VERUS_NETWORK: VRSCTEST
+    expose:
+      - '3100'
+    networks:
+      - signer-control
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:3100/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  provenance-worker-signer-stub:
+    profiles: ['verus']
+    build:
+      context: .
+      dockerfile: infra/docker/stub.Dockerfile
+    environment:
+      PORT: '3100'
+      STUB_KIND: provenance-worker-signer-stub
+      VERUS_NETWORK: VRSCTEST
+    expose:
+      - '3100'
+    volumes:
+      - ./infra/verus/fixtures:/opt/rmr/fixtures:ro
+    networks:
+      - signer-control
+      - verus-rpc
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:3100/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+secrets:
+  postgres_password:
+    file: ${RMR_LOCAL_SECRET_DIR:-.local/infra/secrets}/postgres_password
+  rabbitmq_password:
+    file: ${RMR_LOCAL_SECRET_DIR:-.local/infra/secrets}/rabbitmq_password
+  minio_root_password:
+    file: ${RMR_LOCAL_SECRET_DIR:-.local/infra/secrets}/minio_root_password
+  minio_api_password:
+    file: ${RMR_LOCAL_SECRET_DIR:-.local/infra/secrets}/minio_api_password
+  minio_quarantine_password:
+    file: ${RMR_LOCAL_SECRET_DIR:-.local/infra/secrets}/minio_quarantine_password
+  minio_private_password:
+    file: ${RMR_LOCAL_SECRET_DIR:-.local/infra/secrets}/minio_private_password
+  verus_rpc_user:
+    file: ${RMR_LOCAL_SECRET_DIR:-.local/infra/secrets}/verus_rpc_user
+  verus_rpc_password:
+    file: ${RMR_LOCAL_SECRET_DIR:-.local/infra/secrets}/verus_rpc_password
+
+volumes:
+  postgres-data:
+  rabbitmq-data:
+  object-storage-data:
+  verus-data:
+  verus-params:
+
+networks:
+  public-edge:
+  local-access:
+  core-internal:
+    internal: true
+  signer-control:
+    internal: true
+  verus-rpc:
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.30.90.0/24
+  verus-egress:

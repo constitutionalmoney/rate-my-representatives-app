@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ratemyrepresentatives.com/authentication.schema.json",
+  "title": "AuthenticationContract",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "authenticatedSession": { "$ref": "#/$defs/AuthenticatedSession" },
+    "genericStart": { "$ref": "#/$defs/GenericAuthenticationStart" },
+    "passkeyStart": { "$ref": "#/$defs/PasskeyAuthenticationStart" },
+    "roleGrant": { "$ref": "#/$defs/RoleGrant" }
+  },
+  "required": ["authenticatedSession", "genericStart", "passkeyStart", "roleGrant"],
+  "$defs": {
+    "DeviceDescriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "deviceId": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "platform": { "enum": ["ios", "android", "web"] }
+      },
+      "required": ["deviceId", "label", "platform"]
+    },
+    "PasskeyAuthenticationStart": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "challenge": { "type": "string", "minLength": 43 },
+        "expiresAt": { "type": "string", "format": "date-time" },
+        "requestId": { "type": "string", "minLength": 1 },
+        "status": { "const": "pending" }
+      },
+      "required": ["challenge", "expiresAt", "requestId", "status"]
+    },
+    "GenericAuthenticationStart": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "expiresAt": { "type": "string", "format": "date-time" },
+        "message": { "type": "string", "minLength": 1 },
+        "requestId": { "type": "string", "minLength": 1 },
+        "status": { "const": "pending" }
+      },
+      "required": ["expiresAt", "message", "requestId", "status"]
+    },
+    "SessionSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "assurance": { "enum": ["basic", "phishing_resistant"] },
+        "authenticationMethod": { "enum": ["passkey", "verified_email"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "current": { "type": "boolean" },
+        "device": { "$ref": "#/$defs/DeviceDescriptor" },
+        "expiresAt": { "type": "string", "format": "date-time" },
+        "lastRotatedAt": { "type": "string", "format": "date-time" },
+        "privileged": { "type": "boolean" },
+        "revokedAt": { "type": ["string", "null"], "format": "date-time" },
+        "sessionId": { "type": "string", "minLength": 1 }
+      },
+      "required": [
+        "assurance",
+        "authenticationMethod",
+        "createdAt",
+        "current",
+        "device",
+        "expiresAt",
+        "lastRotatedAt",
+        "privileged",
+        "revokedAt",
+        "sessionId"
+      ]
+    },
+    "AuthenticatedSession": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "accountId": { "type": "string", "minLength": 1 },
+        "session": { "$ref": "#/$defs/SessionSummary" },
+        "sessionToken": { "type": "string", "minLength": 32 }
+      },
+      "required": ["accountId", "session", "sessionToken"]
+    },
+    "RoleScope": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": { "kind": { "const": "global" } },
+          "required": ["kind"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "jurisdictionId": { "type": "string", "minLength": 1 },
+            "kind": { "const": "jurisdiction" }
+          },
+          "required": ["jurisdictionId", "kind"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": { "const": "office_term" },
+            "officeTermId": { "type": "string", "minLength": 1 }
+          },
+          "required": ["kind", "officeTermId"]
+        }
+      ]
+    },
+    "RoleGrant": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "actorId": { "type": "string", "minLength": 1 },
+        "effectiveFrom": { "type": "string", "format": "date-time" },
+        "effectiveUntil": { "type": ["string", "null"], "format": "date-time" },
+        "grantId": { "type": "string", "minLength": 1 },
+        "revokedAt": { "type": ["string", "null"], "format": "date-time" },
+        "role": {
+          "enum": [
+            "participant",
+            "evidence_contributor",
+            "representative_candidate",
+            "authorized_staff",
+            "moderator_reviewer",
+            "administrator",
+            "civic_agent"
+          ]
+        },
+        "scope": { "$ref": "#/$defs/RoleScope" }
+      },
+      "required": [
+        "actorId",
+        "effectiveFrom",
+        "effectiveUntil",
+        "grantId",
+        "revokedAt",
+        "role",
+        "scope"
+      ]
+    }
+  }
+}

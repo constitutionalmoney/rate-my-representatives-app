@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ratemyrepresentatives.com/infrastructure-services.schema.json",
+  "title": "InfrastructureServicesContract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "coreServices", "optionalProfiles"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "coreServices": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": ["postgres", "migrations", "rabbitmq", "object-storage", "mailpit", "api", "worker"]
+      }
+    },
+    "optionalProfiles": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verus"],
+      "properties": {
+        "verus": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["enabledByDefault", "network", "services", "writesEnabled"],
+          "properties": {
+            "enabledByDefault": { "const": false },
+            "network": { "const": "VRSCTEST" },
+            "writesEnabled": { "const": false },
+            "services": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "verus-params",
+                  "verus-node",
+                  "wallet-request-signer-stub",
+                  "provenance-worker-signer-stub"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

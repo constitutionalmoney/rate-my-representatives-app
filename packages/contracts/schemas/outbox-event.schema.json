@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ratemyrepresentatives.com/outbox-event.schema.json",
+  "title": "Outbox event",
+  "description": "At-least-once transactional outbox envelope.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "eventId",
+    "eventType",
+    "eventSchema",
+    "aggregateType",
+    "aggregateId",
+    "idempotencyKey",
+    "correlationId",
+    "privacyClass",
+    "payload",
+    "state",
+    "availableAt",
+    "attemptCount",
+    "maxAttempts",
+    "createdAt"
+  ],
+  "properties": {
+    "eventId": { "type": "string", "minLength": 1 },
+    "eventType": {
+      "enum": [
+        "notification.dispatch",
+        "search.index",
+        "aggregate.recompute",
+        "source.retrieve",
+        "ai.draft.requested",
+        "public_manifest.materialize",
+        "provenance.anchor.requested"
+      ]
+    },
+    "eventSchema": { "type": "string", "minLength": 1 },
+    "aggregateType": { "type": "string", "minLength": 1 },
+    "aggregateId": { "type": "string", "minLength": 1 },
+    "idempotencyKey": { "type": "string", "minLength": 1 },
+    "correlationId": { "type": "string", "minLength": 1 },
+    "privacyClass": { "enum": ["public", "internal", "restricted", "security"] },
+    "payload": { "type": "object", "additionalProperties": true },
+    "state": { "enum": ["pending", "leased", "delivered", "dead_letter"] },
+    "availableAt": { "type": "string", "format": "date-time" },
+    "attemptCount": { "type": "integer", "minimum": 0 },
+    "maxAttempts": { "type": "integer", "minimum": 1 },
+    "createdAt": { "type": "string", "format": "date-time" }
+  }
+}

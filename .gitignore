@@ -23,6 +23,12 @@ yarn-error.log*
 package-lock.json
 .pnpm-debug.log
 *.tsbuildinfo
+.turbo/
+.expo/
+
+# Expo continuous native generation output
+apps/mobile/android/
+apps/mobile/ios/
 
 # Python
 __pycache__/
@@ -112,8 +118,11 @@ source-snapshots/
 dist/
 build/
 public/build/
+apps/mobile/.expo/
+apps/mobile/web-build/
 
 # Local dev data
+.local/
 tmp/
 temp/
 *.local

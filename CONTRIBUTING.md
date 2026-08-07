@@ -62,6 +62,20 @@ A contribution must not violate these rules:
 
 Each pull request should implement one coherent issue or RFC. Large changes should be decomposed into reviewable contracts, domain rules, migrations, services, clients, and tests.
 
+### Foundation commands
+
+Use the pinned Node.js and pnpm versions from `.node-version` and `package.json`.
+
+```bash
+pnpm install --frozen-lockfile
+pnpm check
+```
+
+Use `pnpm generate:contracts` after changing OpenAPI or JSON Schema inputs. Generated
+files are committed and `pnpm check:contracts` rejects drift. Native projects use Expo
+continuous native generation; run `pnpm mobile:prebuild:ios` on macOS or
+`pnpm mobile:prebuild:android` with the corresponding native toolchain.
+
 ### Domain logic first
 
 Put state machines, invariants, and authorization decisions in shared domain packages. Route handlers and UI components must not invent alternative rules.

@@ -1,0 +1,1 @@
+Synthetic private-storage fixture. It contains no account or civic activity.

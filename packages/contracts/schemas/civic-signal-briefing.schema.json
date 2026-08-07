@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ratemyrepresentatives.com/v1/civic-signal-briefing.schema.json",
+  "title": "CivicSignalBriefing",
+  "description": "Proposed monitoring/briefing envelope. It contains no human judgment operation.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-rmr-feature-status": "disabled",
+  "x-rmr-human-intent": "forbidden",
+  "x-rmr-allowed-actors": ["human", "service", "agent"],
+  "required": ["schemaVersion", "kind", "briefingId", "generatedAt", "status"],
+  "properties": {
+    "schemaVersion": { "const": "civic-signal-briefing.v1" },
+    "kind": { "const": "civic_signal_briefing" },
+    "briefingId": { "type": "string", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "status": { "const": "proposed" }
+  }
+}

@@ -1,0 +1,13 @@
+.git
+.github/ISSUE_TEMPLATE
+.expo
+android
+ios
+coverage
+dist
+node_modules
+pnpm-lock.yaml
+**/src/generated/**
+*.md
+LICENSE
+DCO.txt

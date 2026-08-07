@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "api-error.v1",
+  "code": "FEATURE_DISABLED",
+  "message": "This capability is not operational.",
+  "correlationId": "synthetic-correlation-jurisdictions",
+  "fieldErrors": [],
+  "retryable": false,
+  "retryAfterSeconds": null,
+  "featureState": "proposed",
+  "dependencyState": null
+}

@@ -1,0 +1,21 @@
+{
+  "status": "ready",
+  "service": "api",
+  "version": "1.0.0-contract",
+  "contract": {
+    "currentVersion": "v1",
+    "minimumSupportedVersion": "v1",
+    "supportedVersions": ["v1"]
+  },
+  "featureStates": {
+    "publicRegistry": "operational",
+    "civicSignal": "disabled",
+    "representativeSignals": "disabled",
+    "verus": "disabled",
+    "provenanceWrites": "disabled"
+  },
+  "dataMode": "synthetic",
+  "optionalDependencies": {
+    "verus": "disabled"
+  }
+}

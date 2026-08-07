@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ratemyrepresentatives.com/v1/representative-signal-command.schema.json",
+  "title": "RepresentativeSignalCommand",
+  "description": "Disabled future human-intent command contract. No API operation accepts it in issue #60.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-rmr-feature-status": "disabled",
+  "x-rmr-allowed-actors": ["human"],
+  "x-rmr-agent-access": "forbidden",
+  "required": ["schemaVersion", "kind", "officeTermId", "judgment", "confirmation"],
+  "properties": {
+    "schemaVersion": { "const": "representative-signal-command.v1" },
+    "kind": { "const": "representative_signal_command" },
+    "officeTermId": { "type": "string", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$" },
+    "judgment": { "enum": ["support", "concern"] },
+    "confirmation": { "const": "human-confirmed" }
+  }
+}

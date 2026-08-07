@@ -1,0 +1,74 @@
+name: rate-my-representatives
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: infra/docker/api.Dockerfile
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 3000
+      PASSKEY_AUTH_ENABLED: 'false'
+      VERIFIED_EMAIL_AUTH_ENABLED: 'false'
+      ACCOUNT_RECOVERY_ENABLED: 'false'
+      ACCOUNT_DATA_ACCESS_ENABLED: 'false'
+      ACCOUNT_EXPORT_ENABLED: 'false'
+      ACCOUNT_CORRECTION_ENABLED: 'false'
+      ACCOUNT_DELETION_ENABLED: 'false'
+      PRIVILEGED_ACCESS_ENABLED: 'false'
+      NATIVE_PARTICIPATION_ENABLED: 'false'
+      CIVIC_SIGNAL_ENABLED: 'false'
+      REPRESENTATIVE_SIGNALS_ENABLED: 'false'
+      CATEGORY_RATINGS_ENABLED: 'false'
+      COMMUNITY_CONTEXT_ENABLED: 'false'
+      EVIDENCE_SUBMISSION_ENABLED: 'false'
+      AI_RESEARCH_ENABLED: 'false'
+      VERUS_ID_LINKING_ENABLED: 'false'
+      VERUS_AUTH_ENABLED: 'false'
+      REPRESENTATIVE_CLAIMS_ENABLED: 'false'
+      REPRESENTATIVE_VERUS_CLAIMS_ENABLED: 'false'
+      VERUS_IDENTITY_UPDATE_ENABLED: 'false'
+      CBC_ATTESTATION_ENABLED: 'false'
+      PROVENANCE_WRITES_ENABLED: 'false'
+      VERUS_ANCHORING_ENABLED: 'false'
+      COMPOSITE_SCORE_ENABLED: 'false'
+    expose:
+      - '3000'
+    restart: unless-stopped
+    init: true
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:3000/api/v1/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  web:
+    build:
+      context: .
+      dockerfile: infra/docker/web.Dockerfile
+    expose:
+      - '8080'
+    restart: unless-stopped
+    init: true
+    depends_on:
+      api:
+        condition: service_healthy
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ['CMD', 'wget', '--quiet', '--spider', 'http://127.0.0.1:8080/healthz']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s

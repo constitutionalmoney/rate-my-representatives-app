@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "api-error.v1",
+  "code": "NOT_FOUND",
+  "message": "The requested API route does not exist.",
+  "correlationId": "synthetic-correlation-not-found",
+  "fieldErrors": [],
+  "retryable": false,
+  "retryAfterSeconds": null,
+  "featureState": null,
+  "dependencyState": null
+}

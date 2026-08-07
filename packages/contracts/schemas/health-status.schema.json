@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ratemyrepresentatives.com/v1/health-status.schema.json",
+  "title": "HealthStatus",
+  "description": "Operational v1 contract-foundation health response; expanded dependency readiness belongs to issue #42.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "service", "version", "contract", "featureStates", "optionalDependencies"],
+  "properties": {
+    "status": {
+      "const": "ready"
+    },
+    "service": {
+      "const": "api"
+    },
+    "version": {
+      "const": "1.0.0-contract"
+    },
+    "contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["currentVersion", "minimumSupportedVersion", "supportedVersions"],
+      "properties": {
+        "currentVersion": { "const": "v1" },
+        "minimumSupportedVersion": { "const": "v1" },
+        "supportedVersions": {
+          "type": "array",
+          "items": { "const": "v1" },
+          "minItems": 1,
+          "maxItems": 1
+        }
+      }
+    },
+    "featureStates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "publicRegistry",
+        "civicSignal",
+        "representativeSignals",
+        "verus",
+        "provenanceWrites"
+      ],
+      "properties": {
+        "publicRegistry": { "enum": ["proposed", "operational"] },
+        "civicSignal": { "const": "disabled" },
+        "representativeSignals": { "const": "disabled" },
+        "verus": { "const": "disabled" },
+        "provenanceWrites": { "const": "disabled" }
+      }
+    },
+    "dataMode": { "enum": ["synthetic"] },
+    "optionalDependencies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verus"],
+      "properties": {
+        "verus": {
+          "const": "disabled"
+        }
+      }
+    }
+  }
+}

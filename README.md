@@ -8,14 +8,53 @@ This repository is the implementation home for the application described at [rat
 
 ## Current status
 
-**Specification and repository-foundation stage — not operational.**
+**Repository-foundation stage — synthetic registry only; not a production civic release.**
+
+The mobile-first TypeScript workspace and CI foundation now exist. The native, web,
+portal, admin, API, and worker surfaces are deliberately limited to placeholder,
+typed health, and synthetic registry behavior. Domain packages that belong to later
+roadmap issues remain explicit non-operational stubs.
+
+Issue #12 adds a synthetic, deny-by-default authentication and authorization core:
+generated passkey/email/session/role contracts, rotating revocable session policy,
+scoped role checks, service-agent prohibitions, and audited feature gates. Every account
+and high-risk gate remains false; no public account route, credential provider, database,
+or civic write is operational.
+
+Issue #9 adds a reproducible local/CI infrastructure stack: PostgreSQL migrations and a
+synthetic seed, RabbitMQ retry/dead-letter topology, isolated S3-compatible buckets,
+Mailpit, and API/worker container wiring. An optional Compose profile can start a pinned
+`verusd` on VRSCTEST plus disabled signer stubs. No Verus profile or civic write is
+enabled by default, and the application-only Dokploy Compose remains independent.
+
+Issue #19 adds an append-only, privacy-minimized audit ledger and transactional outbox.
+State, audit, and queued effects share one PostgreSQL transaction; workers use safe
+leases, bounded retry, dead letters, controlled replay, and idempotent delivery receipts.
+The live synthetic smoke runs with Verus disabled. Provenance is only a reserved event
+contract—no signer, RPC call, identity operation, or chain write is implemented.
+
+Issue #60 publishes the canonical OpenAPI 3.1 v1 skeleton, versioned JSON Schemas,
+privacy-safe error envelope, runtime validators, compatibility checks, synthetic mock
+server, and generated clients for mobile, web, portal, admin, workers, and the public
+SDK. Health and native-client compatibility discovery are operational.
+
+Issue #49 adds the effective-dated synthetic civic registry for jurisdictions,
+districts, public bodies, offices, external identifiers, and public coverage/conflict
+gaps. Canada and United States fixtures exercise different graph shapes, including
+multiple parents, overlaps, redistricting, rename, and amalgamation. The generated
+`GET /api/v1/jurisdictions` read contract is operational in synthetic mode. People,
+office terms, candidacies, source ingestion, and location resolution remain deferred;
+the registry makes no residence, citizenship, or eligibility determination.
 
 - No production iOS or Android app is released.
 - No public representative profile, category rating, representative signal, Civic Signal briefing, authenticated aggregate, VerusID claim, or Representative Accountability Score is live.
 - No composite score is approved.
 - Checks and Balances Protocol integration is planned and disabled by default.
+- Passkey, verified-email, recovery, privileged access, representative claims, evidence,
+  AI, Verus, provenance, and scoring gates are disabled by default.
 - All Verus wallet, identity-update, and provenance work must be developed on **VRSCTEST** before any mainnet decision.
-- The folder tree below is the approved target architecture, not a claim that implementation already exists.
+- The folder tree below exists as a buildable foundation; its presence is not a claim that civic behavior is implemented.
+- Registry records and API examples are synthetic and do not describe real people, offices, or civic conditions.
 - The marketing site owns public explanation, early access, and prelaunch status. This repository owns application code, civic data, workflows, APIs, native clients, moderation, and Verus integration. The two systems must not share a production database.
 
 The project will not label a proposed capability as operational merely because a mockup, schema, issue, or experimental test exists.
@@ -260,6 +299,46 @@ The native apps and browsers never connect directly to authenticated `verusd` RP
 9. **Accountability-score decision** — implement only if the Light Mathematics method and all approval gates justify it.
 
 See [docs/ROADMAP.md](./docs/ROADMAP.md).
+
+## Development foundation
+
+The workspace pins Node.js `24.19.0` and pnpm `11.20.0`. After installing those
+prerequisites, a clean checkout installs with one command:
+
+```bash
+pnpm install --frozen-lockfile
+```
+
+Run the complete local foundation validation with:
+
+```bash
+pnpm check
+```
+
+The command generates contracts, formats-checks, lints, enforces workspace boundaries,
+type-checks, tests, builds, checks generated artifacts, reviews dependency licences, and
+scans tracked source for high-confidence secret patterns. It does not require PostgreSQL,
+a queue, object storage, Verus, wallet software, keys, or external civic data.
+
+See [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md),
+[docs/CONTRACTS.md](./docs/CONTRACTS.md), [docs/API_V1.md](./docs/API_V1.md), and
+[docs/adr/0001-mobile-first-typescript-monorepo.md](./docs/adr/0001-mobile-first-typescript-monorepo.md).
+
+The issue #12 security boundaries and non-operational status are documented in
+[docs/AUTH_SECURITY_FOUNDATION.md](./docs/AUTH_SECURITY_FOUNDATION.md) and
+[ADR 0002](./docs/adr/0002-deny-by-default-auth-boundaries.md).
+
+The application-only [Docker Compose foundation](./compose.yaml) can build the public
+web placeholder and internal synthetic API without Verus or backing services. It is
+prepared for GitHub-sourced Dokploy deployment; see
+[docs/DEPLOY_DOKPLOY.md](./docs/DEPLOY_DOKPLOY.md).
+
+For local or CI infrastructure, `pnpm infra:up` starts the core
+[Compose stack](./compose.infrastructure.yaml) and `pnpm infra:smoke` verifies migrations,
+fixtures, retry/dead-letter behavior, storage policy isolation, email readiness, and
+Verus-off API/worker health. The separately selected `pnpm infra:verus:up` command is
+VRSCTEST-only and contains no signer keys. See
+[docs/LOCAL_INFRASTRUCTURE.md](./docs/LOCAL_INFRASTRUCTURE.md).
 
 ## Release gates
 

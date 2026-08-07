@@ -12,13 +12,11 @@ and a future same-device Verus Mobile handoff. A marketing-site WebView and Expo
 not exercise those native boundaries.
 
 The repository already shares strict TypeScript contracts and mobile design tokens.
-The candidate Android wallet artifact was inspected locally as inventory only:
-`VerusWallet-1.1.0-5.apk`, package `com.verusmobile`, version `1.1.0-5`, minimum SDK 24,
-target SDK 35, SHA-256
-`08D1D9FDA4AC7E3346912F1EDC91924981823FA3EBC37A9412D1BAFE95E5E5E7`. Its manifest
-registers the `verus` scheme. This confirms a candidate transport surface, not request
-compatibility or wallet approval behavior. No device result or production-support claim
-is inferred from manifest inspection.
+The Android compatibility target is the Google Play Verus Mobile application with package
+`org.autonomoussoftwarefoundation.verusmobile.android`. A previously inspected sideloaded
+APK used a different package and is no longer an accepted target. The exact Google Play
+version, manifest schemes, and device result remain unset until they are read back from the
+approved Pixel 10 test device. No production-support claim is inferred before that test.
 
 ## Decision
 

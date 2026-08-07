@@ -47,8 +47,8 @@ describe('mobile environment isolation', () => {
       verusNetwork: environment.verusNetwork,
       verusWallet: {
         enabled: false,
-        pinnedAndroidPackage: 'com.verusmobile',
-        pinnedAndroidVersion: '1.1.0-5',
+        pinnedAndroidPackage: 'org.autonomoussoftwarefoundation.verusmobile.android',
+        pinnedAndroidVersion: 'unverified',
         scheme: 'verus',
       },
     });
@@ -68,9 +68,19 @@ describe('mobile environment isolation', () => {
     expect(
       parseMobileRuntimeConfig({
         ...parsed,
-        verusWallet: { ...parsed.verusWallet, enabled: true },
+        verusWallet: { ...parsed.verusWallet, enabled: true, pinnedAndroidVersion: '1.0.34' },
       }).verusWallet.enabled,
     ).toBe(true);
+    expect(() =>
+      parseMobileRuntimeConfig({
+        ...parsed,
+        verusWallet: {
+          ...parsed.verusWallet,
+          enabled: true,
+          pinnedAndroidVersion: 'unverified',
+        },
+      }),
+    ).toThrow('restricted');
     const production = mobileEnvironments.production;
     expect(() =>
       parseMobileRuntimeConfig({
@@ -80,7 +90,11 @@ describe('mobile environment isolation', () => {
         mobileEnvironment: production.name,
         releaseChannel: production.releaseChannel,
         verusNetwork: production.verusNetwork,
-        verusWallet: { ...parsed.verusWallet, enabled: true },
+        verusWallet: {
+          ...parsed.verusWallet,
+          enabled: true,
+          pinnedAndroidVersion: '1.0.34',
+        },
       }),
     ).toThrow('restricted');
   });

@@ -19,8 +19,12 @@ On macOS, replace the last two commands with the iOS equivalents. Expo Go is not
 acceptable substitute for this development build.
 
 To exercise only the no-real-key VRSCTEST transport harness in a development build, set
-`RMR_VERUS_WALLET_HARNESS_ENABLED=true` before prebuild. Never enable it for a production
-build. Do not paste or export a seed, WIF, private key, wallet file, or RPC credential.
+`RMR_VERUS_WALLET_HARNESS_ENABLED=true` and set
+`RMR_VERUS_MOBILE_ANDROID_VERSION` to the exact Google Play version read back from the
+approved device before prebuild. The target package is
+`org.autonomoussoftwarefoundation.verusmobile.android`. Never enable the harness for a
+production build. Do not paste or export a seed, WIF, private key, wallet file, or RPC
+credential.
 
 ## Association documents
 

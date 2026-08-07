@@ -130,9 +130,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       RMR_MOBILE_ENV: development
-      # Review artifacts expose only the synthetic, no-key transport control.
-      # The application default and every production lane remain disabled.
-      RMR_VERUS_WALLET_HARNESS_ENABLED: 'true'
     steps:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v4

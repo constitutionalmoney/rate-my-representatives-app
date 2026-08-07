@@ -15,8 +15,8 @@ export type MobileRuntimeConfig = Readonly<{
   verusNetwork: 'VRSCTEST' | 'disabled';
   verusWallet: Readonly<{
     enabled: boolean;
-    pinnedAndroidPackage: 'com.verusmobile';
-    pinnedAndroidVersion: '1.1.0-5';
+    pinnedAndroidPackage: 'org.autonomoussoftwarefoundation.verusmobile.android';
+    pinnedAndroidVersion: string | null;
     scheme: 'verus';
   }>;
 }>;
@@ -89,8 +89,14 @@ export function parseMobileRuntimeConfig(value: unknown): MobileRuntimeConfig {
     value.representativeVerusIdProvisioningEnabled !== false ||
     value.verusIdentityUpdateEnabled !== false ||
     typeof value.verusWallet.enabled !== 'boolean' ||
-    value.verusWallet.pinnedAndroidPackage !== 'com.verusmobile' ||
-    value.verusWallet.pinnedAndroidVersion !== '1.1.0-5' ||
+    value.verusWallet.pinnedAndroidPackage !==
+      'org.autonomoussoftwarefoundation.verusmobile.android' ||
+    (value.verusWallet.pinnedAndroidVersion !== 'unverified' &&
+      value.verusWallet.pinnedAndroidVersion !== null &&
+      (typeof value.verusWallet.pinnedAndroidVersion !== 'string' ||
+        !/^[0-9]+(?:\.[0-9]+){2}(?:[-+][A-Za-z0-9.-]+)?$/u.test(
+          value.verusWallet.pinnedAndroidVersion,
+        ))) ||
     value.verusWallet.scheme !== 'verus' ||
     (value.pushProjectId !== null && typeof value.pushProjectId !== 'string')
   ) {
@@ -105,7 +111,13 @@ export function parseMobileRuntimeConfig(value: unknown): MobileRuntimeConfig {
   ) {
     throw new Error('Mobile runtime environment fields do not match the selected lane.');
   }
-  if (value.verusWallet.enabled && (environment === 'production' || verusNetwork !== 'VRSCTEST')) {
+  if (
+    value.verusWallet.enabled &&
+    (environment === 'production' ||
+      verusNetwork !== 'VRSCTEST' ||
+      value.verusWallet.pinnedAndroidVersion === 'unverified' ||
+      value.verusWallet.pinnedAndroidVersion === null)
+  ) {
     throw new Error('Mobile wallet harness is restricted to non-production VRSCTEST builds.');
   }
   return Object.freeze({
@@ -123,8 +135,12 @@ export function parseMobileRuntimeConfig(value: unknown): MobileRuntimeConfig {
     verusNetwork,
     verusWallet: Object.freeze({
       enabled: value.verusWallet.enabled,
-      pinnedAndroidPackage: 'com.verusmobile',
-      pinnedAndroidVersion: '1.1.0-5',
+      pinnedAndroidPackage: 'org.autonomoussoftwarefoundation.verusmobile.android',
+      pinnedAndroidVersion:
+        value.verusWallet.pinnedAndroidVersion === 'unverified' ||
+        value.verusWallet.pinnedAndroidVersion === null
+          ? null
+          : value.verusWallet.pinnedAndroidVersion,
       scheme: 'verus',
     }),
   });

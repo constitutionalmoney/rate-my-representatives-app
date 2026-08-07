@@ -2,43 +2,56 @@
 
 This file records redacted native compatibility evidence. It must never contain a wallet
 profile password, seed phrase, private key, WIF, wallet file, RPC credential, private civic
-data, or production identifier.
+data, address inventory, balance, or production identifier.
 
-## Android synthetic transport — 2026-08-07
+## Android Google Play target — pending Pixel 10
 
-| Component | Pinned value |
+| Component | Required value |
 |---|---|
-| Device | Android Studio Pixel 9 AVD (`sdk_gphone64_x86_64`) |
-| OS | Android 15, API 35, x86_64 |
-| Display | 1080 by 2424 at 420 dpi |
-| Verus wallet | `VerusWallet-1.1.0-5.apk` |
-| Android package | `com.verusmobile` |
-| Version | `1.1.0-5` (`versionCode` 1010005) |
-| APK SHA-256 | `08D1D9FDA4AC7E3346912F1EDC91924981823FA3EBC37A9412D1BAFE95E5E5E7` |
-| Network boundary | VRSCTEST-only synthetic transport; no wallet network request |
-| Request library | None; deliberately non-signable synthetic envelope |
-| Verus daemon | Not used |
+| Device | Android Studio Pixel 10 AVD; exact model/runtime read-back pending |
+| OS and SDK | Latest installed Android Studio image; exact versions pending |
+| Verus wallet source | Google Play Store |
+| Android package | `org.autonomoussoftwarefoundation.verusmobile.android` |
+| Version and version code | Pending Play Store installation and package-manager read-back |
+| Manifest link schemes | Pending installed-package inspection |
+| APK/app-bundle digest | Not locally available for a Play-managed install |
+| Network boundary | VRSCTEST only |
+| Request library | None for issue #61's deliberately non-signable synthetic envelope |
+| Verus daemon | Not used by issue #61's transport test |
 
-The emulator also contained legacy Verus Mobile `1.0.34` under the distinct package
-`org.autonomoussoftwarefoundation.verusmobile.android`. It was excluded from this test.
-No profile credential, address, key, balance, or wallet content from either package was
-recorded or used.
+A Pixel 9 image previously exposed Google Play wallet version `1.0.34`, but the image and
+wallet were not current enough to establish the supported version. A separately sideloaded
+`com.verusmobile` application is rejected as the compatibility target and is not part of
+the RMR configuration.
 
-### Results
+### Required issue #61 device results
 
-| Test | Result | Evidence boundary |
-|---|---|---|
-| APK digest and installed package/version read-back | Pass | Local APK hash and Android package manager agree with the pinned inventory |
-| `verus:` intent resolution | Pass | Android resolves the browsable intent to `com.verusmobile/.MainActivity` |
-| Synthetic `verus://request/...` launch | Pass | Pinned wallet becomes the top resumed activity |
-| Malformed/no-key envelope handling | Pass, fails closed | Wallet reports an unrecognized or incompatible generic-request protocol version |
-| Key, identity, transaction, RPC, or chain use | Not attempted | The envelope contains no valid request, signature, identity, address, amount, or operation |
-| RMR exact return and bounded synthetic polling | Pending harness-enabled RMR artifact | Must be completed before this matrix entry is final |
+| Test | Status |
+|---|---|
+| Installed package and exact Play Store version read-back | Pending |
+| Declared wallet scheme resolution | Pending |
+| Explicit no-key synthetic launch from the RMR development app | Pending |
+| Malformed/no-key request fails closed without a write | Pending |
+| Exact environment callback returns to RMR | Pending |
+| Bounded synthetic polling reaches a terminal state | Pending |
+| Wrong challenge, wrong environment, expiry, and replay remain rejected | Automated tests pass; device spot-check pending |
 
-The malformed-envelope result proves only Android scheme ownership, app launch, and
-fail-closed parsing. It does not prove signed `GenericRequest`/`GenericResponse`
-compatibility, wallet approval, identity control, authentication, or a Verus write. Those
-remain disabled and belong to issue #31.
+The issue #61 test never creates a valid `GenericRequest`, wallet signature, identity link,
+authentication session, transaction, RPC request, or chain write. Signed
+`LoginConsentResponse` compatibility belongs to issue #31.
+
+## External VRSCTEST authentication service candidate
+
+`https://auth.constitution.money/health` reports `verusid-auth` version `1.0.0`, VRSCTEST,
+and configured chain/signing identity state as of 2026-08-07. Issue #31 may reuse this
+service after its RMR relying-party audience, callback, WebSocket delivery, JWT issuer and
+audience, expiry, replay handling, rate limits, availability, and key-rotation contract are
+documented and tested.
+
+The service's `CONSTITUTION` request-signing identity is an authentication boundary only.
+It does not authorize representative VerusID provisioning, representative identity
+updates, provenance anchoring, or `contentmultimap` publication. Those retain separate
+server-side signer roles and feature gates.
 
 ## iOS
 

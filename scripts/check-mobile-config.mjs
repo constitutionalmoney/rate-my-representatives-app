@@ -57,6 +57,9 @@ for (const config of configurations) {
     extra.representativeVerusIdProvisioningEnabled !== false ||
     extra.representativeActivityVdxfWritesEnabled !== false ||
     extra.verusWallet?.enabled !== false ||
+    extra.verusWallet?.pinnedAndroidPackage !==
+      'org.autonomoussoftwarefoundation.verusmobile.android' ||
+    extra.verusWallet?.pinnedAndroidVersion !== 'unverified' ||
     config.android?.allowBackup !== false ||
     config.updates?.enabled !== false
   ) {

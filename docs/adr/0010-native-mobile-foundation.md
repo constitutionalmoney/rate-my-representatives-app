@@ -11,12 +11,13 @@ contracts, native secure storage, app links, push notifications, accessible inte
 and a future same-device Verus Mobile handoff. A marketing-site WebView and Expo Go do
 not exercise those native boundaries.
 
-The repository already shares strict TypeScript contracts and mobile design tokens.
-The Android compatibility target is the Google Play Verus Mobile application with package
-`org.autonomoussoftwarefoundation.verusmobile.android`. A previously inspected sideloaded
-APK used a different package and is no longer an accepted target. The exact Google Play
-version, manifest schemes, and device result remain unset until they are read back from the
-approved Pixel 10 test device. No production-support claim is inferred before that test.
+The repository already shares strict TypeScript contracts and mobile design tokens. The
+approved Android compatibility target is Verus Mobile package `com.verusmobile`, version
+`1.1.0-5` (`versionCode` 1010005, minimum SDK 24, target SDK 35). It was read back from the
+Pixel 9 Audit AVD on Android 17/API 37, and Android resolves the `verus:` scheme to its main
+activity. The installed base APK SHA-256 is
+`5F7852B0620B1889AE9699A6ED864461A3641BA44A3B0E1731CF03491074A76C`. These values pin a
+synthetic test surface; they do not claim signed-request or production compatibility.
 
 ## Decision
 

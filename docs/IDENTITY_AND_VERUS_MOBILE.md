@@ -82,7 +82,7 @@ Store the nonce hashed where practical. Claim it atomically exactly once.
 
 ### Signed request
 
-The application request must be signed through a dedicated authentication/request signer role whose current identity state can be resolved. The existing VRSCTEST `verusid-auth` service at `auth.constitution.money` and its `CONSTITUTION` signing identity are the candidate implementation for RMR; issue #31 must first validate an RMR-specific audience, callback, JWT/WebSocket contract, expiry, replay handling, availability, and rotation boundary. Its signing material remains outside the general API and native clients.
+The application request must be signed through a dedicated authentication/request signer role whose current identity state can be resolved. The RMR-branded VRSCTEST `verusid-auth` service is being established at `auth.checksandbalances.services`; issue #31 must validate its health, signer identity, RMR-specific audience, callback, JWT/WebSocket contract, expiry, replay handling, availability, and rotation boundary before use. Its signing material remains outside the general API and native clients.
 
 The wallet must be able to show who is asking, what is requested, and why.
 
@@ -245,10 +245,10 @@ Maintain separate VRSCTEST signer roles for:
 - signing RMR wallet requests through the reviewed `verusid-auth` service; and
 - publishing RMR provenance anchors through an independently controlled identity.
 
-The request signer may reuse the existing `CONSTITUTION` identity only through the
-reviewed service contract; RMR must not import its keys or create a duplicate signer.
-Request-signing authority does not grant provenance, representative provisioning,
-identity-update, or `contentmultimap` authority.
+The request signer may be accessed only through the reviewed
+`auth.checksandbalances.services` contract; RMR must not import its keys or create a
+duplicate signer. Request-signing authority does not grant provenance, representative
+provisioning, identity-update, or `contentmultimap` authority.
 
 Do not provision treasury, reserve, committee, auditor, or jurisdictional parent identities as core RMR requirements.
 

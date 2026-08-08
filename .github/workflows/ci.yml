@@ -148,10 +148,15 @@ jobs:
           java-version: '17'
       - run: pnpm mobile:config:check
       - run: pnpm "mobile:prebuild:${{ matrix.platform }}"
+        env:
+          # The Android review artifact exposes only the synthetic no-key transport control.
+          RMR_VERUS_WALLET_HARNESS_ENABLED: ${{ matrix.platform == 'android' && 'true' || 'false' }}
       - if: matrix.platform == 'android'
         name: Compile unsigned Android debug APK
         working-directory: apps/mobile/android
         run: ./gradlew :app:assembleDebug --no-daemon
+        env:
+          RMR_VERUS_WALLET_HARNESS_ENABLED: 'true'
       - if: matrix.platform == 'android'
         uses: actions/upload-artifact@v4
         with:

@@ -16,12 +16,10 @@ publication, scoring, and mainnet behavior remain disabled.
 `apps/mobile/mobile-environments.ts` is the canonical public environment map.
 `apps/mobile/app.config.ts` fails on unknown environments and emits all representative
 identity/provenance gates as `false`. `RMR_VERUS_WALLET_HARNESS_ENABLED=true` is accepted
-only for a non-production VRSCTEST development build with an explicit, reviewed
-`RMR_VERUS_MOBILE_ANDROID_VERSION`. The Android wallet package is fixed to the Google Play
-application `org.autonomoussoftwarefoundation.verusmobile.android`; its version remains
-unset until read back from the approved Pixel 10 test device. The harness does not enable
-authentication, identity updates, representative identity provisioning, or provenance
-writes.
+only for a non-production VRSCTEST development build. The Android wallet target is pinned
+to package `com.verusmobile`, version `1.1.0-5`, as read back from the approved Pixel 9
+Audit device. The harness does not enable authentication, identity updates, representative
+identity provisioning, or provenance writes.
 
 Signing certificates, provisioning profiles, keystores, Expo push project IDs, Apple team
 IDs, and Android certificate fingerprints live in protected environment/platform stores.
@@ -63,8 +61,7 @@ When `RMR_VERUS_WALLET_HARNESS_ENABLED=true` is explicitly supplied to a non-pro
 development build, the native foundation screen exposes an accessible synthetic transport
 control. It launches a deliberately non-signable public envelope, accepts only the exact
 environment callback, and completes a deterministic bounded polling sequence. The control
-is absent by default, requires an explicit pinned wallet version, and cannot be enabled in
-production.
+is absent by default and cannot be enabled in production.
 
 The harness uses synthetic envelopes in automated tests, never a key. It does not define
 a `GenericRequest`, signature verification, callback API, identity update, or RPC call.

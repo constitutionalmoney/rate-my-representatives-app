@@ -9,20 +9,10 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   }
   const environment = environmentDocument[environmentName as keyof typeof environmentDocument];
   const walletHarnessRequested = process.env.RMR_VERUS_WALLET_HARNESS_ENABLED === 'true';
-  const pinnedAndroidVersion = process.env.RMR_VERUS_MOBILE_ANDROID_VERSION;
-  if (
-    pinnedAndroidVersion !== undefined &&
-    !/^[0-9]+(?:\.[0-9]+){2}(?:[-+][A-Za-z0-9.-]+)?$/u.test(pinnedAndroidVersion)
-  ) {
-    throw new Error('RMR_VERUS_MOBILE_ANDROID_VERSION is invalid.');
-  }
   if (walletHarnessRequested && environment.name === 'production') {
     throw new Error('The Verus Mobile harness cannot be enabled in production.');
   }
-  if (walletHarnessRequested && pinnedAndroidVersion === undefined) {
-    throw new Error('The Verus Mobile harness requires a pinned Android wallet version.');
-  }
-  const walletHarnessEnabled = walletHarnessRequested && pinnedAndroidVersion !== undefined;
+  const walletHarnessEnabled = walletHarnessRequested;
   const pushProjectId =
     process.env[`RMR_EXPO_PROJECT_ID_${environment.name.toUpperCase()}`] ?? null;
 
@@ -95,8 +85,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       verusNetwork: environment.verusNetwork,
       verusWallet: {
         enabled: walletHarnessEnabled,
-        pinnedAndroidPackage: 'org.autonomoussoftwarefoundation.verusmobile.android',
-        pinnedAndroidVersion: pinnedAndroidVersion ?? 'unverified',
+        pinnedAndroidPackage: 'com.verusmobile',
+        pinnedAndroidVersion: '1.1.0-5',
         scheme: 'verus',
       },
     },

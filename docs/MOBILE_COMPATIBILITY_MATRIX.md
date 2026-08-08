@@ -20,6 +20,8 @@ data, address inventory, balance, JWT, or production identifier.
 | Network boundary | VRSCTEST-only synthetic transport; no wallet network request |
 | Request library | None; deliberately non-signable synthetic envelope |
 | Verus daemon | Not used by issue #61's transport test |
+| RMR development artifact | Foundation CI run `31278349175`, Android job `93155477705`, commit `f326c85e4bbaafac29945ed5788092f4d896358e` |
+| RMR debug APK SHA-256 | `C45040CA58DFD5DC7CBF5A106F1C876E6C22B91C801FF9E8014414944C307AA0` |
 
 The alternative package `org.autonomoussoftwarefoundation.verusmobile.android` version
 `1.0.34` is not an RMR target. No wallet profile credential, address, identity, key,
@@ -32,15 +34,23 @@ balance, or wallet content was read, recorded, or used for this inventory.
 | Installed package/version/SDK read-back | Pass |
 | Installed base APK digest | Pass |
 | `verus:` scheme resolves to pinned package | Pass |
-| Explicit no-key synthetic launch from RMR development app | Pending harness artifact |
-| Malformed/no-key request fails closed without a write | Pending harness artifact |
-| Exact environment callback returns to RMR | Pending harness artifact |
-| Bounded synthetic polling reaches a terminal state | Pending harness artifact |
-| Wrong challenge, wrong environment, expiry, and replay remain rejected | Automated tests pass; device spot-check pending |
+| Explicit no-key synthetic launch from RMR development app | Pass; opened `com.verusmobile/.MainActivity` |
+| Malformed/no-key request fails closed without a write | Pass; wallet reported an incompatible generic-request protocol version |
+| Exact environment callback returns to RMR | Pass; exact public challenge reference was correlated |
+| Bounded synthetic polling reaches a terminal state | Pass; two-attempt synthetic poll ended `declined` |
+| Wrong challenge | Pass; callback route opened but correlation failed and the request remained pending |
+| Wrong environment | Pass; `rmr-staging:` could not resolve into the development package |
+| Replay | Pass; replay after completion caused no second polling transition |
+| Expiry | Automated expiry tests pass; no five-minute device wait was used as protocol evidence |
 
 The issue #61 test never creates a valid `GenericRequest`, wallet signature, identity link,
 authentication session, transaction, RPC request, or chain write. Signed
 `LoginConsentResponse` compatibility belongs to issue #31.
+
+The device flow used only the deliberately malformed public URL
+`verus://request/synthetic-public-envelope`. Verus Mobile failed it closed with
+`Unrecognized or incompatible generic request protocol version`. The test did not inspect
+or use a wallet profile, address, balance, identity, credential, or network response.
 
 ## RMR VRSCTEST authentication service
 

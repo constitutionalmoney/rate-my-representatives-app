@@ -128,8 +128,9 @@ paths:
       operationId: getMobileCompatibility
       summary: Read installed native-client compatibility policy
       description: >-
-        Reports the synthetic foundation minimum app builds and supported contract
-        versions for native iOS and Android clients. It does not claim an app-store release.
+        Reports minimum app versions/builds and supported contract versions for native
+        iOS and Android clients. The current response is synthetic and does not claim an
+        app-store release.
       tags: [Health]
       deprecated: false
       security: []
@@ -855,12 +856,12 @@ components:
         platforms:
           ios:
             releaseState: foundation
-            minimumAppVersion: 0.0.0-foundation
+            minimumAppVersion: 0.1.0
             minimumBuildNumber: 1
             supportedContractVersions: [v1]
           android:
             releaseState: foundation
-            minimumAppVersion: 0.0.0-foundation
+            minimumAppVersion: 0.1.0
             minimumBuildNumber: 1
             supportedContractVersions: [v1]
     SyntheticPublicRoleRegistry:

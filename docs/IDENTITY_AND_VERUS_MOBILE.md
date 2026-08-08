@@ -82,7 +82,7 @@ Store the nonce hashed where practical. Claim it atomically exactly once.
 
 ### Signed request
 
-The application request should be signed by a dedicated RMR authentication/request identity whose current state can be resolved. Its signing material remains outside the general API and native clients.
+The application request must be signed through a dedicated authentication/request signer role whose current identity state can be resolved. The RMR-branded VRSCTEST `verusid-auth` service is being established at `auth.checksandbalances.services`; issue #31 must validate its health, signer identity, RMR-specific audience, callback, JWT/WebSocket contract, expiry, replay handling, availability, and rotation boundary before use. Its signing material remains outside the general API and native clients.
 
 The wallet must be able to show who is asking, what is requested, and why.
 
@@ -240,10 +240,15 @@ Unknown or wrong-namespace keys may not be wallet-compatible. No example i-addre
 
 ## 7. Application and provenance identities
 
-Provision separate VRSCTEST identities for:
+Maintain separate VRSCTEST signer roles for:
 
-- signing RMR wallet requests; and
-- publishing RMR provenance anchors.
+- signing RMR wallet requests through the reviewed `verusid-auth` service; and
+- publishing RMR provenance anchors through an independently controlled identity.
+
+The request signer may be accessed only through the reviewed
+`auth.checksandbalances.services` contract; RMR must not import its keys or create a
+duplicate signer. Request-signing authority does not grant provenance, representative
+provisioning, identity-update, or `contentmultimap` authority.
 
 Do not provision treasury, reserve, committee, auditor, or jurisdictional parent identities as core RMR requirements.
 

@@ -1,7 +1,7 @@
 /* Generated from mobile-compatibility-status.schema.json. Do not edit directly. */
 
 /**
- * Synthetic foundation compatibility policy for installed native iOS and Android clients.
+ * Versioned compatibility policy for installed native iOS and Android clients.
  */
 export interface MobileCompatibilityStatus {
   status: 'compatible';
@@ -20,9 +20,9 @@ export interface MobileCompatibilityStatus {
   };
 }
 export interface PlatformPolicy {
-  releaseState: 'foundation';
-  minimumAppVersion: '0.0.0-foundation';
-  minimumBuildNumber: 1;
+  releaseState: 'foundation' | 'development' | 'staging' | 'pilot' | 'production' | 'blocked';
+  minimumAppVersion: string;
+  minimumBuildNumber: number;
   /**
    * @minItems 1
    * @maxItems 1

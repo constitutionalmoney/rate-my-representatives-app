@@ -69,6 +69,15 @@ conflicts, and use record-version ETags. Only explicit reviewer/admin publicatio
 decisions enter the public projection. Verus/provenance is absent, no score or signal
 aggregate is returned, and no publication or other civic write route is implemented.
 
+Issue #61 adds the production-capable native delivery boundary without publishing an
+app: isolated development/staging/pilot/production identifiers and origins, generated
+API compatibility checks, Universal/App Link policy, Keychain/Keystore storage, private
+push foundations, privacy-redacted crash records, accessible native baselines, unsigned
+iOS/Android CI builds, and a disabled VRSCTEST-only no-real-key Verus Mobile transport
+harness. Representative VerusID provisioning, authenticated RPC, activity publication,
+participation, scoring, and all mainnet behavior remain outside the mobile client and
+disabled.
+
 - No production iOS or Android app is released.
 - No production representative profile, category rating, representative signal, Civic Signal briefing, authenticated aggregate, VerusID claim, or Representative Accountability Score is live; issue #11 responses are synthetic only.
 - No composite score is approved.
@@ -345,7 +354,8 @@ a queue, object storage, Verus, wallet software, keys, or external civic data.
 
 See [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md),
 [docs/CONTRACTS.md](./docs/CONTRACTS.md), [docs/API_V1.md](./docs/API_V1.md),
-[docs/PUBLIC_PROFILE_API.md](./docs/PUBLIC_PROFILE_API.md), and
+[docs/PUBLIC_PROFILE_API.md](./docs/PUBLIC_PROFILE_API.md),
+[docs/NATIVE_MOBILE.md](./docs/NATIVE_MOBILE.md), and
 [docs/adr/0001-mobile-first-typescript-monorepo.md](./docs/adr/0001-mobile-first-typescript-monorepo.md).
 
 The issue #12 security boundaries and non-operational status are documented in
@@ -392,6 +402,7 @@ Verus-specific gates apply only when the corresponding feature is enabled. A rea
 - [End-to-end roadmap](./docs/ROADMAP.md)
 - [System architecture](./docs/ARCHITECTURE.md)
 - [Source-backed public profile API](./docs/PUBLIC_PROFILE_API.md)
+- [Native mobile foundation](./docs/NATIVE_MOBILE.md)
 - [Identity and Verus Mobile integration](./docs/IDENTITY_AND_VERUS_MOBILE.md)
 - [Subdomain and deployment plan](./docs/SUBDOMAINS.md)
 - [Website alignment and product decisions](./docs/WEBSITE_ALIGNMENT.md)

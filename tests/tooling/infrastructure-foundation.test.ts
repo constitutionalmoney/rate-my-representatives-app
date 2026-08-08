@@ -73,6 +73,16 @@ describe('issue #9 local infrastructure foundation', () => {
     expect(privatePolicy).not.toMatch(/rmr-quarantine|rmr-public/);
   });
 
+  it('passes generated MinIO credentials after an end-of-options delimiter', async () => {
+    const storageSetup = await read('infra/object-storage/configure-storage.sh');
+
+    expect(storageSetup).toContain(
+      'mc alias set -- local "${MINIO_ENDPOINT}" "${MINIO_ROOT_USER}" "${root_password}"',
+    );
+    expect(storageSetup.match(/mc admin user add -- local/g)).toHaveLength(3);
+    expect(storageSetup).not.toMatch(/^mc (?:alias set|admin user add) local /m);
+  });
+
   it('applies prefix conditions only to MinIO actions that support them', async () => {
     const publicPolicy = JSON.parse(
       await read('infra/object-storage/policies/api-public-reader.json'),

@@ -6,7 +6,7 @@ api_password="$(cat /run/secrets/minio_api_password)"
 quarantine_password="$(cat /run/secrets/minio_quarantine_password)"
 private_password="$(cat /run/secrets/minio_private_password)"
 
-mc alias set local "${MINIO_ENDPOINT}" "${MINIO_ROOT_USER}" "${root_password}"
+mc alias set -- local "${MINIO_ENDPOINT}" "${MINIO_ROOT_USER}" "${root_password}"
 mc mb --ignore-existing local/rmr-public local/rmr-quarantine local/rmr-private
 
 mc anonymous set none local/rmr-private
@@ -18,9 +18,9 @@ mc admin policy create local rmr-api-public-reader /opt/rmr/policies/api-public-
 mc admin policy create local rmr-quarantine-worker /opt/rmr/policies/quarantine-worker.json
 mc admin policy create local rmr-private-worker /opt/rmr/policies/private-worker.json
 
-mc admin user add local "${MINIO_API_USER}" "${api_password}"
-mc admin user add local "${MINIO_QUARANTINE_USER}" "${quarantine_password}"
-mc admin user add local "${MINIO_PRIVATE_USER}" "${private_password}"
+mc admin user add -- local "${MINIO_API_USER}" "${api_password}"
+mc admin user add -- local "${MINIO_QUARANTINE_USER}" "${quarantine_password}"
+mc admin user add -- local "${MINIO_PRIVATE_USER}" "${private_password}"
 mc admin policy attach local rmr-api-public-reader --user "${MINIO_API_USER}"
 mc admin policy attach local rmr-quarantine-worker --user "${MINIO_QUARANTINE_USER}"
 mc admin policy attach local rmr-private-worker --user "${MINIO_PRIVATE_USER}"

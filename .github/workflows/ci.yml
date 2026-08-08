@@ -116,8 +116,9 @@ jobs:
       - if: always()
         run: docker compose -f compose.yaml -f compose.local.yaml down --volumes
 
-  native-generation:
-    name: Generate ${{ matrix.platform }} native project
+  native-build:
+    name: Build unsigned ${{ matrix.platform }} development app
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
@@ -127,6 +128,8 @@ jobs:
           - platform: ios
             os: macos-latest
     runs-on: ${{ matrix.os }}
+    env:
+      RMR_MOBILE_ENV: development
     steps:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v4
@@ -138,7 +141,78 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - if: matrix.platform == 'android'
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - run: pnpm mobile:config:check
       - run: pnpm "mobile:prebuild:${{ matrix.platform }}"
+        env:
+          # The Android review artifact exposes only the synthetic no-key transport control.
+          RMR_VERUS_WALLET_HARNESS_ENABLED: ${{ matrix.platform == 'android' && 'true' || 'false' }}
+      - if: matrix.platform == 'android'
+        name: Compile unsigned Android debug APK
+        working-directory: apps/mobile/android
+        run: ./gradlew :app:assembleDebug --no-daemon
+        env:
+          RMR_VERUS_WALLET_HARNESS_ENABLED: 'true'
+      - if: matrix.platform == 'android'
+        uses: actions/upload-artifact@v4
+        with:
+          name: rmr-android-development-apk
+          path: apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 7
+      - if: matrix.platform == 'ios'
+        name: Install generated iOS pods
+        working-directory: apps/mobile/ios
+        run: pod install
+      - if: matrix.platform == 'ios'
+        name: Compile unsigned iOS simulator app
+        working-directory: apps/mobile/ios
+        run: |
+          workspace="$(find . -maxdepth 1 -name '*.xcworkspace' -print -quit)"
+          project="$(find . -maxdepth 1 -name '*.xcodeproj' ! -name 'Pods.xcodeproj' -print -quit)"
+          scheme_file="$(find "$project/xcshareddata/xcschemes" -maxdepth 1 -name '*.xcscheme' -print -quit)"
+          scheme="$(basename "$scheme_file" .xcscheme)"
+          test -n "$workspace" && test -n "$project" && test -n "$scheme_file" && test -n "$scheme"
+          xcodebuild -workspace "$workspace" -scheme "$scheme" -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$PWD/build/DerivedData" CODE_SIGNING_ALLOWED=NO build
+          find "$PWD/build/DerivedData/Build/Products/Debug-iphonesimulator" -maxdepth 1 -type d -name '*.app' -print -quit | grep -q .
+      - if: matrix.platform == 'ios'
+        uses: actions/upload-artifact@v4
+        with:
+          name: rmr-ios-development-simulator-app
+          path: apps/mobile/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/**/*.app
+          if-no-files-found: error
+          retention-days: 7
+
+  native-policy:
+    name: Mobile configuration, SBOM, and security policy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.20.0
+          run_install: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm mobile:config:check
+      - run: pnpm --filter '@rmr/mobile...' build
+      - run: pnpm mobile:bundle-budget
+      - run: pnpm mobile:sbom > rmr-mobile.cdx.json
+      - name: Validate CycloneDX mobile SBOM
+        run: node --input-type=module -e "const document=JSON.parse(await import('node:fs/promises').then(fs=>fs.readFile('rmr-mobile.cdx.json','utf8'))); if(document.bomFormat!=='CycloneDX'||document.specVersion!=='1.5'||document.components.length===0) process.exit(1);"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rmr-mobile-cyclonedx-sbom
+          path: rmr-mobile.cdx.json
+          if-no-files-found: error
+          retention-days: 14
 
   dependency-review:
     if: github.event_name == 'pull_request'

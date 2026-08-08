@@ -241,7 +241,7 @@ export interface paths {
         };
         /**
          * Read installed native-client compatibility policy
-         * @description Reports the synthetic foundation minimum app builds and supported contract versions for native iOS and Android clients. It does not claim an app-store release.
+         * @description Reports minimum app versions/builds and supported contract versions for native iOS and Android clients. The current response is synthetic and does not claim an app-store release.
          */
         get: operations["getMobileCompatibility"];
         put?: never;
@@ -1302,7 +1302,7 @@ export interface components {
         };
         /**
          * MobileCompatibilityStatus
-         * @description Synthetic foundation compatibility policy for installed native iOS and Android clients.
+         * @description Versioned compatibility policy for installed native iOS and Android clients.
          */
         "mobile-compatibility-status.schema": {
             contract: {
@@ -1320,12 +1320,10 @@ export interface components {
             status: "compatible";
             $defs: {
                 platformPolicy: {
-                    /** @constant */
-                    minimumAppVersion: "0.0.0-foundation";
-                    /** @constant */
-                    minimumBuildNumber: 1;
-                    /** @constant */
-                    releaseState: "foundation";
+                    minimumAppVersion: string;
+                    minimumBuildNumber: number;
+                    /** @enum {unknown} */
+                    releaseState: "foundation" | "development" | "staging" | "pilot" | "production" | "blocked";
                     supportedContractVersions: "v1"[];
                 };
             };
@@ -1419,12 +1417,10 @@ export interface components {
             supersedesDecisionId: components["schemas"]["nullableId"];
         };
         platformPolicy: {
-            /** @constant */
-            minimumAppVersion: "0.0.0-foundation";
-            /** @constant */
-            minimumBuildNumber: 1;
-            /** @constant */
-            releaseState: "foundation";
+            minimumAppVersion: string;
+            minimumBuildNumber: number;
+            /** @enum {unknown} */
+            releaseState: "foundation" | "development" | "staging" | "pilot" | "production" | "blocked";
             supportedContractVersions: "v1"[];
         };
         profileContext: {

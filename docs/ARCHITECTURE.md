@@ -321,6 +321,10 @@ No application profile state depends on identity-update success.
 
 ## 10. Native mobile architecture
 
+The accepted starting decision and migration triggers are recorded in
+[ADR 0010](./adr/0010-native-mobile-foundation.md). Operational configuration, privacy,
+wallet-harness, and release boundaries are in [NATIVE_MOBILE.md](./NATIVE_MOBILE.md).
+
 ### Shared and native boundaries
 
 Share:

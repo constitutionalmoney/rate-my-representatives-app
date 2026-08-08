@@ -82,7 +82,9 @@ infra/mobile
 ```
 
 - TypeScript strict mode and pinned runtime/package manager.
-- React Native/Expo development-build foundation for iOS and Android.
+- React Native/Expo development-build foundation for iOS and Android, with isolated
+  environment identifiers, native links, secure storage, privacy-safe push scaffolding,
+  minimum-version enforcement, and unsigned CI compilation (issue #61).
 - Responsive web application.
 - API and worker skeletons.
 - PostgreSQL, queue, object storage, and mail catcher.

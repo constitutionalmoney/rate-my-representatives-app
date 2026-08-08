@@ -95,10 +95,12 @@ self-test, and reports exact findings. Planned breaking changes require a new AP
 version or a specifically reviewed migration approval.
 
 Health publishes `currentVersion`, `minimumSupportedVersion`, and `supportedVersions`.
-`/api/v1/health/mobile` adds foundation minimum builds and per-platform supported contract
-versions so installed clients can make compatibility decisions without depending on
-Verus or other optional services. `releaseState: foundation` makes clear that this is not
-an app-store release claim.
+`/api/v1/health/mobile` adds semantic minimum app versions, integer minimum builds, and
+per-platform supported contract versions so installed clients can make compatibility
+decisions without depending on Verus or other optional services. The current synthetic
+response uses version `0.1.0`, build `1`, and `releaseState: foundation`; that release
+state makes clear this is not an app-store release claim. Later policy values are accepted
+by the generated contract without regenerating a client.
 
 Public profiles work with every Verus flag false. Optional provenance is `null` while
 disabled, external identity references are empty, and neither a composite score nor a

@@ -34,8 +34,8 @@ export function foundationHealth(): HealthStatus {
 
 export function mobileCompatibility(): MobileCompatibilityStatus {
   const platformPolicy = {
-    minimumAppVersion: '0.0.0-foundation' as const,
-    minimumBuildNumber: 1 as const,
+    minimumAppVersion: '0.1.0',
+    minimumBuildNumber: 1,
     releaseState: 'foundation' as const,
     supportedContractVersions: ['v1'] as const,
   };

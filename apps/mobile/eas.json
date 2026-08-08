@@ -6,13 +6,66 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "channel": "development",
+      "android": {
+        "credentialsSource": "remote"
+      },
+      "env": {
+        "RMR_MOBILE_ENV": "development"
+      },
+      "ios": {
+        "credentialsSource": "remote"
+      }
     },
     "development-simulator": {
       "developmentClient": true,
       "distribution": "internal",
+      "channel": "development",
+      "env": {
+        "RMR_MOBILE_ENV": "development"
+      },
       "ios": {
         "simulator": true
+      }
+    },
+    "staging": {
+      "distribution": "internal",
+      "channel": "staging",
+      "android": {
+        "credentialsSource": "remote"
+      },
+      "env": {
+        "RMR_MOBILE_ENV": "staging"
+      },
+      "ios": {
+        "credentialsSource": "remote"
+      }
+    },
+    "pilot": {
+      "distribution": "internal",
+      "channel": "pilot",
+      "android": {
+        "credentialsSource": "remote"
+      },
+      "env": {
+        "RMR_MOBILE_ENV": "pilot"
+      },
+      "ios": {
+        "credentialsSource": "remote"
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "channel": "production",
+      "android": {
+        "credentialsSource": "remote"
+      },
+      "env": {
+        "RMR_MOBILE_ENV": "production"
+      },
+      "ios": {
+        "credentialsSource": "remote"
       }
     }
   }

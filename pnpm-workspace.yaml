@@ -4,6 +4,15 @@ packages:
 
 injectWorkspacePackages: true
 
+# Expo/Metro resolves image-size 1.2.1 only in the build toolchain. These two 2026-08-07
+# parser DoS advisories have no patched release. Repository-controlled assets and bounded
+# CI timeouts limit exposure; remove both exceptions as soon as upstream ships a fix.
+audit:
+  level: high
+  ignore:
+    - GHSA-5p2g-fcmc-qvqq
+    - GHSA-w3rx-r6r6-pgpr
+
 overrides:
   js-yaml@4.3.0: 4.3.1
 

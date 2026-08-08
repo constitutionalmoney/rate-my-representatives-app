@@ -1,6 +1,6 @@
 # Development foundation
 
-**Status:** Issues #8, #12, #9, #19, #60, #49, #59, #55, and #11 foundation.
+**Status:** Issues #8, #12, #9, #19, #60, #49, #59, #55, #11, and #61 foundation.
 Effective-dated jurisdiction/public-role reads, internal source-candidate ingestion, and
 reviewed source-backed profile reads are operational with synthetic data only. No public
 account service, automatic publication, Verus write, participation, scoring, or
@@ -43,6 +43,9 @@ Do not use `npm install` or commit another package-manager lockfile.
 | `pnpm check:dependencies` | Fail on high or critical production dependency advisories |
 | `pnpm check:licenses` | Reject unknown or unapproved production dependency licences |
 | `pnpm check:secrets` | Scan source for high-confidence credential/key patterns |
+| `pnpm mobile:config:check` | Validate isolated native environments and false-by-default high-risk gates |
+| `pnpm mobile:bundle-budget` | Check generated native/web JavaScript and static-asset size budgets |
+| `pnpm mobile:sbom` | Emit the production mobile CycloneDX dependency SBOM |
 | `pnpm check` | Run the complete local CI-equivalent foundation suite |
 
 The core workspace build and test commands require no database, queue, object storage,
@@ -70,7 +73,7 @@ override is applied.
 
 ## Applications
 
-- `apps/mobile`: Expo development-client placeholder for iOS and Android.
+- `apps/mobile`: Expo development-client foundation for iOS and Android using the generated API client.
 - `apps/web`: responsive public-app placeholder and generated-client consumer.
 - `apps/portal`: representative portal placeholder.
 - `apps/admin`: administration/moderation placeholder.
@@ -93,9 +96,14 @@ pnpm mobile:prebuild:android
 ```
 
 iOS native compilation requires a supported macOS/Xcode environment. Android native
-compilation requires the supported Android SDK/JDK environment. CI generates each native
-project on its corresponding runner. Store signing, credentials, push, secure storage,
-wallet links, and release builds are not configured by issue #8.
+compilation requires the supported Android SDK/JDK environment. CI regenerates and
+compiles unsigned development applications on the corresponding runners. Secure storage,
+strict app links, private push boundaries, version compatibility, and a disabled
+VRSCTEST-only wallet transport harness are configured by issue #61. Real signing and push
+credentials remain in protected platform/EAS stores; no production release is authorized.
+
+See [the native mobile guide](./NATIVE_MOBILE.md) and
+[mobile release runbook](./runbooks/MOBILE_RELEASE.md).
 
 ## DCO commits
 

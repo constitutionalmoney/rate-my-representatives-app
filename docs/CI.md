@@ -10,7 +10,10 @@ additional read access.
 - generated OpenAPI/JSON Schema drift, structural validation, and parent-contract
   compatibility;
 - server and web build matrix;
-- iOS and Android Expo prebuild matrix on platform-appropriate runners;
+- unsigned iOS simulator and Android debug compilation after Expo prebuild on
+  platform-appropriate runners;
+- four-environment mobile configuration isolation, false-by-default safety gates, and a
+  retained CycloneDX production dependency SBOM;
 - dependency review, high/critical production advisory audit, and production licence allowlist;
 - local-pattern and Gitleaks secret scanning; and
 - DCO sign-off for every pull-request commit.
@@ -40,3 +43,13 @@ policy metadata, human-intent privacy assertions, generated-client checks across
 consumer surfaces, additive-client/strict-server runtime validation, an isolated mock
 smoke, and a breaking-change regression check. CI fetches the parent commit only for
 contract comparison; it does not contact a production API.
+
+Issue #61 makes native checks compile generated projects rather than stopping at prebuild.
+The iOS build disables code signing and the Android build uses only a debug key generated
+inside the runner. Seven-day development artifacts support isolated emulator/simulator
+review; they are not store candidates. No signing or push secret is available to
+pull-request jobs. Mobile
+policy tests cover malicious links, secure cleanup, minimal push payloads and token
+rotation, compatibility/minimum versions, accessibility rules, crash redaction, and the
+disabled VRSCTEST wallet transport harness. Dependency/licence review and both secret
+scanners cover the mobile workspace as part of the repository-wide jobs.

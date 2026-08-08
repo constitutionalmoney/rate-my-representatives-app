@@ -8,7 +8,7 @@ import {
   readMobileJurisdictionRegistry,
   readMobilePublicProfile,
   readMobilePublicProfiles,
-} from './api.js';
+} from './api';
 
 describe('mobile generated-client wiring', () => {
   it('validates health and proposed registry discovery with synthetic data', async () => {

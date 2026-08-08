@@ -8,13 +8,13 @@
   "platforms": {
     "ios": {
       "releaseState": "foundation",
-      "minimumAppVersion": "0.0.0-foundation",
+      "minimumAppVersion": "0.1.0",
       "minimumBuildNumber": 1,
       "supportedContractVersions": ["v1"]
     },
     "android": {
       "releaseState": "foundation",
-      "minimumAppVersion": "0.0.0-foundation",
+      "minimumAppVersion": "0.1.0",
       "minimumBuildNumber": 1,
       "supportedContractVersions": ["v1"]
     }

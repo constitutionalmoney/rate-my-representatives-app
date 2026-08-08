@@ -56,6 +56,9 @@ describe('mobile environment isolation', () => {
       mobileEnvironment: 'staging',
       verusIdentityUpdateEnabled: false,
     });
+    expect(parseMobileRuntimeConfig({ ...parsed, pushProjectId: undefined }).pushProjectId).toBe(
+      null,
+    );
     expect(() => parseMobileRuntimeConfig({ ...parsed, verusIdentityUpdateEnabled: true })).toThrow(
       'safety configuration',
     );

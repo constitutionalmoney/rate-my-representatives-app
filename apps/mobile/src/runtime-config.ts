@@ -92,7 +92,9 @@ export function parseMobileRuntimeConfig(value: unknown): MobileRuntimeConfig {
     value.verusWallet.pinnedAndroidPackage !== 'com.verusmobile' ||
     value.verusWallet.pinnedAndroidVersion !== '1.1.0-5' ||
     value.verusWallet.scheme !== 'verus' ||
-    (value.pushProjectId !== null && typeof value.pushProjectId !== 'string')
+    (value.pushProjectId !== null &&
+      value.pushProjectId !== undefined &&
+      typeof value.pushProjectId !== 'string')
   ) {
     throw new Error('Mobile runtime safety configuration is invalid.');
   }
@@ -115,7 +117,7 @@ export function parseMobileRuntimeConfig(value: unknown): MobileRuntimeConfig {
     crashReporting: 'redacted-noop',
     mobileEnvironment: environment as MobileEnvironmentName,
     productStatus: 'native-foundation-only',
-    pushProjectId: value.pushProjectId,
+    pushProjectId: value.pushProjectId ?? null,
     releaseChannel: environment as MobileEnvironmentName,
     representativeActivityVdxfWritesEnabled: false,
     representativeVerusIdProvisioningEnabled: false,

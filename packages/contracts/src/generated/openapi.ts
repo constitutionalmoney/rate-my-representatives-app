@@ -15,6 +15,42 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/account/broad-jurisdiction": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read the authenticated account's optional broad jurisdiction */
+        get: operations["getSavedBroadJurisdiction"];
+        put?: never;
+        /** Save one country/province/state/territory preference */
+        post: operations["saveBroadJurisdiction"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/account/broad-jurisdiction/{preferenceId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Replace the authenticated account's broad jurisdiction */
+        put: operations["updateBroadJurisdiction"];
+        post?: never;
+        /** Delete the authenticated account's broad jurisdiction */
+        delete: operations["deleteBroadJurisdiction"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/appeals": {
         parameters: {
             query?: never;
@@ -261,7 +297,7 @@ export interface paths {
         };
         /**
          * Read the effective-dated synthetic jurisdiction registry
-         * @description Returns the nested Canada/United States synthetic registry at an effective date. It is not an eligibility, citizenship, legal-residence, or precise location determination. Person, term, candidacy, ingestion, and location resolution families remain explicitly deferred.
+         * @description Returns the nested Canada/United States synthetic registry at an effective date. It is not an eligibility, citizenship, legal-residence, or precise location determination. Person, term, candidacy, and ingestion remain separate, and this registry operation does not itself resolve a submitted location.
          */
         get: operations["getJurisdictionAvailability"];
         put?: never;
@@ -529,7 +565,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/representation": {
+    "/api/v1/representation/capabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Discover country coverage and minimum location input
+         * @description Returns synthetic Canada and United States provider, coverage-gap, input-minimization, geometry, source, licence, retention, and feature-gate metadata. This route accepts no precise location and makes no legal-residence, citizenship, or voter-eligibility claim.
+         */
+        get: operations["getRepresentationCapabilities"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/representation/resolve": {
         parameters: {
             query?: never;
             header?: never;
@@ -538,7 +594,31 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post?: never;
+        /**
+         * Resolve one precise synthetic location without retaining it
+         * @description Processes the request body only for the lifetime of this request. Request bodies are excluded from logging, traces, analytics, crash reports, queues, audits, AI, Verus, databases, object storage, and caches. Disabled by default.
+         */
+        post: operations["resolveRepresentationOnce"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/representation/resolve/ambiguity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Select one broad candidate from an expiring ambiguity result
+         * @description Accepts only an opaque one-time token and broad candidate ID. The token store contains precomputed public IDs and cannot reconstruct the original precise submission.
+         */
+        post: operations["selectRepresentationAmbiguity"];
         delete?: never;
         options?: never;
         head?: never;
@@ -693,6 +773,25 @@ export interface components {
             referenceId: components["schemas"]["id"];
             sourceIds: components["schemas"]["sourceIds"];
         };
+        "$defs-metadata": {
+            geometry: {
+                /** Format: date-time */
+                effectiveFrom: string;
+                license: string;
+                sha256: string;
+                version: string;
+            };
+            source: {
+                license: string;
+                /** Format: date-time */
+                observedAt: string;
+                providerId: components["schemas"]["opaqueId"];
+                /** @constant */
+                retention: "none";
+                termsUrl: string | null;
+                version: string;
+            };
+        };
         "$defs-office": {
             freshness: components["schemas"]["freshnessState"];
             governmentLevel: components["schemas"]["governmentLevel"];
@@ -748,7 +847,7 @@ export interface components {
          */
         "api-error.schema": {
             /** @enum {unknown} */
-            code: "NOT_FOUND" | "METHOD_NOT_ALLOWED" | "FEATURE_DISABLED" | "VALIDATION_ERROR" | "CONFLICT" | "PRECONDITION_FAILED" | "RATE_LIMITED" | "DEPENDENCY_UNAVAILABLE" | "MAINTENANCE";
+            code: "NOT_FOUND" | "METHOD_NOT_ALLOWED" | "FEATURE_DISABLED" | "VALIDATION_ERROR" | "CONFLICT" | "PRECONDITION_FAILED" | "RATE_LIMITED" | "DEPENDENCY_UNAVAILABLE" | "MAINTENANCE" | "UNAUTHENTICATED" | "FORBIDDEN" | "GONE";
             correlationId: string;
             /** @enum {unknown} */
             dependencyState: "ready" | "degraded" | "unavailable" | "disabled" | null;
@@ -815,6 +914,13 @@ export interface components {
             geometryReference: string;
             geometrySha256: string;
         };
+        BroadJurisdictionPreferenceCommand: {
+            /** @enum {string} */
+            countryCode: "CA" | "US";
+            jurisdictionId: components["schemas"]["OpaqueId"];
+            /** @constant */
+            schemaVersion: "broad-jurisdiction-preference-command.v1";
+        };
         candidacy: {
             candidacyId: components["schemas"]["id"];
             countryCode: components["schemas"]["countryCode"];
@@ -835,6 +941,34 @@ export interface components {
             /** @enum {unknown} */
             toState: "declared" | "registered" | "qualified" | "withdrawn" | "suspended" | "rejected" | "disqualified" | "active" | "won" | "defeated" | "cancelled" | "superseded";
             transitionId: components["schemas"]["id"];
+        };
+        capability: {
+            countryCode: components["schemas"]["countryCode"];
+            coverage: {
+                gapCodes: string[];
+                /** @constant */
+                state: "partial";
+            };
+            /** @constant */
+            dataMode: "synthetic";
+            /** @enum {unknown} */
+            featureState: "disabled" | "operational";
+            input: {
+                /** @enum {unknown} */
+                autocomplete: "postal-code" | "street-address";
+                /** @enum {unknown} */
+                kind: "postal_code" | "address";
+                label: string;
+                maxLength: number;
+                /** @constant */
+                retention: "request_only";
+            };
+            /** @constant */
+            legalDeterminations: "none";
+            provider: components["schemas"]["metadata"];
+            /** @constant */
+            schemaVersion: "representation-capability.v1";
+            supportedScopes: components["schemas"]["scope"][];
         };
         /**
          * CivicSignalBriefing
@@ -976,6 +1110,11 @@ export interface components {
             state: "scheduled" | "active" | "completed" | "cancelled" | "superseded";
             versionId: components["schemas"]["id"];
         };
+        entity: {
+            applicationId: components["schemas"]["opaqueId"];
+            authoritativeIdentifiers: components["schemas"]["identifier"][];
+            label: string;
+        };
         externalIdentifier: {
             attribution: components["schemas"]["attribution"];
             effectiveFrom: components["schemas"]["timestamp"];
@@ -1056,6 +1195,10 @@ export interface components {
         };
         HealthStatus: components["schemas"]["health-status.schema"];
         id: string;
+        identifier: {
+            identifier: string;
+            issuer: string;
+        };
         jurisdiction: {
             countryCode: components["schemas"]["countryCode"];
             jurisdictionId: components["schemas"]["id"];
@@ -1272,6 +1415,17 @@ export interface components {
         };
         /** @enum {unknown} */
         kind: "office_term_transition" | "candidacy_transition" | "source_refresh" | "correction" | "response" | "dispute" | "appeal";
+        match: {
+            candidacyIds: components["schemas"]["opaqueId"][];
+            district: components["schemas"]["entity"] | null;
+            jurisdiction: components["schemas"]["entity"];
+            /** @enum {unknown} */
+            matchState: "matched" | "coverage_gap";
+            officeId: components["schemas"]["opaqueId"] | null;
+            officeTermId: components["schemas"]["opaqueId"] | null;
+            /** @enum {unknown} */
+            scope: "local" | "regional" | "province_state" | "federal" | "special";
+        };
         materialClaim: {
             /** @enum {unknown} */
             category: "vote" | "attendance" | "committee_work" | "expense" | "disclosure" | "public_statement" | "promise_position" | "documented_event" | "outcome";
@@ -1291,6 +1445,25 @@ export interface components {
             status: "reviewed" | "corrected" | "disputed";
             updatedAt: components["schemas"]["timestamp"];
             value: string;
+        };
+        metadata: {
+            geometry: {
+                /** Format: date-time */
+                effectiveFrom: string;
+                license: string;
+                sha256: string;
+                version: string;
+            };
+            source: {
+                license: string;
+                /** Format: date-time */
+                observedAt: string;
+                providerId: string;
+                /** @constant */
+                retention: "none";
+                termsUrl: string | null;
+                version: string;
+            };
         };
         methodMetadata: {
             /** @constant */
@@ -1383,6 +1556,7 @@ export interface components {
             issuer: components["schemas"]["id"];
             officialIdentifierId: components["schemas"]["id"];
         };
+        opaqueId: string;
         OpaqueId: string;
         page: {
             limit: number;
@@ -2156,6 +2330,184 @@ export interface components {
         PublicRoleProfileList: components["schemas"]["public-role-profile-list.schema"];
         PublicRoleProfileTimeline: components["schemas"]["public-role-profile-timeline.schema"];
         PublicRoleRegistry: components["schemas"]["public-role-registry.schema"];
+        /** RepresentationAmbiguitySelection */
+        "representation-ambiguity-selection.schema": {
+            /** Format: date-time */
+            asOf: string;
+            optionId: string;
+            /** @constant */
+            schemaVersion: "representation-ambiguity-selection.v1";
+            selectionToken: string;
+        };
+        /** RepresentationCapabilities */
+        "representation-capabilities.schema": {
+            /** @constant */
+            dataMode: "synthetic";
+            items: components["schemas"]["capability"][];
+            /** @constant */
+            schemaVersion: "representation-capabilities.v1";
+            $defs: {
+                /** @enum {unknown} */
+                countryCode: "CA" | "US";
+                /** @enum {unknown} */
+                scope: "local" | "regional" | "province_state" | "federal" | "special";
+                metadata: {
+                    geometry: {
+                        /** Format: date-time */
+                        effectiveFrom: string;
+                        license: string;
+                        sha256: string;
+                        version: string;
+                    };
+                    source: {
+                        license: string;
+                        /** Format: date-time */
+                        observedAt: string;
+                        providerId: string;
+                        /** @constant */
+                        retention: "none";
+                        termsUrl: string | null;
+                        version: string;
+                    };
+                };
+                capability: {
+                    countryCode: components["schemas"]["countryCode"];
+                    coverage: {
+                        gapCodes: string[];
+                        /** @constant */
+                        state: "partial";
+                    };
+                    /** @constant */
+                    dataMode: "synthetic";
+                    /** @enum {unknown} */
+                    featureState: "disabled" | "operational";
+                    input: {
+                        /** @enum {unknown} */
+                        autocomplete: "postal-code" | "street-address";
+                        /** @enum {unknown} */
+                        kind: "postal_code" | "address";
+                        label: string;
+                        maxLength: number;
+                        /** @constant */
+                        retention: "request_only";
+                    };
+                    /** @constant */
+                    legalDeterminations: "none";
+                    provider: components["schemas"]["metadata"];
+                    /** @constant */
+                    schemaVersion: "representation-capability.v1";
+                    supportedScopes: components["schemas"]["scope"][];
+                };
+            };
+        };
+        /** RepresentationResolutionRequest */
+        "representation-resolution-request.schema": {
+            /** Format: date-time */
+            asOf: string;
+            /** @enum {unknown} */
+            countryCode: "CA" | "US";
+            input: {
+                /** @enum {unknown} */
+                kind: "postal_code" | "address";
+                value: string;
+            };
+            /** @constant */
+            schemaVersion: "representation-resolution-request.v1";
+        } & (unknown & unknown);
+        /** RepresentationResolution */
+        "representation-resolution.schema": {
+            ambiguity: {
+                /** Format: date-time */
+                expiresAt: string;
+                options: {
+                    candidateId: components["schemas"]["opaqueId"];
+                    label: string;
+                }[];
+                selectionToken: components["schemas"]["opaqueId"];
+            } | null;
+            /** Format: date-time */
+            asOf: string;
+            /** @enum {unknown} */
+            countryCode: "CA" | "US";
+            /** @constant */
+            dataMode: "synthetic";
+            detailCode: string | null;
+            inputDisposition: {
+                /** Format: date-time */
+                disposedAt: string;
+                /** @constant */
+                logged: false;
+                /** @constant */
+                persisted: false;
+                /** @constant */
+                queued: false;
+                /** @constant */
+                sentToAi: false;
+                /** @constant */
+                sentToVerus: false;
+            };
+            legalDeterminations: {
+                /** @constant */
+                citizenship: "not_determined";
+                /** @constant */
+                legalResidence: "not_determined";
+                /** @constant */
+                voterEligibility: "not_determined";
+            };
+            matches: components["schemas"]["match"][];
+            provider: components["schemas"]["$defs-metadata"];
+            resolutionId: components["schemas"]["opaqueId"];
+            /** @constant */
+            schemaVersion: "representation-resolution.v1";
+            /** @enum {unknown} */
+            state: "resolved" | "ambiguous" | "unsupported" | "conflicting" | "stale" | "provider_unavailable";
+            $defs: {
+                opaqueId: string;
+                identifier: {
+                    identifier: string;
+                    issuer: string;
+                };
+                entity: {
+                    applicationId: components["schemas"]["opaqueId"];
+                    authoritativeIdentifiers: components["schemas"]["identifier"][];
+                    label: string;
+                };
+                match: {
+                    candidacyIds: components["schemas"]["opaqueId"][];
+                    district: components["schemas"]["entity"] | null;
+                    jurisdiction: components["schemas"]["entity"];
+                    /** @enum {unknown} */
+                    matchState: "matched" | "coverage_gap";
+                    officeId: components["schemas"]["opaqueId"] | null;
+                    officeTermId: components["schemas"]["opaqueId"] | null;
+                    /** @enum {unknown} */
+                    scope: "local" | "regional" | "province_state" | "federal" | "special";
+                };
+                metadata: {
+                    geometry: {
+                        /** Format: date-time */
+                        effectiveFrom: string;
+                        license: string;
+                        sha256: string;
+                        version: string;
+                    };
+                    source: {
+                        license: string;
+                        /** Format: date-time */
+                        observedAt: string;
+                        providerId: components["schemas"]["opaqueId"];
+                        /** @constant */
+                        retention: "none";
+                        termsUrl: string | null;
+                        version: string;
+                    };
+                };
+            };
+        };
+        RepresentationAmbiguitySelection: components["schemas"]["representation-ambiguity-selection.schema"];
+        RepresentationCapabilities: components["schemas"]["representation-capabilities.schema"];
+        RepresentationResolution: components["schemas"]["representation-resolution.schema"];
+        RepresentationResolutionRequest: components["schemas"]["representation-resolution-request.schema"];
         /**
          * RepresentativeSignalCommand
          * @description Disabled future human-intent command contract. No API operation accepts it in issue #60.
@@ -2194,6 +2546,25 @@ export interface components {
             schemaVersion: "public-role-profile-responses.v1";
             updatedAt: components["schemas"]["timestamp"];
         };
+        /** SavedBroadJurisdiction */
+        "saved-broad-jurisdiction.schema": {
+            /** @enum {unknown} */
+            countryCode: "CA" | "US";
+            /** Format: date-time */
+            createdAt: string;
+            jurisdictionId: string;
+            /** @enum {unknown} */
+            jurisdictionKind: "country" | "province" | "state" | "territory";
+            label: string;
+            preferenceId: string;
+            /** @constant */
+            schemaVersion: "saved-broad-jurisdiction.v1";
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        SavedBroadJurisdiction: components["schemas"]["saved-broad-jurisdiction.schema"];
+        /** @enum {unknown} */
+        scope: "local" | "regional" | "province_state" | "federal" | "special";
         selection: {
             id: null;
             /** @constant */
@@ -2281,11 +2652,29 @@ export interface components {
         timestamp: string;
     };
     responses: {
+        /** @description The idempotency key or optimistic state conflicts with an existing write. */
+        Conflict: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/problem+json": components["schemas"]["api-error.schema"];
+            };
+        };
         /** @description The capability is disabled or still proposed. */
         FeatureDisabled: {
             headers: {
                 "Cache-Control": components["headers"]["CacheControl"];
                 "X-Correlation-ID": components["headers"]["CorrelationId"];
+                [name: string]: unknown;
+            };
+            content: {
+                "application/problem+json": components["schemas"]["api-error.schema"];
+            };
+        };
+        /** @description The requested record does not exist or is not visible to this actor. */
+        NotFound: {
+            headers: {
                 [name: string]: unknown;
             };
             content: {
@@ -2303,10 +2692,33 @@ export interface components {
                 "application/problem+json": components["schemas"]["api-error.schema"];
             };
         };
+        /** @description A valid human session is required. */
+        Unauthenticated: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/problem+json": components["schemas"]["api-error.schema"];
+            };
+        };
+        /** @description The request is invalid. Error details never echo precise input. */
+        ValidationError: {
+            headers: {
+                "Cache-Control": components["headers"]["CacheControl"];
+                "X-Correlation-ID": components["headers"]["CorrelationId"];
+                [name: string]: unknown;
+            };
+            content: {
+                "application/problem+json": components["schemas"]["api-error.schema"];
+            };
+        };
     };
     parameters: {
+        /** @description Opaque caller-generated retry key; must contain no location or account data. */
+        IdempotencyKey: string;
         /** @description Entity tag from a prior read of this profile version. */
         IfNoneMatch: string;
+        PreferenceId: components["schemas"]["OpaqueId"];
         /** @description Stable application profile identifier for one person and one public-role context. */
         ProfileId: components["schemas"]["OpaqueId"];
         /** @description Effective timestamp; defaults to the deterministic synthetic fixture timestamp. */
@@ -2329,6 +2741,116 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    getSavedBroadJurisdiction: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Saved broad jurisdiction; never a district, municipality, address, or coordinates. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["saved-broad-jurisdiction.schema"];
+                };
+            };
+            401: components["responses"]["Unauthenticated"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    saveBroadJurisdiction: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Opaque caller-generated retry key; must contain no location or account data. */
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BroadJurisdictionPreferenceCommand"];
+            };
+        };
+        responses: {
+            /** @description Broad jurisdiction saved. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["saved-broad-jurisdiction.schema"];
+                };
+            };
+            400: components["responses"]["ValidationError"];
+            401: components["responses"]["Unauthenticated"];
+            409: components["responses"]["Conflict"];
+        };
+    };
+    updateBroadJurisdiction: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Opaque caller-generated retry key; must contain no location or account data. */
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
+            path: {
+                preferenceId: components["parameters"]["PreferenceId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BroadJurisdictionPreferenceCommand"];
+            };
+        };
+        responses: {
+            /** @description Broad jurisdiction updated. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["saved-broad-jurisdiction.schema"];
+                };
+            };
+            400: components["responses"]["ValidationError"];
+            401: components["responses"]["Unauthenticated"];
+            404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
+        };
+    };
+    deleteBroadJurisdiction: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Opaque caller-generated retry key; must contain no location or account data. */
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
+            path: {
+                preferenceId: components["parameters"]["PreferenceId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Broad jurisdiction deleted. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["Unauthenticated"];
+            404: components["responses"]["NotFound"];
+        };
+    };
     getCandidacyRegistry: {
         parameters: {
             query?: {
@@ -2896,6 +3418,90 @@ export interface operations {
                 };
             };
             404: components["responses"]["PublicProfileNotFound"];
+        };
+    };
+    getRepresentationCapabilities: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Synthetic country capabilities and coverage gaps. */
+            200: {
+                headers: {
+                    "Cache-Control": components["headers"]["CacheControl"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["representation-capabilities.schema"];
+                };
+            };
+        };
+    };
+    resolveRepresentationOnce: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["representation-resolution-request.schema"];
+            };
+        };
+        responses: {
+            /** @description Explicit resolved, ambiguous, unsupported, conflicting, stale, or outage result. */
+            200: {
+                headers: {
+                    "Cache-Control": components["headers"]["CacheControl"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["representation-resolution.schema"];
+                };
+            };
+            400: components["responses"]["ValidationError"];
+            503: components["responses"]["FeatureDisabled"];
+        };
+    };
+    selectRepresentationAmbiguity: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["representation-ambiguity-selection.schema"];
+            };
+        };
+        responses: {
+            /** @description Selected representation result. */
+            200: {
+                headers: {
+                    "Cache-Control": components["headers"]["CacheControl"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["representation-resolution.schema"];
+                };
+            };
+            400: components["responses"]["ValidationError"];
+            /** @description The ambiguity token expired, was consumed, or does not match the option. */
+            410: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["api-error.schema"];
+                };
+            };
+            503: components["responses"]["FeatureDisabled"];
         };
     };
 }

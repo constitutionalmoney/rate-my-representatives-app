@@ -14,7 +14,6 @@ import {
   type RepresentativeIntent,
 } from '@rmr/discovery';
 import {
-  CountrySelection,
   CoverageGap,
   DeckCompletion,
   DiscoveryError,
@@ -29,6 +28,7 @@ import type { PublicRoleProfile } from '@rmr/contracts';
 import { readWebPublicProfile, readWebPublicProfiles } from './health';
 import { createWebPublicDiscoveryCache, resolveWebPublicStorage } from './public-cache';
 import { publicProfileIdFromPath, resolveWebApiOrigin } from './runtime';
+import { LocationResolver } from './location-resolver';
 
 type LoadingState = 'deck' | 'profile' | null;
 type RetryState = Readonly<
@@ -185,7 +185,12 @@ export default function App() {
       />
     );
   } else if (country === null || deck === null) {
-    content = <CountrySelection onSelect={(selected) => void loadDeck(selected)} />;
+    content = (
+      <LocationResolver
+        apiOrigin={apiOrigin}
+        onBrowseCountry={(selected) => void loadDeck(selected)}
+      />
+    );
   } else if (deck.items.length === 0) {
     content = (
       <CoverageGap

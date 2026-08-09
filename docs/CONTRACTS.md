@@ -28,8 +28,9 @@ as other schemas. A material access, rights, parser, schema, schedule, or safety
 change creates a new connector version rather than mutating stored capability history.
 
 **Status:** Issue #60 foundation plus issue #49/#59 registry reads, issue #55 internal
-source contracts, issue #11 synthetic source-backed profile reads, and issue #7's
-non-operational report contract. Remaining HTTP route families are proposed or disabled.
+source contracts, issue #11 synthetic source-backed profile reads, issue #29 gated
+location contracts, and issue #7's non-operational report contract. Remaining HTTP route
+families are proposed or disabled.
 
 ## Canonical sources and committed outputs
 
@@ -50,7 +51,7 @@ pnpm check:api-compat
 pnpm test:contract
 ```
 
-`check:contracts` rejects generated drift and validates the OpenAPI document, all eighteen
+`check:contracts` rejects generated drift and validates the OpenAPI document, all 24
 schemas, synthetic fixtures, operation metadata, privacy fields, and human-intent
 boundaries. `check:api-compat` compares the canonical contract with the parent commit and
 rejects unapproved breaking changes. An intentional break requires a versioned migration
@@ -60,6 +61,11 @@ approval is not a substitute for publishing the new API version.
 Issue #55 explicitly approves the required `SOURCE_INGESTION_ENABLED` field addition.
 All typed consumers receive the field as `false` by default; omitting it is rejected so
 older deployments cannot accidentally bypass the new deny-by-default execution gate.
+
+Issue #29 explicitly approves the required false-by-default
+`LOCATION_RESOLUTION_ENABLED` field and additive `UNAUTHENTICATED`, `FORBIDDEN`, and
+`GONE` error codes used by the authenticated broad-preference and one-time ambiguity
+routes. No existing status, operation, or error meaning is removed.
 
 ## Generated clients and runtime validation
 
@@ -88,6 +94,7 @@ It serves:
 - `GET /api/v1/jurisdictions` as a typed `200` synthetic registry response; and
 - the four public-role lifecycle reads as typed `200` synthetic responses;
 - public profile list/detail/timeline/source/coverage/response/dispute/correction/appeal reads; and
+- representation capability/resolve/ambiguity responses and broad-jurisdiction preference responses; and
 - all other requests as a typed `404 NOT_FOUND`.
 
 `pnpm --filter @rmr/contracts mock:smoke` starts the mock on an ephemeral local port,
@@ -105,5 +112,11 @@ reference explicitly non-canonical and non-authorizing.
 responses. Dedicated list/timeline schemas preserve generated native/web types and
 runtime validation. Server validation rejects undocumented private fields; clients strip
 only additive fields after cloning.
+
+Issue #29 adds strict request/response schemas for representation capabilities,
+one-time resolution, ambiguity continuation, and saved broad jurisdiction. Generated
+mobile/web clients validate responses and never expose a persistence operation for
+precise input. The checked synthetic fixtures contain invented geography and `CC0-1.0`
+metadata only; they do not describe a real address or person.
 
 See [API_V1.md](./API_V1.md) for operation metadata and compatibility policy.

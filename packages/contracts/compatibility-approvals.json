@@ -1,4 +1,10 @@
 {
   "description": "Exact compatibility findings approved through review. Keep empty unless a versioned migration explicitly authorizes a break.",
-  "approvedBreaks": ["feature-gates.schema.json:required-field-added:SOURCE_INGESTION_ENABLED"]
+  "approvedBreaks": [
+    "api-error.schema.json.code:enum-value-added:UNAUTHENTICATED",
+    "api-error.schema.json.code:enum-value-added:FORBIDDEN",
+    "api-error.schema.json.code:enum-value-added:GONE",
+    "feature-gates.schema.json:required-field-added:LOCATION_RESOLUTION_ENABLED",
+    "feature-gates.schema.json:required-field-added:SOURCE_INGESTION_ENABLED"
+  ]
 }

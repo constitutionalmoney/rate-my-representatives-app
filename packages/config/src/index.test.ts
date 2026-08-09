@@ -12,7 +12,7 @@ import {
 
 describe('typed runtime configuration', () => {
   it('keeps every high-risk feature disabled by default', () => {
-    expect(FEATURE_FLAG_NAMES).toHaveLength(25);
+    expect(FEATURE_FLAG_NAMES).toHaveLength(26);
     expect(Object.values(DEFAULT_FEATURE_FLAGS).every((value) => value === false)).toBe(true);
     expect(loadFeatureFlags()).toEqual(DEFAULT_FEATURE_FLAGS);
   });
@@ -42,6 +42,7 @@ describe('typed runtime configuration', () => {
     expect(config.port).toBe(4100);
     expect(config.featureFlags.VERUS_ANCHORING_ENABLED).toBe(false);
     expect(config.featureFlags.SOURCE_INGESTION_ENABLED).toBe(false);
+    expect(config.featureFlags.LOCATION_RESOLUTION_ENABLED).toBe(false);
   });
 
   it('allows an explicit all-interface bind for a container and rejects arbitrary hosts', () => {

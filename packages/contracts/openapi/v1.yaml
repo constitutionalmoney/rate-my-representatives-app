@@ -6,8 +6,9 @@ info:
   description: >-
     Canonical v1 contract foundation. Health, mobile compatibility, the synthetic
     effective-dated jurisdiction registry, public-role lifecycle reads, and reviewed
-    source-backed public profiles are operational. Every other route family is contract
-    discovery only and has no operation.
+    source-backed public profiles and privacy-minimized synthetic location capability
+    discovery are operational. Precise synthetic resolution and account preference writes
+    remain disabled by default behind explicit feature and authentication gates.
   license:
     name: Apache-2.0
     identifier: Apache-2.0
@@ -24,7 +25,7 @@ tags:
   - name: Jurisdictions
     description: Operational synthetic nested jurisdiction, district, body, and office registry.
   - name: Representation
-    description: Proposed representation resolution.
+    description: Privacy-minimized synthetic Canada/U.S. representation resolution.
   - name: People
     description: Operational synthetic public people and reviewed resolution history.
   - name: Offices
@@ -176,8 +177,8 @@ paths:
       description: >-
         Returns the nested Canada/United States synthetic registry at an effective
         date. It is not an eligibility, citizenship, legal-residence, or precise
-        location determination. Person, term, candidacy, ingestion, and location
-        resolution families remain explicitly deferred.
+        location determination. Person, term, candidacy, and ingestion remain separate,
+        and this registry operation does not itself resolve a submitted location.
       tags: [Jurisdictions]
       deprecated: false
       security: []
@@ -258,9 +259,233 @@ paths:
                 $ref: '#/components/schemas/ApiError'
         '503':
           $ref: '#/components/responses/FeatureDisabled'
-  /api/v1/representation:
-    description: Proposed; no operation until the representation-resolution issue is implemented.
-    x-rmr-feature-status: proposed
+  /api/v1/representation/capabilities:
+    get:
+      operationId: getRepresentationCapabilities
+      summary: Discover country coverage and minimum location input
+      description: >-
+        Returns synthetic Canada and United States provider, coverage-gap, input-minimization,
+        geometry, source, licence, retention, and feature-gate metadata. This route accepts no
+        precise location and makes no legal-residence, citizenship, or voter-eligibility claim.
+      tags: [Representation]
+      deprecated: false
+      security: []
+      x-rmr-contract: &representationCapabilityContract
+        featureStatus: operational
+        allowedActors: [anonymous, human, representative, staff, reviewer, admin, service, agent]
+        requiredScopes: []
+        authentication: none
+        recentPresence: false
+        privacyClassification: public
+        fieldPrivacy: no-precise-location-fields
+        publicSerializer: representation-capabilities-v1
+        privateSerializer: not-applicable
+        idempotency: not-applicable
+        concurrency: none
+        rateLimitClass: public-read
+        errorCodes: [MAINTENANCE]
+        auditEffect: payload-free-operational-event
+        outboxEffect: none
+        pagination: none
+        filters: []
+        sort: country-code
+        cache: no-store
+        versionPolicy: additive-v1
+        sourceMetadata: synthetic-provider-and-geometry-version
+      responses:
+        '200':
+          description: Synthetic country capabilities and coverage gaps.
+          headers:
+            Cache-Control: { $ref: '#/components/headers/CacheControl' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RepresentationCapabilities' }
+              examples:
+                syntheticCapabilities:
+                  $ref: '#/components/examples/SyntheticRepresentationCapabilities'
+  /api/v1/representation/resolve:
+    post:
+      operationId: resolveRepresentationOnce
+      summary: Resolve one precise synthetic location without retaining it
+      description: >-
+        Processes the request body only for the lifetime of this request. Request bodies are
+        excluded from logging, traces, analytics, crash reports, queues, audits, AI, Verus,
+        databases, object storage, and caches. Disabled by default.
+      tags: [Representation]
+      deprecated: false
+      security: []
+      x-rmr-feature-flag: LOCATION_RESOLUTION_ENABLED
+      x-rmr-contract: &representationResolutionContract
+        featureStatus: disabled
+        allowedActors: [anonymous, human]
+        requiredScopes: []
+        authentication: optional
+        recentPresence: false
+        privacyClassification: highly-restricted-request-public-response
+        fieldPrivacy: request-body-never-logged-or-persisted
+        publicSerializer: representation-resolution-v1
+        privateSerializer: no-private-serializer
+        idempotency: request-is-one-time-and-write-free
+        concurrency: request-scoped
+        rateLimitClass: precise-location
+        errorCodes: [VALIDATION_ERROR, FEATURE_DISABLED, PROVIDER_UNAVAILABLE, RATE_LIMITED]
+        auditEffect: payload-free-operational-event
+        outboxEffect: none
+        pagination: none
+        filters: []
+        sort: scope-order
+        cache: no-store
+        versionPolicy: additive-v1
+        sourceMetadata: provider-and-effective-geometry-version
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RepresentationResolutionRequest' }
+      responses:
+        '200':
+          description: Explicit resolved, ambiguous, unsupported, conflicting, stale, or outage result.
+          headers:
+            Cache-Control: { $ref: '#/components/headers/CacheControl' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RepresentationResolution' }
+              examples:
+                syntheticCanadianResolution:
+                  $ref: '#/components/examples/SyntheticCanadianRepresentationResolution'
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '503': { $ref: '#/components/responses/FeatureDisabled' }
+  /api/v1/representation/resolve/ambiguity:
+    post:
+      operationId: selectRepresentationAmbiguity
+      summary: Select one broad candidate from an expiring ambiguity result
+      description: >-
+        Accepts only an opaque one-time token and broad candidate ID. The token store contains
+        precomputed public IDs and cannot reconstruct the original precise submission.
+      tags: [Representation]
+      deprecated: false
+      security: []
+      x-rmr-feature-flag: LOCATION_RESOLUTION_ENABLED
+      x-rmr-contract: *representationResolutionContract
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RepresentationAmbiguitySelection' }
+      responses:
+        '200':
+          description: Selected representation result.
+          headers:
+            Cache-Control: { $ref: '#/components/headers/CacheControl' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RepresentationResolution' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '410':
+          description: The ambiguity token expired, was consumed, or does not match the option.
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/ApiError' }
+        '503': { $ref: '#/components/responses/FeatureDisabled' }
+  /api/v1/account/broad-jurisdiction:
+    get:
+      operationId: getSavedBroadJurisdiction
+      summary: Read the authenticated account's optional broad jurisdiction
+      tags: [Account]
+      deprecated: false
+      security: [{ SessionBearer: [] }]
+      x-rmr-contract: &broadJurisdictionContract
+        featureStatus: disabled
+        allowedActors: [human]
+        requiredScopes: [account:self]
+        authentication: session-bearer
+        recentPresence: false
+        privacyClassification: private-account-preference
+        fieldPrivacy: broad-jurisdiction-only
+        publicSerializer: none
+        privateSerializer: saved-broad-jurisdiction-v1
+        idempotency: required-for-writes
+        concurrency: optimistic-updated-at
+        rateLimitClass: authenticated-write
+        errorCodes: [UNAUTHENTICATED, FORBIDDEN, VALIDATION_ERROR, CONFLICT]
+        auditEffect: payload-free-preference-event
+        outboxEffect: none
+        pagination: none
+        filters: []
+        sort: none
+        cache: no-store
+        versionPolicy: additive-v1
+        sourceMetadata: canonical-jurisdiction-registry
+      responses:
+        '200':
+          description: Saved broad jurisdiction; never a district, municipality, address, or coordinates.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SavedBroadJurisdiction' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      operationId: saveBroadJurisdiction
+      summary: Save one country/province/state/territory preference
+      tags: [Account]
+      deprecated: false
+      security: [{ SessionBearer: [] }]
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      x-rmr-contract: *broadJurisdictionContract
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BroadJurisdictionPreferenceCommand' }
+      responses:
+        '201':
+          description: Broad jurisdiction saved.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SavedBroadJurisdiction' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/v1/account/broad-jurisdiction/{preferenceId}:
+    put:
+      operationId: updateBroadJurisdiction
+      summary: Replace the authenticated account's broad jurisdiction
+      tags: [Account]
+      deprecated: false
+      security: [{ SessionBearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/PreferenceId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      x-rmr-contract: *broadJurisdictionContract
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BroadJurisdictionPreferenceCommand' }
+      responses:
+        '200':
+          description: Broad jurisdiction updated.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SavedBroadJurisdiction' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+    delete:
+      operationId: deleteBroadJurisdiction
+      summary: Delete the authenticated account's broad jurisdiction
+      tags: [Account]
+      deprecated: false
+      security: [{ SessionBearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/PreferenceId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      x-rmr-contract: *broadJurisdictionContract
+      responses:
+        '204': { description: Broad jurisdiction deleted. }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
   /api/v1/people:
     get:
       operationId: getPeopleRegistry
@@ -711,7 +936,26 @@ paths:
     description: Disabled provenance route family; issue #35 owns any future VRSCTEST writer.
     x-rmr-feature-status: disabled
 components:
+  securitySchemes:
+    SessionBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: opaque-session
+      description: Opaque authenticated human session; never accepted from query parameters.
   parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: Opaque caller-generated retry key; must contain no location or account data.
+      schema:
+        type: string
+        pattern: '^[a-zA-Z0-9][a-zA-Z0-9._:-]{7,127}$'
+    PreferenceId:
+      name: preferenceId
+      in: path
+      required: true
+      schema: { $ref: '#/components/schemas/OpaqueId' }
     ProfileId:
       name: profileId
       in: path
@@ -784,7 +1028,48 @@ components:
       $ref: ../schemas/public-role-profile-timeline.schema.json
     RepresentativeSignalCommand:
       $ref: ../schemas/representative-signal-command.schema.json
+    RepresentationAmbiguitySelection:
+      $ref: ../schemas/representation-ambiguity-selection.schema.json
+    RepresentationCapabilities:
+      $ref: ../schemas/representation-capabilities.schema.json
+    RepresentationResolutionRequest:
+      $ref: ../schemas/representation-resolution-request.schema.json
+    RepresentationResolution:
+      $ref: ../schemas/representation-resolution.schema.json
+    SavedBroadJurisdiction:
+      $ref: ../schemas/saved-broad-jurisdiction.schema.json
+    BroadJurisdictionPreferenceCommand:
+      type: object
+      additionalProperties: false
+      required: [schemaVersion, countryCode, jurisdictionId]
+      properties:
+        schemaVersion: { const: broad-jurisdiction-preference-command.v1 }
+        countryCode: { type: string, enum: [CA, US] }
+        jurisdictionId: { $ref: '#/components/schemas/OpaqueId' }
   responses:
+    ValidationError:
+      description: The request is invalid. Error details never echo precise input.
+      headers:
+        Cache-Control: { $ref: '#/components/headers/CacheControl' }
+        X-Correlation-ID: { $ref: '#/components/headers/CorrelationId' }
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+    Unauthenticated:
+      description: A valid human session is required.
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+    NotFound:
+      description: The requested record does not exist or is not visible to this actor.
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+    Conflict:
+      description: The idempotency key or optimistic state conflicts with an existing write.
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/ApiError' }
     PublicProfileNotFound:
       description: The profile does not exist or has no human-approved publication decision.
       headers:
@@ -808,6 +1093,15 @@ components:
             proposedJurisdictions:
               $ref: '#/components/examples/SyntheticJurisdictionsProposed'
   examples:
+    SyntheticRepresentationCapabilities:
+      summary: Synthetic Canada and United States location-provider capabilities
+      externalValue: ../fixtures/representation-capabilities.synthetic.json
+    SyntheticCanadianRepresentationResolution:
+      summary: Synthetic effective-dated Canadian representation result
+      externalValue: ../fixtures/representation-resolution-ca.synthetic.json
+    SyntheticSavedBroadJurisdiction:
+      summary: Synthetic province-level account preference
+      externalValue: ../fixtures/saved-broad-jurisdiction.synthetic.json
     SyntheticPublicRoleProfile:
       summary: Synthetic source-backed public-role profile
       externalValue: ../fixtures/public-role-profile.synthetic.json

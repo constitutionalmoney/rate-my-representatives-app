@@ -18,6 +18,43 @@ export const ROUTE_POLICIES: readonly RoutePolicy[] = Object.freeze([
   { action: 'public_read', method: 'GET', path: '/api/v1/health' },
   { action: 'public_read', method: 'GET', path: '/api/v1/health/mobile' },
   { action: 'public_read', method: 'GET', path: '/api/v1/jurisdictions' },
+  { action: 'public_read', method: 'GET', path: '/api/v1/representation/capabilities' },
+  {
+    action: 'resolve_location',
+    feature: 'LOCATION_RESOLUTION_ENABLED',
+    method: 'POST',
+    path: '/api/v1/representation/resolve',
+  },
+  {
+    action: 'resolve_location',
+    feature: 'LOCATION_RESOLUTION_ENABLED',
+    method: 'POST',
+    path: '/api/v1/representation/resolve/ambiguity',
+  },
+  {
+    action: 'manage_own_account',
+    feature: 'ACCOUNT_DATA_ACCESS_ENABLED',
+    method: 'GET',
+    path: '/api/v1/account/broad-jurisdiction',
+  },
+  {
+    action: 'manage_own_account',
+    feature: 'ACCOUNT_DATA_ACCESS_ENABLED',
+    method: 'POST',
+    path: '/api/v1/account/broad-jurisdiction',
+  },
+  {
+    action: 'manage_own_account',
+    feature: 'ACCOUNT_DATA_ACCESS_ENABLED',
+    method: 'PUT',
+    path: '/api/v1/account/broad-jurisdiction/:preferenceId',
+  },
+  {
+    action: 'manage_own_account',
+    feature: 'ACCOUNT_DATA_ACCESS_ENABLED',
+    method: 'DELETE',
+    path: '/api/v1/account/broad-jurisdiction/:preferenceId',
+  },
   {
     action: 'public_read',
     feature: 'PASSKEY_AUTH_ENABLED',

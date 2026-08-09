@@ -43,8 +43,9 @@ districts, public bodies, offices, external identifiers, and public coverage/con
 gaps. Canada and United States fixtures exercise different graph shapes, including
 multiple parents, overlaps, redistricting, rename, and amalgamation. The generated
 `GET /api/v1/jurisdictions` read contract is operational in synthetic mode. Source
-ingestion and location resolution remain deferred; the registry makes no residence,
-citizenship, or eligibility determination.
+ingestion and location resolution remain outside issue #49; later issue #55 and #29
+foundations are separately gated. The registry makes no residence, citizenship, or
+eligibility determination.
 
 Issue #59 adds separate synthetic person, office-term, election, candidacy, official-ID,
 and reviewed person-resolution records. Read-only `people`, `office-terms`, `elections`,
@@ -82,9 +83,10 @@ Issue #30 adds the first read-only application experience: country-only syntheti
 selection, finite completion and coverage-gap states, visible support/concern previews,
 skip-as-no-judgment, sourced detail, safe deep links, validated public-only offline cache,
 and a responsive installable PWA. The native and web clients use generated GET clients.
-Support/concern previews cannot confirm or submit before issue #37, and issue #29 still
-owns minimized jurisdiction resolution. No address, private choice, score, source write,
-Verus dependency, provenance write, or participation route is introduced. See
+Support/concern previews cannot confirm or submit before issue #37. Issue #29 now adds a
+separately gated transient resolver without changing the country-only deck default. No
+address persistence, private choice, score, source write, Verus dependency, provenance
+write, or participation route is introduced. See
 [`docs/READ_ONLY_DISCOVERY.md`](./docs/READ_ONLY_DISCOVERY.md).
 
 Issue #7 defines the versioned coverage, freshness, public-gap, correction, and pilot
@@ -102,6 +104,15 @@ scores; signer/RPC credentials remain absent from API, native, web, and general-
 processes. All added data is synthetic, high-risk flags remain false, and the core stack
 still requires no Verus. See
 [`docs/DATA_CLASSIFICATION.md`](./docs/DATA_CLASSIFICATION.md).
+
+Issue #29 adds a privacy-minimized Canada/United States jurisdiction resolver contract,
+synthetic provider adapters, effective-dated boundary matching, explicit ambiguity and
+outage recovery, and accessible manual web/native flows. Precise input is request-scoped
+only and is structurally excluded from persistence, logs, traces, analytics, queues,
+audit, crash records, AI, and Verus. Accounts may save only a canonical country,
+province, state, or territory after separate authorization. `LOCATION_RESOLUTION_ENABLED`
+remains false by default; the public capability route reports that state without
+requiring Verus. See [`docs/LOCATION_RESOLUTION.md`](./docs/LOCATION_RESOLUTION.md).
 
 - No production iOS or Android app is released; issue #30 remains a synthetic pilot.
 - No production representative profile, category rating, representative signal, Civic Signal briefing, authenticated aggregate, VerusID claim, or Representative Accountability Score is live; issue #11 responses are synthetic only.

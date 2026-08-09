@@ -32,7 +32,10 @@ export const API_ERROR_SCHEMA = {
         "PRECONDITION_FAILED",
         "RATE_LIMITED",
         "DEPENDENCY_UNAVAILABLE",
-        "MAINTENANCE"
+        "MAINTENANCE",
+        "UNAUTHENTICATED",
+        "FORBIDDEN",
+        "GONE"
       ]
     },
     "message": {
@@ -1595,6 +1598,10 @@ export const FEATURE_GATES_SCHEMA = {
       "type": "boolean",
       "default": false
     },
+    "LOCATION_RESOLUTION_ENABLED": {
+      "type": "boolean",
+      "default": false
+    },
     "PRIVILEGED_ACCESS_ENABLED": {
       "type": "boolean",
       "default": false
@@ -1676,6 +1683,7 @@ export const FEATURE_GATES_SCHEMA = {
     "ACCOUNT_EXPORT_ENABLED",
     "ACCOUNT_CORRECTION_ENABLED",
     "ACCOUNT_DELETION_ENABLED",
+    "LOCATION_RESOLUTION_ENABLED",
     "PRIVILEGED_ACCESS_ENABLED",
     "NATIVE_PARTICIPATION_ENABLED",
     "CIVIC_SIGNAL_ENABLED",
@@ -6026,6 +6034,815 @@ export const PUBLIC_ROLE_REGISTRY_SCHEMA = {
           }
         }
       ]
+    }
+  }
+} as const;
+
+export const REPRESENTATION_AMBIGUITY_SELECTION_SCHEMA = {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.ratemyrepresentatives.app/v1/representation-ambiguity-selection.schema.json",
+  "title": "RepresentationAmbiguitySelection",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "asOf",
+    "selectionToken",
+    "optionId"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "representation-ambiguity-selection.v1"
+    },
+    "asOf": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "selectionToken": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$"
+    },
+    "optionId": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$"
+    }
+  }
+} as const;
+
+export const REPRESENTATION_CAPABILITIES_SCHEMA = {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.ratemyrepresentatives.app/v1/representation-capabilities.schema.json",
+  "title": "RepresentationCapabilities",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "dataMode",
+    "items"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "representation-capabilities.v1"
+    },
+    "dataMode": {
+      "const": "synthetic"
+    },
+    "items": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "$ref": "#/$defs/capability"
+      }
+    }
+  },
+  "$defs": {
+    "countryCode": {
+      "enum": [
+        "CA",
+        "US"
+      ]
+    },
+    "scope": {
+      "enum": [
+        "local",
+        "regional",
+        "province_state",
+        "federal",
+        "special"
+      ]
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "geometry",
+        "source"
+      ],
+      "properties": {
+        "geometry": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "effectiveFrom",
+            "license",
+            "sha256",
+            "version"
+          ],
+          "properties": {
+            "effectiveFrom": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "license": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "license",
+            "observedAt",
+            "providerId",
+            "retention",
+            "termsUrl",
+            "version"
+          ],
+          "properties": {
+            "license": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "observedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "providerId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$"
+            },
+            "retention": {
+              "const": "none"
+            },
+            "termsUrl": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "format": "uri",
+                  "pattern": "^https://"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        }
+      }
+    },
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "coverage",
+        "countryCode",
+        "dataMode",
+        "featureState",
+        "input",
+        "legalDeterminations",
+        "provider",
+        "supportedScopes"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "representation-capability.v1"
+        },
+        "coverage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "gapCodes"
+          ],
+          "properties": {
+            "state": {
+              "const": "partial"
+            },
+            "gapCodes": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Z][A-Z0-9_]{2,63}$"
+              }
+            }
+          }
+        },
+        "countryCode": {
+          "$ref": "#/$defs/countryCode"
+        },
+        "dataMode": {
+          "const": "synthetic"
+        },
+        "featureState": {
+          "enum": [
+            "disabled",
+            "operational"
+          ]
+        },
+        "input": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "autocomplete",
+            "kind",
+            "label",
+            "maxLength",
+            "retention"
+          ],
+          "properties": {
+            "autocomplete": {
+              "enum": [
+                "postal-code",
+                "street-address"
+              ]
+            },
+            "kind": {
+              "enum": [
+                "postal_code",
+                "address"
+              ]
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "maxLength": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 240
+            },
+            "retention": {
+              "const": "request_only"
+            }
+          }
+        },
+        "legalDeterminations": {
+          "const": "none"
+        },
+        "provider": {
+          "$ref": "#/$defs/metadata"
+        },
+        "supportedScopes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/scope"
+          }
+        }
+      }
+    }
+  }
+} as const;
+
+export const REPRESENTATION_RESOLUTION_REQUEST_SCHEMA = {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.ratemyrepresentatives.app/v1/representation-resolution-request.schema.json",
+  "title": "RepresentationResolutionRequest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "asOf",
+    "countryCode",
+    "input"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "representation-resolution-request.v1"
+    },
+    "asOf": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "countryCode": {
+      "enum": [
+        "CA",
+        "US"
+      ]
+    },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "value"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "postal_code",
+            "address"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "type": "object",
+        "properties": {
+          "countryCode": {
+            "const": "CA"
+          }
+        }
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "const": "postal_code"
+              },
+              "value": {
+                "type": "string",
+                "maxLength": 7
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "type": "object",
+        "properties": {
+          "countryCode": {
+            "const": "US"
+          }
+        }
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "const": "address"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+} as const;
+
+export const REPRESENTATION_RESOLUTION_SCHEMA = {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.ratemyrepresentatives.app/v1/representation-resolution.schema.json",
+  "title": "RepresentationResolution",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "resolutionId",
+    "dataMode",
+    "countryCode",
+    "asOf",
+    "state",
+    "detailCode",
+    "matches",
+    "ambiguity",
+    "provider",
+    "inputDisposition",
+    "legalDeterminations"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "representation-resolution.v1"
+    },
+    "resolutionId": {
+      "$ref": "#/$defs/opaqueId"
+    },
+    "dataMode": {
+      "const": "synthetic"
+    },
+    "countryCode": {
+      "enum": [
+        "CA",
+        "US"
+      ]
+    },
+    "asOf": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "state": {
+      "enum": [
+        "resolved",
+        "ambiguous",
+        "unsupported",
+        "conflicting",
+        "stale",
+        "provider_unavailable"
+      ]
+    },
+    "detailCode": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]{2,63}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "matches": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/match"
+      }
+    },
+    "ambiguity": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "selectionToken",
+            "expiresAt",
+            "options"
+          ],
+          "properties": {
+            "selectionToken": {
+              "$ref": "#/$defs/opaqueId"
+            },
+            "expiresAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "options": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "candidateId",
+                  "label"
+                ],
+                "properties": {
+                  "candidateId": {
+                    "$ref": "#/$defs/opaqueId"
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 160
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "provider": {
+      "$ref": "#/$defs/metadata"
+    },
+    "inputDisposition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "disposedAt",
+        "logged",
+        "persisted",
+        "queued",
+        "sentToAi",
+        "sentToVerus"
+      ],
+      "properties": {
+        "disposedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "logged": {
+          "const": false
+        },
+        "persisted": {
+          "const": false
+        },
+        "queued": {
+          "const": false
+        },
+        "sentToAi": {
+          "const": false
+        },
+        "sentToVerus": {
+          "const": false
+        }
+      }
+    },
+    "legalDeterminations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "citizenship",
+        "legalResidence",
+        "voterEligibility"
+      ],
+      "properties": {
+        "citizenship": {
+          "const": "not_determined"
+        },
+        "legalResidence": {
+          "const": "not_determined"
+        },
+        "voterEligibility": {
+          "const": "not_determined"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "opaqueId": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$"
+    },
+    "identifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "issuer",
+        "identifier"
+      ],
+      "properties": {
+        "issuer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "identifier": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      }
+    },
+    "entity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "applicationId",
+        "authoritativeIdentifiers",
+        "label"
+      ],
+      "properties": {
+        "applicationId": {
+          "$ref": "#/$defs/opaqueId"
+        },
+        "authoritativeIdentifiers": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        }
+      }
+    },
+    "match": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope",
+        "matchState",
+        "jurisdiction",
+        "district",
+        "officeId",
+        "officeTermId",
+        "candidacyIds"
+      ],
+      "properties": {
+        "scope": {
+          "enum": [
+            "local",
+            "regional",
+            "province_state",
+            "federal",
+            "special"
+          ]
+        },
+        "matchState": {
+          "enum": [
+            "matched",
+            "coverage_gap"
+          ]
+        },
+        "jurisdiction": {
+          "$ref": "#/$defs/entity"
+        },
+        "district": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/entity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "officeId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/opaqueId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "officeTermId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/opaqueId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "candidacyIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/opaqueId"
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "geometry",
+        "source"
+      ],
+      "properties": {
+        "geometry": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "effectiveFrom",
+            "license",
+            "sha256",
+            "version"
+          ],
+          "properties": {
+            "effectiveFrom": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "license": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "license",
+            "observedAt",
+            "providerId",
+            "retention",
+            "termsUrl",
+            "version"
+          ],
+          "properties": {
+            "license": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "observedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "providerId": {
+              "$ref": "#/$defs/opaqueId"
+            },
+            "retention": {
+              "const": "none"
+            },
+            "termsUrl": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "format": "uri",
+                  "pattern": "^https://"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        }
+      }
+    }
+  }
+} as const;
+
+export const SAVED_BROAD_JURISDICTION_SCHEMA = {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.ratemyrepresentatives.app/v1/saved-broad-jurisdiction.schema.json",
+  "title": "SavedBroadJurisdiction",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "preferenceId",
+    "countryCode",
+    "jurisdictionId",
+    "jurisdictionKind",
+    "label",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "saved-broad-jurisdiction.v1"
+    },
+    "preferenceId": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$"
+    },
+    "countryCode": {
+      "enum": [
+        "CA",
+        "US"
+      ]
+    },
+    "jurisdictionId": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$"
+    },
+    "jurisdictionKind": {
+      "enum": [
+        "country",
+        "province",
+        "state",
+        "territory"
+      ]
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
     }
   }
 } as const;

@@ -14,7 +14,10 @@ export interface ApiError {
     | 'PRECONDITION_FAILED'
     | 'RATE_LIMITED'
     | 'DEPENDENCY_UNAVAILABLE'
-    | 'MAINTENANCE';
+    | 'MAINTENANCE'
+    | 'UNAUTHENTICATED'
+    | 'FORBIDDEN'
+    | 'GONE';
   message: string;
   correlationId: string;
   /**

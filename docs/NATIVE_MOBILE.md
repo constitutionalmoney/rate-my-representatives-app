@@ -47,8 +47,10 @@ reference and refetches current API state.
 The default Discover area provides the issue #30 country-only finite deck, explicit
 coverage-gap/completion states, local unsubmitted support/concern previews, skip with no
 retained judgment, and full sourced detail. The System area retains compatibility and the
-disabled-by-default synthetic wallet harness status. Issue #29 still owns a minimized
-jurisdiction resolver and issue #37 still owns representative-signal confirmation.
+disabled-by-default synthetic wallet harness status. The Find area provides issue #29's
+accessible manual Canada/United States resolver and always-visible country-browse
+fallback. It clears submitted input before awaiting the API and retains only public
+match results in component memory. Issue #37 still owns representative-signal confirmation.
 
 An Expo cache file stores only schema-validated public profile responses. Entries expire
 after seven days, the serialized cache is limited to 2 MiB, and reads use an eight-second

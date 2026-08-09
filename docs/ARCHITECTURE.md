@@ -254,6 +254,24 @@ At minimum use separate database schemas/roles or equivalent service controls fo
 
 The public read model must not be able to join a person/account identity to private political activity.
 
+### Privacy-minimized location boundary
+
+Issue #29 implements location resolution as a request-scoped domain operation, not a
+location database. Country-specific Canada and United States adapters accept normalized
+minimum input, return effective-dated jurisdiction/district/application IDs, and attach
+source, geometry, licence, and version metadata. Explicit result states distinguish
+resolved, ambiguous, unsupported, conflicting, stale, and provider-unavailable outcomes.
+An ambiguity token is opaque, single-use, and held only in bounded process memory.
+
+Precise input is cleared by the clients before the network operation completes and is
+never written to PostgreSQL, object storage, cache, queue, outbox, audit, logs, traces,
+analytics, crash reports, AI, or Verus. The only optional persisted location-derived
+state is an authorized account preference for a canonical country, province, state, or
+territory. It cannot contain a municipality, district, boundary, address, coordinate, or
+resolution token. The resolver makes no legal-residence, citizenship, voter-registration,
+or eligibility determination. See [LOCATION_RESOLUTION.md](./LOCATION_RESOLUTION.md) and
+[ADR 0012](./adr/0012-privacy-minimized-location-resolution.md).
+
 Issue #22 makes this table executable. `packages/domain/src/security-domains.ts` denies
 unknown principal/domain/operation tuples and audits every decision without subject or
 payload data. PostgreSQL reserves one schema and `NOLOGIN` service role per restricted

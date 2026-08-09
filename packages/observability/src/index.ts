@@ -7,6 +7,8 @@ const SENSITIVE_KEYS = new Set([
   'authorization',
   'challenge',
   'categoryrating',
+  'coordinate',
+  'coordinates',
   'cookie',
   'credential',
   'csrftoken',
@@ -17,11 +19,15 @@ const SENSITIVE_KEYS = new Set([
   'identityproof',
   'identifier',
   'location',
+  'latitude',
+  'longitude',
   'moderatornotes',
   'passphrase',
   'passkey',
   'preciseaddress',
   'preciselocation',
+  'postalcode',
+  'providerquery',
   'preference',
   'privateactivity',
   'privatekey',
@@ -48,6 +54,7 @@ const ANALYTICS_EVENT_FIELDS = Object.freeze({
   'deck.complete': new Set(['durationBucket', 'platform', 'status']),
   'deck.error': new Set(['errorCode', 'platform', 'status']),
   'deck.load': new Set(['durationBucket', 'platform', 'status']),
+  'location.resolve': new Set(['countryCode', 'providerId', 'status']),
 });
 
 export type ObservabilitySink = 'audit' | 'crash' | 'log' | 'queue' | 'trace';

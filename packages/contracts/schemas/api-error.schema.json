@@ -28,7 +28,10 @@
         "PRECONDITION_FAILED",
         "RATE_LIMITED",
         "DEPENDENCY_UNAVAILABLE",
-        "MAINTENANCE"
+        "MAINTENANCE",
+        "UNAUTHENTICATED",
+        "FORBIDDEN",
+        "GONE"
       ]
     },
     "message": { "type": "string", "minLength": 1, "maxLength": 256 },

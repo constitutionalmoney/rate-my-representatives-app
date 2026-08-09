@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "saved-broad-jurisdiction.v1",
+  "preferenceId": "preference:synthetic:ca:1",
+  "countryCode": "CA",
+  "jurisdictionId": "jurisdiction:ca:maple",
+  "jurisdictionKind": "province",
+  "label": "Maple Province",
+  "createdAt": "2026-06-01T12:00:00.000Z",
+  "updatedAt": "2026-06-01T12:00:00.000Z"
+}

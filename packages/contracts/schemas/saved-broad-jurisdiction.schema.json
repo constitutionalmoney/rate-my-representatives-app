@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.ratemyrepresentatives.app/v1/saved-broad-jurisdiction.schema.json",
+  "title": "SavedBroadJurisdiction",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "preferenceId",
+    "countryCode",
+    "jurisdictionId",
+    "jurisdictionKind",
+    "label",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "saved-broad-jurisdiction.v1" },
+    "preferenceId": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$"
+    },
+    "countryCode": { "enum": ["CA", "US"] },
+    "jurisdictionId": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$"
+    },
+    "jurisdictionKind": { "enum": ["country", "province", "state", "territory"] },
+    "label": { "type": "string", "minLength": 1, "maxLength": 160 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  }
+}

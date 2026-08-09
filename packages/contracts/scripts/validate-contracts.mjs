@@ -36,7 +36,9 @@ const requiredMetadata = [
 ];
 const initialRouteFamilies = [
   '/api/v1/jurisdictions',
-  '/api/v1/representation',
+  '/api/v1/representation/capabilities',
+  '/api/v1/representation/resolve',
+  '/api/v1/representation/resolve/ambiguity',
   '/api/v1/people',
   '/api/v1/offices',
   '/api/v1/office-terms',
@@ -57,6 +59,8 @@ const initialRouteFamilies = [
   '/api/v1/methodologies',
   '/api/v1/auth',
   '/api/v1/account',
+  '/api/v1/account/broad-jurisdiction',
+  '/api/v1/account/broad-jurisdiction/{preferenceId}',
   '/api/v1/representative-claims',
   '/api/v1/staff-delegations',
   '/api/v1/representative-signals',
@@ -202,7 +206,21 @@ for (const operationId of [
 ]) {
   assert(operationIds.has(operationId), `Issue #11 operation is missing: ${operationId}.`);
 }
-assert(operationIds.size === 16, 'Issues #59 and #11 must expose exactly sixteen reads.');
+for (const operationId of [
+  'getRepresentationCapabilities',
+  'resolveRepresentationOnce',
+  'selectRepresentationAmbiguity',
+  'getSavedBroadJurisdiction',
+  'saveBroadJurisdiction',
+  'updateBroadJurisdiction',
+  'deleteBroadJurisdiction',
+]) {
+  assert(operationIds.has(operationId), `Issue #29 operation is missing: ${operationId}.`);
+}
+assert(
+  operationIds.size === 23,
+  'Implemented v1 slices must expose exactly twenty-three operations.',
+);
 
 const publicForbidden = new Set([
   'accountid',
@@ -225,6 +243,9 @@ for (const filename of [
   'mobile-compatibility-status.schema.json',
   'public-role-profile.schema.json',
   'public-role-registry.schema.json',
+  'representation-capabilities.schema.json',
+  'representation-resolution.schema.json',
+  'saved-broad-jurisdiction.schema.json',
 ]) {
   for (const key of propertyKeys(schemas.get(filename))) {
     assert(
@@ -276,6 +297,9 @@ const fixtureSchemas = new Map([
   ['not-found.json', 'api-error.schema.json'],
   ['public-role-profile.synthetic.json', 'public-role-profile.schema.json'],
   ['public-role-registry.synthetic.json', 'public-role-registry.schema.json'],
+  ['representation-capabilities.synthetic.json', 'representation-capabilities.schema.json'],
+  ['representation-resolution-ca.synthetic.json', 'representation-resolution.schema.json'],
+  ['saved-broad-jurisdiction.synthetic.json', 'saved-broad-jurisdiction.schema.json'],
   ['security-domain-policy.synthetic.json', 'security-domain-policy.schema.json'],
   ['source-connector-ca.synthetic.json', 'source-connector-capability.schema.json'],
   ['source-connector-us.synthetic.json', 'source-connector-capability.schema.json'],

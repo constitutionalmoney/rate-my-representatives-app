@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.ratemyrepresentatives.app/v1/representation-capabilities.schema.json",
+  "title": "RepresentationCapabilities",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "dataMode", "items"],
+  "properties": {
+    "schemaVersion": { "const": "representation-capabilities.v1" },
+    "dataMode": { "const": "synthetic" },
+    "items": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": { "$ref": "#/$defs/capability" }
+    }
+  },
+  "$defs": {
+    "countryCode": { "enum": ["CA", "US"] },
+    "scope": {
+      "enum": ["local", "regional", "province_state", "federal", "special"]
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["geometry", "source"],
+      "properties": {
+        "geometry": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["effectiveFrom", "license", "sha256", "version"],
+          "properties": {
+            "effectiveFrom": { "type": "string", "format": "date-time" },
+            "license": { "type": "string", "minLength": 1, "maxLength": 256 },
+            "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+            "version": { "type": "string", "minLength": 1, "maxLength": 128 }
+          }
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["license", "observedAt", "providerId", "retention", "termsUrl", "version"],
+          "properties": {
+            "license": { "type": "string", "minLength": 1, "maxLength": 256 },
+            "observedAt": { "type": "string", "format": "date-time" },
+            "providerId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$"
+            },
+            "retention": { "const": "none" },
+            "termsUrl": {
+              "oneOf": [
+                { "type": "string", "format": "uri", "pattern": "^https://" },
+                { "type": "null" }
+              ]
+            },
+            "version": { "type": "string", "minLength": 1, "maxLength": 128 }
+          }
+        }
+      }
+    },
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "coverage",
+        "countryCode",
+        "dataMode",
+        "featureState",
+        "input",
+        "legalDeterminations",
+        "provider",
+        "supportedScopes"
+      ],
+      "properties": {
+        "schemaVersion": { "const": "representation-capability.v1" },
+        "coverage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["state", "gapCodes"],
+          "properties": {
+            "state": { "const": "partial" },
+            "gapCodes": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]{2,63}$" }
+            }
+          }
+        },
+        "countryCode": { "$ref": "#/$defs/countryCode" },
+        "dataMode": { "const": "synthetic" },
+        "featureState": { "enum": ["disabled", "operational"] },
+        "input": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["autocomplete", "kind", "label", "maxLength", "retention"],
+          "properties": {
+            "autocomplete": { "enum": ["postal-code", "street-address"] },
+            "kind": { "enum": ["postal_code", "address"] },
+            "label": { "type": "string", "minLength": 1, "maxLength": 128 },
+            "maxLength": { "type": "integer", "minimum": 1, "maximum": 240 },
+            "retention": { "const": "request_only" }
+          }
+        },
+        "legalDeterminations": { "const": "none" },
+        "provider": { "$ref": "#/$defs/metadata" },
+        "supportedScopes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/scope" }
+        }
+      }
+    }
+  }
+}

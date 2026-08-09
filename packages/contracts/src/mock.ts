@@ -5,6 +5,9 @@ import {
   SYNTHETIC_NOT_FOUND,
   SYNTHETIC_PUBLIC_ROLE_PROFILE,
   SYNTHETIC_PUBLIC_ROLE_REGISTRY,
+  SYNTHETIC_REPRESENTATION_CAPABILITIES,
+  SYNTHETIC_CA_REPRESENTATION_RESOLUTION,
+  SYNTHETIC_SAVED_BROAD_JURISDICTION,
 } from './generated/contract-fixtures.js';
 
 function jsonResponse(value: unknown, status: number, correlationId?: string): Response {
@@ -30,6 +33,33 @@ export function createContractMockFetch(): typeof globalThis.fetch {
     }
     if (request.method === 'GET' && url.pathname === '/api/v1/jurisdictions') {
       return jsonResponse(SYNTHETIC_JURISDICTIONS, 200);
+    }
+    if (request.method === 'GET' && url.pathname === '/api/v1/representation/capabilities') {
+      return jsonResponse(SYNTHETIC_REPRESENTATION_CAPABILITIES, 200);
+    }
+    if (request.method === 'POST' && url.pathname === '/api/v1/representation/resolve') {
+      return jsonResponse(SYNTHETIC_CA_REPRESENTATION_RESOLUTION, 200);
+    }
+    if (request.method === 'POST' && url.pathname === '/api/v1/representation/resolve/ambiguity') {
+      return jsonResponse(SYNTHETIC_CA_REPRESENTATION_RESOLUTION, 200);
+    }
+    if (request.method === 'GET' && url.pathname === '/api/v1/account/broad-jurisdiction') {
+      return jsonResponse(SYNTHETIC_SAVED_BROAD_JURISDICTION, 200);
+    }
+    if (request.method === 'POST' && url.pathname === '/api/v1/account/broad-jurisdiction') {
+      return jsonResponse(SYNTHETIC_SAVED_BROAD_JURISDICTION, 201);
+    }
+    if (
+      request.method === 'PUT' &&
+      url.pathname.startsWith('/api/v1/account/broad-jurisdiction/')
+    ) {
+      return jsonResponse(SYNTHETIC_SAVED_BROAD_JURISDICTION, 200);
+    }
+    if (
+      request.method === 'DELETE' &&
+      url.pathname.startsWith('/api/v1/account/broad-jurisdiction/')
+    ) {
+      return new Response(null, { status: 204 });
     }
     if (
       request.method === 'GET' &&

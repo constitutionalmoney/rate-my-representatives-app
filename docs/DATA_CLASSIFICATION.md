@@ -1,8 +1,9 @@
 # Data classification and security domains
 
-**Status:** Issue #22 enforcement foundation. Synthetic local/CI data only. This document
-does not enable accounts, location resolution, participation, representative scoring,
-source publication, Verus identities, provenance writes, or mainnet behavior.
+**Status:** Issue #22 enforcement foundation plus issue #29 transient location boundary.
+Synthetic local/CI data only. This document does not enable production accounts,
+providers, participation, representative scoring, source publication, Verus identities,
+provenance writes, or mainnet behavior.
 
 ## Classification levels
 
@@ -27,7 +28,7 @@ and live infrastructure smoke encode the same eight-domain boundary.
 |---|---|---|---|---|
 | Public registry | P0 after review | people, offices, terms, candidacies, sources, public claims/responses/corrections | `rmr_registry`, `rmr_public`; `rmr_api_public_service` receives only security-barrier/read views | Read and serialize allowlisted fields |
 | Account authentication | P2 | email, passkeys, sessions, recovery, device state | reserved `rmr_account`; `rmr_account_service` only | None |
-| Location resolver | P2 input, P0/P1 output | transient address/coordinates; returned district IDs | reserved `rmr_location`; `rmr_location_service` plus public registry read | District IDs only; precise input is not persisted |
+| Location resolver | P2 input, P0/P1 output | transient address/coordinates; returned district IDs | table-free `rmr_location`; request-scoped service plus public registry read | District IDs only; precise input is not persisted |
 | Identity/attestation | P2 | VerusID links, representative claims, staff evidence, opaque provider status | reserved `rmr_identity`; `rmr_identity_service` only | Reviewed public reference through a separate projection only |
 | Private civic activity | P2 | individual signals, ratings, preferences, subscriptions | reserved `rmr_participation`; `rmr_participation_service` only | None; future aggregates require separate privacy review |
 | Moderation | P2 | notes, assignments, abuse indicators, private correspondence | reserved `rmr_moderation`; `rmr_moderation_service` and restricted audit view | None |
@@ -68,11 +69,19 @@ selection.
 
 ## Location, observability, queues, and analytics
 
-Precise location input is accepted only by a future resolver's transient-process
+Precise location input is accepted only by the gated resolver's transient-process
 operation. It may exist in process memory for the shortest practical interval and must be
 discarded after returning district/jurisdiction IDs. It is prohibited from PostgreSQL,
 object storage, logs, traces, analytics, queues, crash reports, audit detail, and support
 exports.
+
+`rmr_location` intentionally owns no table. An authenticated user may separately save
+one `rmr_account.saved_broad_jurisdiction` row containing only an application
+jurisdiction ID, country code, canonical country/province/state/territory kind and label,
+and creation/update timestamps. Database checks, RLS, security-definer commands,
+hashed idempotency receipts, and payload-free audit prevent reconstruction or
+cross-account access. Municipality, district, boundary, address, coordinate, provider
+query, and ambiguity-token fields are prohibited.
 
 General observability recursively redacts credential, identity, precise-location,
 individual-signal, moderation, wallet, and token keys. Product analytics uses a positive

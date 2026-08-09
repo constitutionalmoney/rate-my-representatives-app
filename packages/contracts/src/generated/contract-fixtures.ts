@@ -668,6 +668,244 @@ export const SYNTHETIC_PUBLIC_ROLE_REGISTRY = {
   }
 } as const;
 
+export const SYNTHETIC_REPRESENTATION_CAPABILITIES = {
+  "schemaVersion": "representation-capabilities.v1",
+  "dataMode": "synthetic",
+  "items": [
+    {
+      "schemaVersion": "representation-capability.v1",
+      "coverage": {
+        "state": "partial",
+        "gapCodes": [
+          "FEDERAL_OFFICE_TERM_GAP",
+          "LOCAL_OFFICE_TERM_GAP"
+        ]
+      },
+      "countryCode": "CA",
+      "dataMode": "synthetic",
+      "featureState": "disabled",
+      "input": {
+        "autocomplete": "postal-code",
+        "kind": "postal_code",
+        "label": "Synthetic postal code",
+        "maxLength": 7,
+        "retention": "request_only"
+      },
+      "legalDeterminations": "none",
+      "provider": {
+        "geometry": {
+          "effectiveFrom": "2026-01-01T00:00:00.000Z",
+          "license": "CC0-1.0 synthetic fixture",
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "version": "synthetic-ca-geometry-2026.1"
+        },
+        "source": {
+          "license": "CC0-1.0 synthetic fixture",
+          "observedAt": "2026-06-01T00:00:00.000Z",
+          "providerId": "provider:synthetic:ca",
+          "retention": "none",
+          "termsUrl": null,
+          "version": "synthetic-ca-lookup-1.0.0"
+        }
+      },
+      "supportedScopes": [
+        "local",
+        "regional",
+        "province_state",
+        "federal"
+      ]
+    },
+    {
+      "schemaVersion": "representation-capability.v1",
+      "coverage": {
+        "state": "partial",
+        "gapCodes": [
+          "FEDERAL_OFFICE_TERM_GAP",
+          "LOCAL_OFFICE_TERM_GAP",
+          "REGIONAL_OFFICE_TERM_GAP"
+        ]
+      },
+      "countryCode": "US",
+      "dataMode": "synthetic",
+      "featureState": "disabled",
+      "input": {
+        "autocomplete": "street-address",
+        "kind": "address",
+        "label": "Synthetic street address",
+        "maxLength": 240,
+        "retention": "request_only"
+      },
+      "legalDeterminations": "none",
+      "provider": {
+        "geometry": {
+          "effectiveFrom": "2026-01-01T00:00:00.000Z",
+          "license": "CC0-1.0 synthetic fixture",
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "version": "synthetic-us-geometry-2026.1"
+        },
+        "source": {
+          "license": "CC0-1.0 synthetic fixture",
+          "observedAt": "2026-06-01T00:00:00.000Z",
+          "providerId": "provider:synthetic:us",
+          "retention": "none",
+          "termsUrl": null,
+          "version": "synthetic-us-lookup-1.0.0"
+        }
+      },
+      "supportedScopes": [
+        "local",
+        "regional",
+        "province_state",
+        "federal",
+        "special"
+      ]
+    }
+  ]
+} as const;
+
+export const SYNTHETIC_CA_REPRESENTATION_RESOLUTION = {
+  "schemaVersion": "representation-resolution.v1",
+  "resolutionId": "resolution:synthetic:ca:1",
+  "dataMode": "synthetic",
+  "countryCode": "CA",
+  "asOf": "2026-06-01T12:00:00.000Z",
+  "state": "resolved",
+  "detailCode": null,
+  "matches": [
+    {
+      "scope": "local",
+      "matchState": "coverage_gap",
+      "jurisdiction": {
+        "applicationId": "jurisdiction:ca:harbour",
+        "authoritativeIdentifiers": [
+          {
+            "issuer": "synthetic-ca-municipal-registry",
+            "identifier": "HARBOUR-CITY-002"
+          }
+        ],
+        "label": "Harbour City"
+      },
+      "district": null,
+      "officeId": "office:ca:harbour-mayor",
+      "officeTermId": null,
+      "candidacyIds": []
+    },
+    {
+      "scope": "regional",
+      "matchState": "matched",
+      "jurisdiction": {
+        "applicationId": "jurisdiction:ca:north-region",
+        "authoritativeIdentifiers": [
+          {
+            "issuer": "synthetic-ca-regional-registry",
+            "identifier": "NORTH-REGION-001"
+          }
+        ],
+        "label": "North Regional District"
+      },
+      "district": null,
+      "officeId": "office:ca:north-director",
+      "officeTermId": "term:ca:rowan:north-director:2026",
+      "candidacyIds": []
+    },
+    {
+      "scope": "province_state",
+      "matchState": "matched",
+      "jurisdiction": {
+        "applicationId": "jurisdiction:ca:maple",
+        "authoritativeIdentifiers": [
+          {
+            "issuer": "synthetic-ca-provincial-registry",
+            "identifier": "CA-MAPLE"
+          }
+        ],
+        "label": "Maple Province"
+      },
+      "district": {
+        "applicationId": "district:ca:maple-provincial",
+        "authoritativeIdentifiers": [
+          {
+            "issuer": "synthetic-ca-election-boundaries",
+            "identifier": "CA-MAPLE-PROV-2026"
+          }
+        ],
+        "label": "Harbour Coast Provincial District"
+      },
+      "officeId": "office:ca:maple-member",
+      "officeTermId": "term:ca:avery:maple-member:2026",
+      "candidacyIds": []
+    },
+    {
+      "scope": "federal",
+      "matchState": "coverage_gap",
+      "jurisdiction": {
+        "applicationId": "jurisdiction:ca",
+        "authoritativeIdentifiers": [
+          {
+            "issuer": "synthetic-ca-country-registry",
+            "identifier": "CA"
+          }
+        ],
+        "label": "Canada synthetic fixture"
+      },
+      "district": {
+        "applicationId": "district:ca:maple-federal-new",
+        "authoritativeIdentifiers": [
+          {
+            "issuer": "synthetic-ca-federal-boundaries",
+            "identifier": "CA-FED-MAPLE-2026"
+          }
+        ],
+        "label": "Maple Federal District 2026"
+      },
+      "officeId": null,
+      "officeTermId": null,
+      "candidacyIds": []
+    }
+  ],
+  "ambiguity": null,
+  "provider": {
+    "geometry": {
+      "effectiveFrom": "2026-01-01T00:00:00.000Z",
+      "license": "CC0-1.0 synthetic fixture",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "version": "synthetic-ca-geometry-2026.1"
+    },
+    "source": {
+      "license": "CC0-1.0 synthetic fixture",
+      "observedAt": "2026-06-01T00:00:00.000Z",
+      "providerId": "provider:synthetic:ca",
+      "retention": "none",
+      "termsUrl": null,
+      "version": "synthetic-ca-lookup-1.0.0"
+    }
+  },
+  "inputDisposition": {
+    "disposedAt": "2026-06-01T12:00:00.000Z",
+    "logged": false,
+    "persisted": false,
+    "queued": false,
+    "sentToAi": false,
+    "sentToVerus": false
+  },
+  "legalDeterminations": {
+    "citizenship": "not_determined",
+    "legalResidence": "not_determined",
+    "voterEligibility": "not_determined"
+  }
+} as const;
+
+export const SYNTHETIC_SAVED_BROAD_JURISDICTION = {
+  "schemaVersion": "saved-broad-jurisdiction.v1",
+  "preferenceId": "preference:synthetic:ca:1",
+  "countryCode": "CA",
+  "jurisdictionId": "jurisdiction:ca:maple",
+  "jurisdictionKind": "province",
+  "label": "Maple Province",
+  "createdAt": "2026-06-01T12:00:00.000Z",
+  "updatedAt": "2026-06-01T12:00:00.000Z"
+} as const;
+
 export const SYNTHETIC_SECURITY_DOMAIN_POLICY = {
   "schemaVersion": "security-domain-policy.v1",
   "dataMode": "synthetic",

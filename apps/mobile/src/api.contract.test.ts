@@ -6,8 +6,10 @@ import {
   readMobileCompatibilityPolicy,
   readMobileHealth,
   readMobileJurisdictionRegistry,
+  readMobileRepresentationCapabilities,
   readMobilePublicProfile,
   readMobilePublicProfiles,
+  resolveMobileRepresentation,
 } from './api';
 
 describe('mobile generated-client wiring', () => {
@@ -51,5 +53,24 @@ describe('mobile generated-client wiring', () => {
     ).resolves.toMatchObject({ provenance: null, externalIdentityReferences: [] });
     expect(requests.map(({ method }) => method)).toEqual(['GET', 'GET']);
     expect(requests[0]?.url).toContain('countryCode=CA');
+  });
+
+  it('wires privacy-minimized representation capability and resolution clients', async () => {
+    const mockFetch = createContractMockFetch();
+    await expect(
+      readMobileRepresentationCapabilities('http://127.0.0.1:3000', mockFetch),
+    ).resolves.toMatchObject({ items: [{ countryCode: 'CA' }, { countryCode: 'US' }] });
+    await expect(
+      resolveMobileRepresentation(
+        'http://127.0.0.1:3000',
+        {
+          schemaVersion: 'representation-resolution-request.v1',
+          asOf: '2026-06-01T12:00:00.000Z',
+          countryCode: 'CA',
+          input: { kind: 'postal_code', value: 'A1A 1A1' },
+        },
+        mockFetch,
+      ),
+    ).resolves.toMatchObject({ state: 'resolved', inputDisposition: { persisted: false } });
   });
 });

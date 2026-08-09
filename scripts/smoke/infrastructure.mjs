@@ -367,6 +367,35 @@ assert(
   securityDomainSmoke.stderr || 'Security-domain PostgreSQL smoke failed.',
 );
 
+const locationResolutionSmoke = spawnSync(
+  'docker',
+  [
+    'compose',
+    '-f',
+    'compose.infrastructure.yaml',
+    'exec',
+    '-T',
+    'postgres',
+    'psql',
+    '-U',
+    'rmr',
+    '-d',
+    'rmr',
+    '--set',
+    'ON_ERROR_STOP=1',
+    '--file=-',
+  ],
+  {
+    cwd: root,
+    encoding: 'utf8',
+    input: await readFile(path.join(root, 'scripts', 'smoke', 'location-resolution.sql'), 'utf8'),
+  },
+);
+assert(
+  locationResolutionSmoke.status === 0,
+  locationResolutionSmoke.stderr || 'Privacy-minimized location PostgreSQL smoke failed.',
+);
+
 const running = spawnSync(
   'docker',
   ['compose', '-f', 'compose.infrastructure.yaml', 'ps', '--services', '--status', 'running'],

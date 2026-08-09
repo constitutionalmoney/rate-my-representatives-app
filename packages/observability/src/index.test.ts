@@ -17,6 +17,8 @@ describe('privacy-safe observability', () => {
         email: 'synthetic@example.invalid',
         nested: { precise_location: 'synthetic address', signal: 'concern' },
         preciseAddress: 'synthetic precise address',
+        postalCode: 'A1A 1A1',
+        coordinates: { latitude: 1, longitude: 2 },
         publicId: 'fixture-1',
         sessionToken: 'synthetic-session-token',
       }),
@@ -27,9 +29,24 @@ describe('privacy-safe observability', () => {
       email: '[REDACTED]',
       nested: { precise_location: '[REDACTED]', signal: '[REDACTED]' },
       preciseAddress: '[REDACTED]',
+      postalCode: '[REDACTED]',
+      coordinates: '[REDACTED]',
       publicId: 'fixture-1',
       sessionToken: '[REDACTED]',
     });
+  });
+
+  it('permits only coarse operational location analytics', () => {
+    expect(
+      createAnalyticsEvent(
+        'location.resolve',
+        { countryCode: 'CA', providerId: 'synthetic-ca', status: 'resolved' },
+        '2026-06-01T12:00:00.000Z',
+      ),
+    ).toMatchObject({ event: 'location.resolve' });
+    expect(() => createAnalyticsEvent('location.resolve', { postalCode: 'A1A 1A1' })).toThrow(
+      /not allowlisted/,
+    );
   });
 
   it('creates deterministic structured events when a timestamp is supplied', () => {

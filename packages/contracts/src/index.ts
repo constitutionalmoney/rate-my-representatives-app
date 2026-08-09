@@ -6,10 +6,14 @@ export {
   createRmrClient,
   createWebClient,
   createWorkerClient,
+  continueRepresentationAmbiguity,
+  deleteBroadJurisdiction,
   OFFICIAL_CLIENT_SURFACES,
   readApiHealth,
   readJurisdictionAvailability,
   readJurisdictionRegistry,
+  readRepresentationCapabilities,
+  readSavedBroadJurisdiction,
   readMobileCompatibility,
   readPeople,
   readOfficeTerms,
@@ -24,6 +28,9 @@ export {
   readPublicProfileResponses,
   readPublicProfileSources,
   readPublicProfileTimeline,
+  resolveRepresentationOnce,
+  saveBroadJurisdiction,
+  updateBroadJurisdiction,
 } from './client.js';
 export { createContractMockFetch } from './mock.js';
 export {
@@ -42,6 +49,11 @@ export {
   parsePublicRoleProfileSources,
   parsePublicRoleProfileTimeline,
   parsePublicRoleRegistry,
+  parseRepresentationAmbiguitySelection,
+  parseRepresentationCapabilities,
+  parseRepresentationResolution,
+  parseRepresentationResolutionRequest,
+  parseSavedBroadJurisdiction,
   parseSourceConnectorCapability,
   parseSourceCoverageSnapshot,
 } from './validators.js';
@@ -66,6 +78,12 @@ export type {
   PublicRoleProfileSources,
   PublicRoleProfileTimeline,
   PublicRoleProfileTimelineQuery,
+  BroadJurisdictionPreferenceCommand,
+  RepresentationAmbiguitySelection,
+  RepresentationCapabilities,
+  RepresentationResolution,
+  RepresentationResolutionRequest,
+  SavedBroadJurisdiction,
   RmrApiClient,
 } from './client.js';
 export type { ApiError as ApiErrorSchema } from './generated/api-error.js';
@@ -73,6 +91,11 @@ export type { HealthStatus as HealthStatusSchema } from './generated/health-stat
 export type { JurisdictionRegistry as JurisdictionRegistrySchema } from './generated/jurisdiction-registry.js';
 export type { MobileCompatibilityStatus as MobileCompatibilityStatusSchema } from './generated/mobile-compatibility-status.js';
 export type { PublicRoleRegistry as PublicRoleRegistrySchema } from './generated/public-role-registry.js';
+export type { RepresentationAmbiguitySelection as RepresentationAmbiguitySelectionSchema } from './generated/representation-ambiguity-selection.js';
+export type { RepresentationCapabilities as RepresentationCapabilitiesSchema } from './generated/representation-capabilities.js';
+export type { RepresentationResolutionRequest as RepresentationResolutionRequestSchema } from './generated/representation-resolution-request.js';
+export type { RepresentationResolution as RepresentationResolutionSchema } from './generated/representation-resolution.js';
+export type { SavedBroadJurisdiction as SavedBroadJurisdictionSchema } from './generated/saved-broad-jurisdiction.js';
 export type { PublicRoleProfileList as PublicRoleProfileListSchema } from './generated/public-role-profile-list.js';
 export type {
   AppealSection as PublicRoleProfileAppealsSchema,

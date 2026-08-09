@@ -5,8 +5,10 @@ import { createContractMockFetch } from '@rmr/contracts';
 import {
   readFoundationHealth,
   readWebJurisdictionRegistry,
+  readWebRepresentationCapabilities,
   readWebPublicProfile,
   readWebPublicProfiles,
+  resolveWebRepresentation,
 } from './health.js';
 
 describe('web generated-client wiring', () => {
@@ -52,5 +54,24 @@ describe('web generated-client wiring', () => {
     });
     expect(requests.map(({ method }) => method)).toEqual(['GET', 'GET']);
     expect(requests[0]?.url).toContain('countryCode=CA');
+  });
+
+  it('wires the minimum-input capability and one-time resolution clients', async () => {
+    const mockFetch = createContractMockFetch();
+    await expect(
+      readWebRepresentationCapabilities('http://127.0.0.1:3000', mockFetch),
+    ).resolves.toMatchObject({ items: [{ countryCode: 'CA' }, { countryCode: 'US' }] });
+    await expect(
+      resolveWebRepresentation(
+        'http://127.0.0.1:3000',
+        {
+          schemaVersion: 'representation-resolution-request.v1',
+          asOf: '2026-06-01T12:00:00.000Z',
+          countryCode: 'CA',
+          input: { kind: 'postal_code', value: 'A1A 1A1' },
+        },
+        mockFetch,
+      ),
+    ).resolves.toMatchObject({ state: 'resolved', inputDisposition: { logged: false } });
   });
 });

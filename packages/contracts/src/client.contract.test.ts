@@ -7,9 +7,12 @@ import {
   createPublicSdkClient,
   createWebClient,
   createWorkerClient,
+  deleteBroadJurisdiction,
   OFFICIAL_CLIENT_SURFACES,
   readApiHealth,
   readJurisdictionRegistry,
+  readRepresentationCapabilities,
+  readSavedBroadJurisdiction,
   readMobileCompatibility,
   readPeople,
   readPublicProfile,
@@ -19,6 +22,8 @@ import {
   readPublicProfiles,
   readPublicProfileSources,
   readPublicProfileTimeline,
+  resolveRepresentationOnce,
+  saveBroadJurisdiction,
 } from './client.js';
 import { createContractMockFetch } from './mock.js';
 
@@ -83,6 +88,39 @@ describe('generated v1 clients', () => {
         ios: { releaseState: 'foundation', supportedContractVersions: ['v1'] },
       },
     });
+  });
+
+  it('publishes privacy-minimized resolution and broad-preference clients', async () => {
+    const client = createMobileClient('http://127.0.0.1:3000', createContractMockFetch());
+    await expect(readRepresentationCapabilities(client)).resolves.toMatchObject({
+      dataMode: 'synthetic',
+      items: [{ countryCode: 'CA' }, { countryCode: 'US' }],
+    });
+    await expect(
+      resolveRepresentationOnce(client, {
+        schemaVersion: 'representation-resolution-request.v1',
+        asOf: '2026-06-01T12:00:00.000Z',
+        countryCode: 'CA',
+        input: { kind: 'postal_code', value: 'A1A 1A1' },
+      }),
+    ).resolves.toMatchObject({ state: 'resolved', countryCode: 'CA' });
+    await expect(readSavedBroadJurisdiction(client)).resolves.toMatchObject({
+      jurisdictionKind: 'province',
+    });
+    await expect(
+      saveBroadJurisdiction(
+        client,
+        {
+          schemaVersion: 'broad-jurisdiction-preference-command.v1',
+          countryCode: 'CA',
+          jurisdictionId: 'jurisdiction:ca:maple',
+        },
+        'idempotency:synthetic:1',
+      ),
+    ).resolves.toMatchObject({ jurisdictionId: 'jurisdiction:ca:maple' });
+    await expect(
+      deleteBroadJurisdiction(client, 'preference:synthetic:ca:1', 'idempotency:synthetic:2'),
+    ).resolves.toBeUndefined();
   });
 
   it.each([

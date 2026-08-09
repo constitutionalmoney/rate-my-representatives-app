@@ -182,9 +182,13 @@ native iOS/Android and responsive web/PWA. It uses the generated issue #11 GET c
 a validated public-only offline cache, safe profile deep links, explicit completion and
 coverage-gap states, and visible no-drag controls. Support/concern remain unsubmitted
 local previews, skip creates no retained event, and no score or Verus dependency exists.
-Issue #29 still owns minimized jurisdiction resolution; issue #37 still owns confirmed
-representative-signal writes. Production coverage, browser/device release evidence, and
-the Phase 3 pilot exit metrics remain separate release gates.
+Issue #29 now provides disabled-by-default transient Canada/United States resolution,
+effective-dated synthetic boundary/provider contracts, accessible manual web/native
+recovery, and optional account persistence limited to a canonical country, province,
+state, or territory. Precise input is never retained, and no resolver provider or
+geography is production-approved. Issue #37 still owns confirmed representative-signal
+writes. Production coverage, browser/device release evidence, and the Phase 3 pilot exit
+metrics remain separate release gates.
 
 ## Phase 4 — Accounts, roles, and representative authorization
 

@@ -6,6 +6,7 @@ export const FEATURE_FLAG_DEFINITIONS = {
   ACCOUNT_EXPORT_ENABLED: 'Private account data export',
   ACCOUNT_CORRECTION_ENABLED: 'Account data correction',
   ACCOUNT_DELETION_ENABLED: 'Account deletion workflow',
+  LOCATION_RESOLUTION_ENABLED: 'Privacy-minimized precise location resolution',
   PRIVILEGED_ACCESS_ENABLED: 'Moderator and administrator sessions',
   NATIVE_PARTICIPATION_ENABLED: 'Native human participation',
   CIVIC_SIGNAL_ENABLED: 'Civic Signal monitoring and briefings',

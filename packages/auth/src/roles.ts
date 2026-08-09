@@ -53,6 +53,7 @@ export const DOMAIN_ACTIONS = [
   'public_read',
   'manage_own_sessions',
   'manage_own_account',
+  'resolve_location',
   'submit_representative_signal',
   'submit_category_rating',
   'submit_human_comment',
@@ -156,6 +157,18 @@ export function authorizeDomainAction(request: AuthorizationRequest): Authorizat
       allowed: true,
       reason:
         actor.actorType === 'anonymous' ? 'anonymous-public-read' : 'authenticated-self-service',
+    });
+  }
+
+  if (request.action === 'resolve_location') {
+    return Object.freeze({
+      allowed: actor.actorType !== 'service',
+      reason:
+        actor.actorType === 'anonymous'
+          ? 'anonymous-public-read'
+          : actor.actorType === 'human'
+            ? 'authenticated-self-service'
+            : 'insufficient-authentication',
     });
   }
 

@@ -1,6 +1,6 @@
 # API v1 contract foundation
 
-**Status:** Contract, synthetic registry, and synthetic source-backed profile reads; not a production civic-data release
+**Status:** Contract, synthetic registry/profile reads, and disabled-by-default synthetic location resolution; not a production civic-data release
 **Canonical specification:** `packages/contracts/openapi/v1.yaml`
 
 ## Implemented operations
@@ -23,6 +23,12 @@
 | `GET /api/v1/profiles/{profileId}/disputes` | Operational, synthetic | Visible items or explicit availability state | Read only |
 | `GET /api/v1/profiles/{profileId}/corrections` | Operational, synthetic | Visible correction/supersession history | Read only |
 | `GET /api/v1/profiles/{profileId}/appeals` | Operational, synthetic | Visible appeal history or explicit availability state | Read only |
+| `GET /api/v1/representation/capabilities` | Operational, synthetic | Country/provider coverage, input, licence, and gate state | None |
+| `POST /api/v1/representation/resolve` | Feature-gated, synthetic | One request-scoped effective-dated match or explicit non-match state | No persistence |
+| `POST /api/v1/representation/resolve/ambiguity` | Feature-gated, synthetic | Consume one opaque in-memory ambiguity selection | No persistence |
+| `GET /api/v1/account/broad-jurisdiction` | Feature-gated, authenticated | Read one canonical broad preference | Read only |
+| `POST /api/v1/account/broad-jurisdiction` | Feature-gated, authenticated | Save one country/province/state/territory preference | Account data only |
+| `PUT/DELETE /api/v1/account/broad-jurisdiction/{preferenceId}` | Feature-gated, authenticated | Replace or delete the account-owned preference | Account data only |
 
 The registry accepts optional `asOf`, `countryCode`, `jurisdictionId`, and
 `includeHistorical` filters. Its default timestamp and every returned record are
@@ -48,8 +54,8 @@ means `coverage_gap_not_misconduct`. Source conflicts remain visible. The server
 an exact allowlist that excludes account, precise-location, signal, attestation,
 staff-evidence, moderator-note, and private wallet data.
 
-The remaining v1 route families for representation, global sources/coverage enumeration,
-accounts, participation, evidence writes, due-process writes, Civic Signal, notifications, Verus, and
+The remaining v1 route families for global sources/coverage enumeration, other account
+operations, participation, evidence writes, due-process writes, Civic Signal, notifications, Verus, and
 provenance are discoverable as empty OpenAPI path items. They do not define callable
 operations until their owning issue implements authorization, domain rules, persistence,
 and tests. Empty discovery entries must not be described as released endpoints.
@@ -106,3 +112,12 @@ Public profiles work with every Verus flag false. Optional provenance is `null` 
 disabled, external identity references are empty, and neither a composite score nor a
 representative-signal aggregate is exposed. No API operation automatically publishes a
 record. See [PUBLIC_PROFILE_API.md](./PUBLIC_PROFILE_API.md).
+
+Location resolution works with Verus disabled. Precise request input has a 1 KiB route
+limit, is never echoed in success/errors, and is discarded after normalization and
+provider use. Responses expose only broad/public matches, provider/boundary versions,
+licence metadata, gaps, and explicit recovery state. `LOCATION_RESOLUTION_ENABLED=false`
+keeps both resolution commands unavailable by default; the capability read stays public
+so clients can present a country-browse fallback. Broad-preference commands additionally
+require authenticated account access and idempotency. See
+[LOCATION_RESOLUTION.md](./LOCATION_RESOLUTION.md).

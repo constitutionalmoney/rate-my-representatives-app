@@ -11,9 +11,20 @@ import {
   parsePublicRoleProfileSources,
   parsePublicRoleProfileTimeline,
   parsePublicRoleRegistry,
+  parseRepresentationAmbiguitySelection,
+  parseRepresentationCapabilities,
+  parseRepresentationResolution,
+  parseRepresentationResolutionRequest,
+  parseSavedBroadJurisdiction,
   type ApiError,
+  type SavedBroadJurisdiction,
 } from '@rmr/contracts';
 import {
+  EphemeralAmbiguityStore,
+  LocationInputValidationError,
+  PRIVACY_MINIMIZED_LOCATION_NORMALIZER,
+  SYNTHETIC_LOCATION_PROVIDERS,
+  createSavedBroadJurisdiction,
   queryPublicRoleRegistry,
   queryJurisdictionRegistry,
   listPublicProfiles,
@@ -21,6 +32,11 @@ import {
   readPublicProfileTimeline,
   SYNTHETIC_JURISDICTION_REGISTRY,
   SYNTHETIC_PUBLIC_ROLE_REGISTRY,
+  representationCapabilities,
+  resolveRepresentation,
+  selectRepresentationAmbiguity,
+  updateSavedBroadJurisdiction,
+  type BroadJurisdictionSelection,
   type CandidacyId,
   type CountryCode,
   type ElectionId,
@@ -60,6 +76,82 @@ const TIMELINE_KINDS = new Set<PublicProfileTimelineKind>([
   'dispute',
   'appeal',
 ]);
+const BROAD_PREFERENCE_PATH = /^\/api\/v1\/account\/broad-jurisdiction\/([^/]+)$/;
+const IDEMPOTENCY_KEY_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$/;
+const MAX_LOCATION_BODY_BYTES = 1024;
+const DEFAULT_AMBIGUITY_STORE = new EphemeralAmbiguityStore();
+
+const BROAD_JURISDICTIONS: Readonly<Record<string, BroadJurisdictionSelection>> = Object.freeze({
+  'jurisdiction:ca': {
+    countryCode: 'CA',
+    jurisdictionId: 'jurisdiction:ca',
+    jurisdictionKind: 'country',
+    label: 'Canada synthetic fixture',
+  },
+  'jurisdiction:ca:maple': {
+    countryCode: 'CA',
+    jurisdictionId: 'jurisdiction:ca:maple',
+    jurisdictionKind: 'province',
+    label: 'Maple Province',
+  },
+  'jurisdiction:us': {
+    countryCode: 'US',
+    jurisdictionId: 'jurisdiction:us',
+    jurisdictionKind: 'country',
+    label: 'United States synthetic fixture',
+  },
+  'jurisdiction:us:example-state': {
+    countryCode: 'US',
+    jurisdictionId: 'jurisdiction:us:example-state',
+    jurisdictionKind: 'state',
+    label: 'Example State',
+  },
+});
+
+export interface BroadJurisdictionPreferencePort {
+  delete(accountId: string, preferenceId: string, idempotencyKey: string): Promise<boolean>;
+  put(
+    accountId: string,
+    preference: SavedBroadJurisdiction,
+    idempotencyKey: string,
+  ): Promise<SavedBroadJurisdiction>;
+  read(accountId: string): Promise<SavedBroadJurisdiction | null>;
+}
+
+export interface HandlerContext {
+  readonly accountDataAccessEnabled?: boolean;
+  readonly accountId?: string | null;
+  readonly ambiguityStore?: EphemeralAmbiguityStore;
+  readonly createId?: () => string;
+  readonly locationResolutionEnabled?: boolean;
+  readonly now?: () => Date;
+  readonly preferences?: BroadJurisdictionPreferencePort;
+}
+
+function handlerContext(
+  context: HandlerContext,
+): Required<
+  Pick<
+    HandlerContext,
+    | 'accountDataAccessEnabled'
+    | 'accountId'
+    | 'ambiguityStore'
+    | 'createId'
+    | 'locationResolutionEnabled'
+    | 'now'
+  >
+> &
+  Pick<HandlerContext, 'preferences'> {
+  return {
+    accountDataAccessEnabled: context.accountDataAccessEnabled === true,
+    accountId: context.accountId ?? null,
+    ambiguityStore: context.ambiguityStore ?? DEFAULT_AMBIGUITY_STORE,
+    createId: context.createId ?? (() => `resolution:${crypto.randomUUID()}`),
+    locationResolutionEnabled: context.locationResolutionEnabled === true,
+    now: context.now ?? (() => new Date()),
+    ...(context.preferences ? { preferences: context.preferences } : {}),
+  };
+}
 
 function correlationId(request: Request): string {
   const candidate = request.headers.get('x-correlation-id');
@@ -83,6 +175,96 @@ function errorResponse(
     },
     status,
   });
+}
+
+export function requestBodyTooLarge(request: Request): Response {
+  return errorResponse(request, 413, {
+    code: 'VALIDATION_ERROR',
+    dependencyState: null,
+    featureState: null,
+    fieldErrors: [{ code: 'BODY_TOO_LARGE', field: 'body' }],
+    message: 'Request body exceeds the permitted size.',
+    retryable: false,
+    retryAfterSeconds: null,
+  });
+}
+
+function featureDisabled(request: Request): Response {
+  return errorResponse(request, 503, {
+    code: 'FEATURE_DISABLED',
+    dependencyState: 'disabled',
+    featureState: 'disabled',
+    fieldErrors: [],
+    message: 'This capability is disabled by default.',
+    retryAfterSeconds: null,
+    retryable: false,
+  });
+}
+
+async function readPrivacySensitiveJson(request: Request): Promise<unknown> {
+  const declaredLength = Number(request.headers.get('content-length') ?? '0');
+  if (Number.isFinite(declaredLength) && declaredLength > MAX_LOCATION_BODY_BYTES) {
+    throw new Error('REQUEST_TOO_LARGE');
+  }
+  if (!(request.headers.get('content-type') ?? '').toLowerCase().startsWith('application/json')) {
+    throw new Error('INVALID_CONTENT_TYPE');
+  }
+  const text = await request.text();
+  if (new TextEncoder().encode(text).byteLength > MAX_LOCATION_BODY_BYTES) {
+    throw new Error('REQUEST_TOO_LARGE');
+  }
+  return JSON.parse(text) as unknown;
+}
+
+function requestValidationError(request: Request, field = 'body'): Response {
+  return errorResponse(request, 400, {
+    code: 'VALIDATION_ERROR',
+    dependencyState: null,
+    featureState: 'operational',
+    fieldErrors: [{ code: 'INVALID_VALUE', field }],
+    message: 'The request is invalid.',
+    retryAfterSeconds: null,
+    retryable: false,
+  });
+}
+
+function unauthenticated(request: Request): Response {
+  return errorResponse(request, 401, {
+    code: 'UNAUTHENTICATED',
+    dependencyState: null,
+    featureState: 'disabled',
+    fieldErrors: [],
+    message: 'An authenticated human session is required.',
+    retryAfterSeconds: null,
+    retryable: false,
+  });
+}
+
+function preferenceNotFound(request: Request): Response {
+  return errorResponse(request, 404, {
+    code: 'NOT_FOUND',
+    dependencyState: null,
+    featureState: 'operational',
+    fieldErrors: [],
+    message: 'The saved broad jurisdiction does not exist.',
+    retryAfterSeconds: null,
+    retryable: false,
+  });
+}
+
+function parseBroadPreferenceCommand(value: unknown): BroadJurisdictionSelection | null {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) return null;
+  const command = value as Record<string, unknown>;
+  if (
+    Object.keys(command).sort().join(',') !== 'countryCode,jurisdictionId,schemaVersion' ||
+    command.schemaVersion !== 'broad-jurisdiction-preference-command.v1' ||
+    (command.countryCode !== 'CA' && command.countryCode !== 'US') ||
+    typeof command.jurisdictionId !== 'string'
+  ) {
+    return null;
+  }
+  const selection = BROAD_JURISDICTIONS[command.jurisdictionId];
+  return selection?.countryCode === command.countryCode ? selection : null;
 }
 
 function registryQuery(
@@ -267,7 +449,11 @@ function profileNotFound(request: Request): Response {
   });
 }
 
-export async function handleRequest(request: Request): Promise<Response> {
+export async function handleRequest(
+  request: Request,
+  context: HandlerContext = {},
+): Promise<Response> {
+  const runtime = handlerContext(context);
   const url = new URL(request.url);
   if (request.method === 'GET' && url.pathname === '/api/v1/health') {
     return Response.json(foundationHealth(), {
@@ -281,6 +467,155 @@ export async function handleRequest(request: Request): Promise<Response> {
     return Response.json(mobileCompatibility(), {
       headers: { 'cache-control': 'no-store' },
     });
+  }
+
+  if (request.method === 'GET' && url.pathname === '/api/v1/representation/capabilities') {
+    return Response.json(
+      parseRepresentationCapabilities(
+        {
+          dataMode: 'synthetic',
+          items: representationCapabilities(runtime.locationResolutionEnabled),
+          schemaVersion: 'representation-capabilities.v1',
+        },
+        'server',
+      ),
+      { headers: { 'cache-control': 'no-store' } },
+    );
+  }
+
+  if (request.method === 'POST' && url.pathname === '/api/v1/representation/resolve') {
+    if (!runtime.locationResolutionEnabled) return featureDisabled(request);
+    try {
+      const command = parseRepresentationResolutionRequest(
+        await readPrivacySensitiveJson(request),
+        'server',
+      );
+      const resolution = await resolveRepresentation({
+        ambiguityStore: runtime.ambiguityStore,
+        asOf: command.asOf,
+        countryCode: command.countryCode,
+        createId: runtime.createId,
+        input: command.input,
+        normalizer: PRIVACY_MINIMIZED_LOCATION_NORMALIZER,
+        now: runtime.now,
+        provider: SYNTHETIC_LOCATION_PROVIDERS[command.countryCode],
+      });
+      return Response.json(parseRepresentationResolution(resolution, 'server'), {
+        headers: { 'cache-control': 'no-store' },
+      });
+    } catch (error) {
+      if (error instanceof LocationInputValidationError) return requestValidationError(request);
+      return requestValidationError(request);
+    }
+  }
+
+  if (request.method === 'POST' && url.pathname === '/api/v1/representation/resolve/ambiguity') {
+    if (!runtime.locationResolutionEnabled) return featureDisabled(request);
+    try {
+      const command = parseRepresentationAmbiguitySelection(
+        await readPrivacySensitiveJson(request),
+        'server',
+      );
+      const resolution = selectRepresentationAmbiguity({
+        ambiguityStore: runtime.ambiguityStore,
+        asOf: command.asOf,
+        command: {
+          optionId: command.optionId,
+          selectionToken: command.selectionToken,
+        },
+        createId: runtime.createId,
+        now: runtime.now,
+      });
+      if (resolution === null) {
+        return errorResponse(request, 410, {
+          code: 'GONE',
+          dependencyState: null,
+          featureState: 'operational',
+          fieldErrors: [],
+          message: 'The ambiguity selection is unavailable. Start a new location lookup.',
+          retryAfterSeconds: null,
+          retryable: false,
+        });
+      }
+      return Response.json(parseRepresentationResolution(resolution, 'server'), {
+        headers: { 'cache-control': 'no-store' },
+      });
+    } catch {
+      return requestValidationError(request);
+    }
+  }
+
+  const isBroadPreferenceCollection = url.pathname === '/api/v1/account/broad-jurisdiction';
+  const broadPreferenceMatch = BROAD_PREFERENCE_PATH.exec(url.pathname);
+  if (isBroadPreferenceCollection || broadPreferenceMatch) {
+    if (!runtime.accountDataAccessEnabled) return featureDisabled(request);
+    if (runtime.accountId === null || runtime.preferences === undefined) {
+      return unauthenticated(request);
+    }
+    if (request.method === 'GET' && isBroadPreferenceCollection) {
+      const saved = await runtime.preferences.read(runtime.accountId);
+      if (saved === null) return preferenceNotFound(request);
+      return Response.json(parseSavedBroadJurisdiction(saved, 'server'), {
+        headers: { 'cache-control': 'no-store' },
+      });
+    }
+    const idempotencyKey = request.headers.get('idempotency-key');
+    if (idempotencyKey === null || !IDEMPOTENCY_KEY_PATTERN.test(idempotencyKey)) {
+      return requestValidationError(request, 'header.Idempotency-Key');
+    }
+    if (request.method === 'POST' && isBroadPreferenceCollection) {
+      try {
+        const selection = parseBroadPreferenceCommand(await readPrivacySensitiveJson(request));
+        if (selection === null) return requestValidationError(request);
+        const saved = createSavedBroadJurisdiction({
+          createId: () => `preference:${runtime.createId()}`,
+          now: runtime.now().toISOString(),
+          selection,
+        });
+        const persisted = await runtime.preferences.put(runtime.accountId, saved, idempotencyKey);
+        return Response.json(parseSavedBroadJurisdiction(persisted, 'server'), {
+          headers: { 'cache-control': 'no-store' },
+          status: 201,
+        });
+      } catch {
+        return requestValidationError(request);
+      }
+    }
+    let preferenceId: string;
+    try {
+      preferenceId = decodeURIComponent(broadPreferenceMatch?.[1] ?? '');
+    } catch {
+      preferenceId = '';
+    }
+    if (!OPAQUE_ID_PATTERN.test(preferenceId)) {
+      return requestValidationError(request, 'path.preferenceId');
+    }
+    if (request.method === 'PUT') {
+      try {
+        const existing = await runtime.preferences.read(runtime.accountId);
+        if (existing === null || existing.preferenceId !== preferenceId) {
+          return preferenceNotFound(request);
+        }
+        const selection = parseBroadPreferenceCommand(await readPrivacySensitiveJson(request));
+        if (selection === null) return requestValidationError(request);
+        const updated = updateSavedBroadJurisdiction(
+          existing,
+          selection,
+          runtime.now().toISOString(),
+        );
+        const persisted = await runtime.preferences.put(runtime.accountId, updated, idempotencyKey);
+        return Response.json(parseSavedBroadJurisdiction(persisted, 'server'), {
+          headers: { 'cache-control': 'no-store' },
+        });
+      } catch {
+        return requestValidationError(request);
+      }
+    }
+    if (request.method === 'DELETE') {
+      return (await runtime.preferences.delete(runtime.accountId, preferenceId, idempotencyKey))
+        ? new Response(null, { headers: { 'cache-control': 'no-store' }, status: 204 })
+        : preferenceNotFound(request);
+    }
   }
 
   if (request.method === 'GET' && url.pathname === '/api/v1/jurisdictions') {

@@ -1,11 +1,14 @@
 import {
+  continueRepresentationAmbiguity,
   createMobileClient,
   readApiHealth,
   readJurisdictionRegistry,
+  readRepresentationCapabilities,
   readMobileCompatibility,
   readPeople,
   readPublicProfile,
   readPublicProfiles,
+  resolveRepresentationOnce,
   type HealthStatus,
   type JurisdictionRegistry,
   type MobileCompatibilityStatus,
@@ -13,6 +16,10 @@ import {
   type PublicRoleProfile,
   type PublicRoleProfileList,
   type PublicRoleProfileListQuery,
+  type RepresentationCapabilities,
+  type RepresentationResolution,
+  type RepresentationResolutionRequest,
+  type RepresentationAmbiguitySelection,
 } from '@rmr/contracts';
 
 export function readMobileHealth(
@@ -34,6 +41,29 @@ export function readMobileJurisdictionRegistry(
   fetchImplementation?: typeof globalThis.fetch,
 ): Promise<JurisdictionRegistry> {
   return readJurisdictionRegistry(createMobileClient(baseUrl, fetchImplementation));
+}
+
+export function readMobileRepresentationCapabilities(
+  baseUrl: string,
+  fetchImplementation?: typeof globalThis.fetch,
+): Promise<RepresentationCapabilities> {
+  return readRepresentationCapabilities(createMobileClient(baseUrl, fetchImplementation));
+}
+
+export function resolveMobileRepresentation(
+  baseUrl: string,
+  request: RepresentationResolutionRequest,
+  fetchImplementation?: typeof globalThis.fetch,
+): Promise<RepresentationResolution> {
+  return resolveRepresentationOnce(createMobileClient(baseUrl, fetchImplementation), request);
+}
+
+export function continueMobileRepresentationAmbiguity(
+  baseUrl: string,
+  request: RepresentationAmbiguitySelection,
+  fetchImplementation?: typeof globalThis.fetch,
+): Promise<RepresentationResolution> {
+  return continueRepresentationAmbiguity(createMobileClient(baseUrl, fetchImplementation), request);
 }
 
 export function readMobileCompatibilityPolicy(

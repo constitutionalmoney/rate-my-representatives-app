@@ -1,16 +1,23 @@
 import {
+  continueRepresentationAmbiguity,
   createWebClient,
   readApiHealth,
   readJurisdictionRegistry,
+  readRepresentationCapabilities,
   readPeople,
   readPublicProfile,
   readPublicProfiles,
+  resolveRepresentationOnce,
   type HealthStatus,
   type JurisdictionRegistry,
   type PublicRoleRegistry,
   type PublicRoleProfile,
   type PublicRoleProfileList,
   type PublicRoleProfileListQuery,
+  type RepresentationCapabilities,
+  type RepresentationResolution,
+  type RepresentationResolutionRequest,
+  type RepresentationAmbiguitySelection,
 } from '@rmr/contracts';
 
 export async function readFoundationHealth(
@@ -32,6 +39,29 @@ export async function readWebJurisdictionRegistry(
   fetchImplementation?: typeof globalThis.fetch,
 ): Promise<JurisdictionRegistry> {
   return readJurisdictionRegistry(createWebClient(baseUrl, fetchImplementation));
+}
+
+export function readWebRepresentationCapabilities(
+  baseUrl: string,
+  fetchImplementation?: typeof globalThis.fetch,
+): Promise<RepresentationCapabilities> {
+  return readRepresentationCapabilities(createWebClient(baseUrl, fetchImplementation));
+}
+
+export function resolveWebRepresentation(
+  baseUrl: string,
+  request: RepresentationResolutionRequest,
+  fetchImplementation?: typeof globalThis.fetch,
+): Promise<RepresentationResolution> {
+  return resolveRepresentationOnce(createWebClient(baseUrl, fetchImplementation), request);
+}
+
+export function continueWebRepresentationAmbiguity(
+  baseUrl: string,
+  request: RepresentationAmbiguitySelection,
+  fetchImplementation?: typeof globalThis.fetch,
+): Promise<RepresentationResolution> {
+  return continueRepresentationAmbiguity(createWebClient(baseUrl, fetchImplementation), request);
 }
 
 export async function readWebPublicProfiles(

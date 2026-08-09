@@ -12,6 +12,8 @@ const mobileCompatibility = await fixture('mobile-compatibility.ready.json');
 const jurisdictions = await fixture('jurisdictions.synthetic.json');
 const publicRoles = await fixture('public-role-registry.synthetic.json');
 const publicProfile = await fixture('public-role-profile.synthetic.json');
+const representationCapabilities = await fixture('representation-capabilities.synthetic.json');
+const representationResolution = await fixture('representation-resolution-ca.synthetic.json');
 const notFound = await fixture('not-found.json');
 
 function send(response, status, value, headers = {}) {
@@ -37,6 +39,18 @@ export function createContractMockServer() {
     }
     if (request.method === 'GET' && url.pathname === '/api/v1/jurisdictions') {
       send(response, 200, jurisdictions);
+      return;
+    }
+    if (request.method === 'GET' && url.pathname === '/api/v1/representation/capabilities') {
+      send(response, 200, representationCapabilities);
+      return;
+    }
+    if (request.method === 'POST' && url.pathname === '/api/v1/representation/resolve') {
+      send(response, 200, representationResolution);
+      return;
+    }
+    if (request.method === 'POST' && url.pathname === '/api/v1/representation/resolve/ambiguity') {
+      send(response, 200, representationResolution);
       return;
     }
     if (
@@ -154,6 +168,7 @@ if (isEntrypoint) {
       healthResponse,
       mobileResponse,
       jurisdictionResponse,
+      representationCapabilityResponse,
       peopleResponse,
       profileResponse,
       missingResponse,
@@ -161,6 +176,7 @@ if (isEntrypoint) {
       fetch(`${baseUrl}/api/v1/health`),
       fetch(`${baseUrl}/api/v1/health/mobile`),
       fetch(`${baseUrl}/api/v1/jurisdictions`),
+      fetch(`${baseUrl}/api/v1/representation/capabilities`),
       fetch(`${baseUrl}/api/v1/people`),
       fetch(`${baseUrl}/api/v1/profiles/${encodeURIComponent(publicProfile.profileId)}`),
       fetch(`${baseUrl}/api/v1/missing`),
@@ -169,6 +185,7 @@ if (isEntrypoint) {
       healthResponse.status !== 200 ||
       mobileResponse.status !== 200 ||
       jurisdictionResponse.status !== 200 ||
+      representationCapabilityResponse.status !== 200 ||
       peopleResponse.status !== 200 ||
       profileResponse.status !== 200 ||
       missingResponse.status !== 404

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.ratemyrepresentatives.app/v1/representation-resolution-request.schema.json",
+  "title": "RepresentationResolutionRequest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "asOf", "countryCode", "input"],
+  "properties": {
+    "schemaVersion": { "const": "representation-resolution-request.v1" },
+    "asOf": { "type": "string", "format": "date-time" },
+    "countryCode": { "enum": ["CA", "US"] },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "value"],
+      "properties": {
+        "kind": { "enum": ["postal_code", "address"] },
+        "value": { "type": "string", "minLength": 1, "maxLength": 240 }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "type": "object", "properties": { "countryCode": { "const": "CA" } } },
+      "then": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "object",
+            "properties": {
+              "kind": { "const": "postal_code" },
+              "value": { "type": "string", "maxLength": 7 }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "type": "object", "properties": { "countryCode": { "const": "US" } } },
+      "then": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "object",
+            "properties": { "kind": { "const": "address" } }
+          }
+        }
+      }
+    }
+  ]
+}

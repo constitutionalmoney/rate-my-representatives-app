@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "representation-capabilities.v1",
+  "dataMode": "synthetic",
+  "items": [
+    {
+      "schemaVersion": "representation-capability.v1",
+      "coverage": {
+        "state": "partial",
+        "gapCodes": ["FEDERAL_OFFICE_TERM_GAP", "LOCAL_OFFICE_TERM_GAP"]
+      },
+      "countryCode": "CA",
+      "dataMode": "synthetic",
+      "featureState": "disabled",
+      "input": {
+        "autocomplete": "postal-code",
+        "kind": "postal_code",
+        "label": "Synthetic postal code",
+        "maxLength": 7,
+        "retention": "request_only"
+      },
+      "legalDeterminations": "none",
+      "provider": {
+        "geometry": {
+          "effectiveFrom": "2026-01-01T00:00:00.000Z",
+          "license": "CC0-1.0 synthetic fixture",
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "version": "synthetic-ca-geometry-2026.1"
+        },
+        "source": {
+          "license": "CC0-1.0 synthetic fixture",
+          "observedAt": "2026-06-01T00:00:00.000Z",
+          "providerId": "provider:synthetic:ca",
+          "retention": "none",
+          "termsUrl": null,
+          "version": "synthetic-ca-lookup-1.0.0"
+        }
+      },
+      "supportedScopes": ["local", "regional", "province_state", "federal"]
+    },
+    {
+      "schemaVersion": "representation-capability.v1",
+      "coverage": {
+        "state": "partial",
+        "gapCodes": ["FEDERAL_OFFICE_TERM_GAP", "LOCAL_OFFICE_TERM_GAP", "REGIONAL_OFFICE_TERM_GAP"]
+      },
+      "countryCode": "US",
+      "dataMode": "synthetic",
+      "featureState": "disabled",
+      "input": {
+        "autocomplete": "street-address",
+        "kind": "address",
+        "label": "Synthetic street address",
+        "maxLength": 240,
+        "retention": "request_only"
+      },
+      "legalDeterminations": "none",
+      "provider": {
+        "geometry": {
+          "effectiveFrom": "2026-01-01T00:00:00.000Z",
+          "license": "CC0-1.0 synthetic fixture",
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "version": "synthetic-us-geometry-2026.1"
+        },
+        "source": {
+          "license": "CC0-1.0 synthetic fixture",
+          "observedAt": "2026-06-01T00:00:00.000Z",
+          "providerId": "provider:synthetic:us",
+          "retention": "none",
+          "termsUrl": null,
+          "version": "synthetic-us-lookup-1.0.0"
+        }
+      },
+      "supportedScopes": ["local", "regional", "province_state", "federal", "special"]
+    }
+  ]
+}

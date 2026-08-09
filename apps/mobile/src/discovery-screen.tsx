@@ -55,6 +55,7 @@ type NativeText = ElementRef<typeof Text>;
 
 export type DiscoveryScreenProps = Readonly<{
   apiOrigin: string;
+  initialCountry?: DiscoveryCountry | null;
   onProfileRequestHandled: () => void;
   requestedProfileId: string | null;
 }>;
@@ -615,6 +616,7 @@ export function DiscoveryScreen(props: DiscoveryScreenProps) {
     [props.apiOrigin],
   );
   const [country, setCountry] = useState<DiscoveryCountry | null>(null);
+  const initialCountryHandled = useRef(false);
   const [deck, setDeck] = useState<RepresentativeDeckState | null>(null);
   const [profileRead, setProfileRead] = useState<DiscoveryRead<PublicRoleProfile> | null>(null);
   const [loading, setLoading] = useState<LoadingState>(null);
@@ -660,6 +662,12 @@ export function DiscoveryScreen(props: DiscoveryScreenProps) {
     },
     [repository],
   );
+
+  useEffect(() => {
+    if (initialCountryHandled.current || props.initialCountry == null) return;
+    initialCountryHandled.current = true;
+    void loadDeck(props.initialCountry);
+  }, [loadDeck, props.initialCountry]);
 
   const openProfile = useCallback(
     async (profileId: string) => {

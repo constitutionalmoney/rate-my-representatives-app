@@ -16,6 +16,11 @@ import type {
 } from './generated/public-role-profile.js';
 import type { PublicRoleProfileTimeline } from './generated/public-role-profile-timeline.js';
 import type { PublicRoleRegistry } from './generated/public-role-registry.js';
+import type { RepresentationAmbiguitySelection } from './generated/representation-ambiguity-selection.js';
+import type { RepresentationCapabilities } from './generated/representation-capabilities.js';
+import type { RepresentationResolutionRequest } from './generated/representation-resolution-request.js';
+import type { RepresentationResolution } from './generated/representation-resolution.js';
+import type { SavedBroadJurisdiction } from './generated/saved-broad-jurisdiction.js';
 import type { SourceConnectorCapabilityV1 } from './generated/source-connector-capability.js';
 import type { SourceCoverageSnapshotV1 } from './generated/source-coverage-snapshot.js';
 import * as clientValidators from './generated/client-validators.js';
@@ -113,6 +118,76 @@ export function parsePublicRoleRegistry(
     boundary === 'client'
       ? clientValidators.publicRoleRegistry
       : serverValidators.publicRoleRegistry,
+    value,
+    boundary === 'client',
+  );
+}
+
+export function parseRepresentationCapabilities(
+  value: unknown,
+  boundary: ContractBoundary = 'client',
+): RepresentationCapabilities {
+  return parseContract<RepresentationCapabilities>(
+    'RepresentationCapabilities',
+    boundary === 'client'
+      ? clientValidators.representationCapabilities
+      : serverValidators.representationCapabilities,
+    value,
+    boundary === 'client',
+  );
+}
+
+export function parseRepresentationResolutionRequest(
+  value: unknown,
+  boundary: ContractBoundary = 'server',
+): RepresentationResolutionRequest {
+  return parseContract<RepresentationResolutionRequest>(
+    'RepresentationResolutionRequest',
+    boundary === 'client'
+      ? clientValidators.representationResolutionRequest
+      : serverValidators.representationResolutionRequest,
+    value,
+    boundary === 'client',
+  );
+}
+
+export function parseRepresentationAmbiguitySelection(
+  value: unknown,
+  boundary: ContractBoundary = 'server',
+): RepresentationAmbiguitySelection {
+  return parseContract<RepresentationAmbiguitySelection>(
+    'RepresentationAmbiguitySelection',
+    boundary === 'client'
+      ? clientValidators.representationAmbiguitySelection
+      : serverValidators.representationAmbiguitySelection,
+    value,
+    boundary === 'client',
+  );
+}
+
+export function parseRepresentationResolution(
+  value: unknown,
+  boundary: ContractBoundary = 'client',
+): RepresentationResolution {
+  return parseContract<RepresentationResolution>(
+    'RepresentationResolution',
+    boundary === 'client'
+      ? clientValidators.representationResolution
+      : serverValidators.representationResolution,
+    value,
+    boundary === 'client',
+  );
+}
+
+export function parseSavedBroadJurisdiction(
+  value: unknown,
+  boundary: ContractBoundary = 'client',
+): SavedBroadJurisdiction {
+  return parseContract<SavedBroadJurisdiction>(
+    'SavedBroadJurisdiction',
+    boundary === 'client'
+      ? clientValidators.savedBroadJurisdiction
+      : serverValidators.savedBroadJurisdiction,
     value,
     boundary === 'client',
   );

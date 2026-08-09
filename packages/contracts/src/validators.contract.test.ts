@@ -5,6 +5,9 @@ import {
   SYNTHETIC_JURISDICTIONS,
   SYNTHETIC_PUBLIC_ROLE_REGISTRY,
   SYNTHETIC_PUBLIC_ROLE_PROFILE,
+  SYNTHETIC_REPRESENTATION_CAPABILITIES,
+  SYNTHETIC_CA_REPRESENTATION_RESOLUTION,
+  SYNTHETIC_SAVED_BROAD_JURISDICTION,
   SYNTHETIC_SECURITY_DOMAIN_POLICY,
   SYNTHETIC_CA_SOURCE_CONNECTOR,
   SYNTHETIC_SOURCE_COVERAGE,
@@ -22,6 +25,10 @@ import {
   parseJurisdictionRegistry,
   parsePublicRoleRegistry,
   parsePublicRoleProfile,
+  parseRepresentationCapabilities,
+  parseRepresentationResolution,
+  parseRepresentationResolutionRequest,
+  parseSavedBroadJurisdiction,
   parseSourceConnectorCapability,
   parseSourceCoverageSnapshot,
 } from './validators.js';
@@ -128,5 +135,36 @@ describe('runtime contract validators', () => {
     });
     expect(SYNTHETIC_SECURITY_DOMAIN_POLICY.domains).toHaveLength(8);
     expect(SECURITY_DOMAIN_POLICY_SCHEMA.properties.defaultAccess.const).toBe('deny');
+  });
+
+  it('validates location contracts and rejects precise fields from response serializers', () => {
+    expect(
+      parseRepresentationCapabilities(SYNTHETIC_REPRESENTATION_CAPABILITIES, 'server'),
+    ).toEqual(SYNTHETIC_REPRESENTATION_CAPABILITIES);
+    expect(parseRepresentationResolution(SYNTHETIC_CA_REPRESENTATION_RESOLUTION, 'server')).toEqual(
+      SYNTHETIC_CA_REPRESENTATION_RESOLUTION,
+    );
+    expect(parseSavedBroadJurisdiction(SYNTHETIC_SAVED_BROAD_JURISDICTION, 'server')).toEqual(
+      SYNTHETIC_SAVED_BROAD_JURISDICTION,
+    );
+    expect(() =>
+      parseRepresentationResolution(
+        { ...SYNTHETIC_CA_REPRESENTATION_RESOLUTION, preciseAddress: 'forbidden' },
+        'server',
+      ),
+    ).toThrow(ContractValidationError);
+  });
+
+  it('accepts precise input only at the strict request boundary', () => {
+    const request = {
+      schemaVersion: 'representation-resolution-request.v1',
+      asOf: '2026-06-01T12:00:00.000Z',
+      countryCode: 'CA',
+      input: { kind: 'postal_code', value: 'A1A 1A1' },
+    };
+    expect(parseRepresentationResolutionRequest(request, 'server')).toEqual(request);
+    expect(() =>
+      parseRepresentationResolutionRequest({ ...request, analyticsConsent: true }, 'server'),
+    ).toThrow(ContractValidationError);
   });
 });

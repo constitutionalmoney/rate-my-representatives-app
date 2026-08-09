@@ -20,6 +20,7 @@ import { readMobileCompatibilityPolicy, readMobileHealth } from './src/api';
 import { evaluateMobileCompatibility } from './src/compatibility';
 import { DiscoveryScreen } from './src/discovery-screen';
 import { parseNativeLink } from './src/links';
+import { LocationResolverScreen } from './src/location-resolver-screen';
 import { parseMobileRuntimeConfig, type MobileRuntimeConfig } from './src/runtime-config';
 import {
   acceptWalletReturn,
@@ -30,7 +31,7 @@ import {
 } from './src/wallet-harness';
 
 type FoundationStatus = 'checking' | 'compatible' | 'degraded' | 'update_required';
-type AppArea = 'discover' | 'system';
+type AppArea = 'discover' | 'find' | 'system';
 
 const syntheticWalletChallengeReference = 'challenge:synthetic:device:0001';
 const syntheticWalletEnvelope = 'synthetic-public-envelope';
@@ -38,10 +39,11 @@ const syntheticWalletEnvelope = 'synthetic-public-envelope';
 export default function App() {
   const runtime = useMemo(() => parseMobileRuntimeConfig(Constants.expoConfig?.extra), []);
   const environment = mobileEnvironmentsForRuntime(runtime.mobileEnvironment);
-  const [area, setArea] = useState<AppArea>('discover');
+  const [area, setArea] = useState<AppArea>('find');
   const [foundationStatus, setFoundationStatus] = useState<FoundationStatus>('checking');
   const [linkStatus, setLinkStatus] = useState('No app link handled in this session.');
   const [requestedProfileId, setRequestedProfileId] = useState<string | null>(null);
+  const [requestedCountry, setRequestedCountry] = useState<'CA' | 'US' | null>(null);
   const [walletRequest, setWalletRequest] = useState<WalletHarnessRequest | null>(null);
   const walletRequestRef = useRef<WalletHarnessRequest | null>(null);
   const [walletStatus, setWalletStatus] = useState(
@@ -198,6 +200,7 @@ export default function App() {
   return (
     <SafeAreaView style={styles.app}>
       <View accessibilityRole="tablist" style={styles.navigation}>
+        <NavigationButton active={area === 'find'} label="Find" onPress={() => setArea('find')} />
         <NavigationButton
           active={area === 'discover'}
           label="Discover"
@@ -210,9 +213,18 @@ export default function App() {
         />
       </View>
       <View style={styles.content}>
-        {area === 'discover' ? (
+        {area === 'find' ? (
+          <LocationResolverScreen
+            apiOrigin={runtime.apiOrigin}
+            onBrowseCountry={(countryCode) => {
+              setRequestedCountry(countryCode);
+              setArea('discover');
+            }}
+          />
+        ) : area === 'discover' ? (
           <DiscoveryScreen
             apiOrigin={runtime.apiOrigin}
+            initialCountry={requestedCountry}
             onProfileRequestHandled={clearRequestedProfile}
             requestedProfileId={requestedProfileId}
           />

@@ -807,6 +807,63 @@ dd {
   }
 }
 
+.location-panel {
+  align-items: stretch;
+  text-align: left;
+}
+
+.location-form,
+.location-result {
+  background: #f7f2e8;
+  border: 1px solid #b6c7bd;
+  border-radius: 1rem;
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.location-form fieldset {
+  border: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  margin: 0;
+  padding: 0;
+}
+
+.location-form legend,
+.location-field {
+  color: #17372c;
+  font-weight: 700;
+}
+
+.location-form label {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.location-field {
+  align-items: stretch !important;
+  display: grid !important;
+  gap: 0.5rem !important;
+}
+
+.location-field input {
+  background: #fffdf8;
+  border: 1px solid #6d8c7f;
+  border-radius: 0.75rem;
+  color: #17372c;
+  font: inherit;
+  min-height: 3rem;
+  padding: 0.75rem;
+}
+
+.location-form button,
+.location-panel > button {
+  justify-self: start;
+}
+
 @media (max-width: 34rem) {
   .pilot-badge {
     display: none;

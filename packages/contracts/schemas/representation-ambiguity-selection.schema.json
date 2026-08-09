@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.ratemyrepresentatives.app/v1/representation-ambiguity-selection.schema.json",
+  "title": "RepresentationAmbiguitySelection",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "asOf", "selectionToken", "optionId"],
+  "properties": {
+    "schemaVersion": { "const": "representation-ambiguity-selection.v1" },
+    "asOf": { "type": "string", "format": "date-time" },
+    "selectionToken": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$"
+    },
+    "optionId": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$"
+    }
+  }
+}

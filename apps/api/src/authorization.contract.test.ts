@@ -43,21 +43,23 @@ function roleGrant(role: RoleGrant['role']): RoleGrant {
 }
 
 describe('route and domain authorization contract', () => {
-  it.each(['/api/v1/health', '/api/v1/health/mobile', '/api/v1/jurisdictions'])(
-    'keeps public contract discovery anonymous at %s',
-    (path) => {
-      expect(
-        authorizeRoute({
-          actor: anonymous,
-          at,
-          featureGates: gateEvaluator(),
-          grants: [],
-          method: 'GET',
-          path,
-        }),
-      ).toEqual({ allowed: true, reason: 'authorized' });
-    },
-  );
+  it.each([
+    '/api/v1/health',
+    '/api/v1/health/mobile',
+    '/api/v1/jurisdictions',
+    '/api/v1/representation/capabilities',
+  ])('keeps public contract discovery anonymous at %s', (path) => {
+    expect(
+      authorizeRoute({
+        actor: anonymous,
+        at,
+        featureGates: gateEvaluator(),
+        grants: [],
+        method: 'GET',
+        path,
+      }),
+    ).toEqual({ allowed: true, reason: 'authorized' });
+  });
 
   it('denies unknown routes and disabled authentication flows by default', () => {
     expect(
@@ -106,5 +108,38 @@ describe('route and domain authorization contract', () => {
         path: '/api/v1/representative-signals',
       }),
     ).toEqual({ allowed: false, reason: 'forbidden' });
+  });
+
+  it('gates precise location and rejects service actors even when enabled', () => {
+    expect(
+      authorizeRoute({
+        actor: anonymous,
+        at,
+        featureGates: gateEvaluator(),
+        grants: [],
+        method: 'POST',
+        path: '/api/v1/representation/resolve',
+      }),
+    ).toEqual({ allowed: false, reason: 'feature-disabled' });
+    expect(
+      authorizeRoute({
+        actor: service,
+        at,
+        featureGates: gateEvaluator({ LOCATION_RESOLUTION_ENABLED: 'true' }),
+        grants: [],
+        method: 'POST',
+        path: '/api/v1/representation/resolve',
+      }),
+    ).toEqual({ allowed: false, reason: 'forbidden' });
+    expect(
+      authorizeRoute({
+        actor: anonymous,
+        at,
+        featureGates: gateEvaluator({ LOCATION_RESOLUTION_ENABLED: 'true' }),
+        grants: [],
+        method: 'POST',
+        path: '/api/v1/representation/resolve',
+      }),
+    ).toEqual({ allowed: true, reason: 'authorized' });
   });
 });

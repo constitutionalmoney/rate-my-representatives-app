@@ -16,6 +16,11 @@ import type {
 } from './generated/public-role-profile.js';
 import type { PublicRoleProfileTimeline as PublicRoleProfileTimelineSchema } from './generated/public-role-profile-timeline.js';
 import type { PublicRoleRegistry as PublicRoleRegistrySchema } from './generated/public-role-registry.js';
+import type { RepresentationAmbiguitySelection as RepresentationAmbiguitySelectionSchema } from './generated/representation-ambiguity-selection.js';
+import type { RepresentationCapabilities as RepresentationCapabilitiesSchema } from './generated/representation-capabilities.js';
+import type { RepresentationResolutionRequest as RepresentationResolutionRequestSchema } from './generated/representation-resolution-request.js';
+import type { RepresentationResolution as RepresentationResolutionSchema } from './generated/representation-resolution.js';
+import type { SavedBroadJurisdiction as SavedBroadJurisdictionSchema } from './generated/saved-broad-jurisdiction.js';
 import type { paths } from './generated/openapi.js';
 import {
   parseHealthStatus,
@@ -31,6 +36,9 @@ import {
   parsePublicRoleProfileSources,
   parsePublicRoleProfileTimeline,
   parsePublicRoleRegistry,
+  parseRepresentationCapabilities,
+  parseRepresentationResolution,
+  parseSavedBroadJurisdiction,
 } from './validators.js';
 
 export type ApiError = ApiErrorSchema;
@@ -47,6 +55,16 @@ export type PublicRoleProfileResponses = PublicRoleProfileResponsesSchema;
 export type PublicRoleProfileSources = PublicRoleProfileSourcesSchema;
 export type PublicRoleProfileTimeline = PublicRoleProfileTimelineSchema;
 export type PublicRoleRegistry = PublicRoleRegistrySchema;
+export type RepresentationAmbiguitySelection = RepresentationAmbiguitySelectionSchema;
+export type RepresentationCapabilities = RepresentationCapabilitiesSchema;
+export type RepresentationResolutionRequest = RepresentationResolutionRequestSchema;
+export type RepresentationResolution = RepresentationResolutionSchema;
+export type SavedBroadJurisdiction = SavedBroadJurisdictionSchema;
+export interface BroadJurisdictionPreferenceCommand {
+  readonly schemaVersion: 'broad-jurisdiction-preference-command.v1';
+  readonly countryCode: 'CA' | 'US';
+  readonly jurisdictionId: string;
+}
 export interface PublicRoleRegistryQuery {
   readonly asOf?: string;
   readonly countryCode?: 'CA' | 'US';
@@ -148,6 +166,92 @@ export async function readJurisdictionRegistry(
   });
   if (error || data === undefined) throw new Error('Jurisdiction registry request failed.');
   return parseJurisdictionRegistry(data);
+}
+
+export async function readRepresentationCapabilities(
+  client: RmrApiClient,
+): Promise<RepresentationCapabilities> {
+  const { data, error } = await client.GET('/api/v1/representation/capabilities');
+  if (error || data === undefined) throw new Error('Representation capability request failed.');
+  return parseRepresentationCapabilities(data);
+}
+
+export async function resolveRepresentationOnce(
+  client: RmrApiClient,
+  request: RepresentationResolutionRequest,
+): Promise<RepresentationResolution> {
+  const { data, error } = await client.POST('/api/v1/representation/resolve', {
+    body: request,
+  });
+  if (error || data === undefined) throw new Error('Representation resolution request failed.');
+  return parseRepresentationResolution(data);
+}
+
+export async function continueRepresentationAmbiguity(
+  client: RmrApiClient,
+  request: RepresentationAmbiguitySelection,
+): Promise<RepresentationResolution> {
+  const { data, error } = await client.POST('/api/v1/representation/resolve/ambiguity', {
+    body: request,
+  });
+  if (error || data === undefined) throw new Error('Representation ambiguity request failed.');
+  return parseRepresentationResolution(data);
+}
+
+export async function readSavedBroadJurisdiction(
+  client: RmrApiClient,
+): Promise<SavedBroadJurisdiction> {
+  const { data, error } = await client.GET('/api/v1/account/broad-jurisdiction');
+  if (error || data === undefined) throw new Error('Saved broad jurisdiction request failed.');
+  return parseSavedBroadJurisdiction(data);
+}
+
+export async function saveBroadJurisdiction(
+  client: RmrApiClient,
+  command: BroadJurisdictionPreferenceCommand,
+  idempotencyKey: string,
+): Promise<SavedBroadJurisdiction> {
+  const { data, error } = await client.POST('/api/v1/account/broad-jurisdiction', {
+    body: command,
+    params: { header: { 'Idempotency-Key': idempotencyKey } },
+  });
+  if (error || data === undefined) throw new Error('Save broad jurisdiction request failed.');
+  return parseSavedBroadJurisdiction(data);
+}
+
+export async function updateBroadJurisdiction(
+  client: RmrApiClient,
+  preferenceId: string,
+  command: BroadJurisdictionPreferenceCommand,
+  idempotencyKey: string,
+): Promise<SavedBroadJurisdiction> {
+  const { data, error } = await client.PUT('/api/v1/account/broad-jurisdiction/{preferenceId}', {
+    body: command,
+    params: {
+      header: { 'Idempotency-Key': idempotencyKey },
+      path: { preferenceId },
+    },
+  });
+  if (error || data === undefined) throw new Error('Update broad jurisdiction request failed.');
+  return parseSavedBroadJurisdiction(data);
+}
+
+export async function deleteBroadJurisdiction(
+  client: RmrApiClient,
+  preferenceId: string,
+  idempotencyKey: string,
+): Promise<void> {
+  const { error, response } = await client.DELETE(
+    '/api/v1/account/broad-jurisdiction/{preferenceId}',
+    {
+      params: {
+        header: { 'Idempotency-Key': idempotencyKey },
+        path: { preferenceId },
+      },
+    },
+  );
+  if (error || response.status !== 204)
+    throw new Error('Delete broad jurisdiction request failed.');
 }
 
 /** @deprecated Use readJurisdictionRegistry. */

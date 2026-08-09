@@ -1,5 +1,6 @@
 export * from './audit-outbox.js';
 export * from './jurisdiction-registry.js';
+export * from './location-resolution.js';
 export * from './public-role-registry.js';
 export * from './public-profile.js';
 export * from './source-ingestion.js';
@@ -9,5 +10,5 @@ export const databaseFoundation = Object.freeze({
   implementationIssue: 19,
   migrationDirectory: 'packages/db/migrations',
   seedDirectory: 'packages/db/seeds/local',
-  status: 'official-source-ingestion-ready',
+  status: 'privacy-minimized-location-preference-ready',
 });

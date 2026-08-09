@@ -115,6 +115,9 @@ importers:
       '@rmr/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
+      '@rmr/discovery':
+        specifier: workspace:*
+        version: link:../../packages/discovery
       '@rmr/mobile-ui':
         specifier: workspace:*
         version: link:../../packages/mobile-ui
@@ -130,6 +133,9 @@ importers:
       expo-device:
         specifier: 57.0.1
         version: 57.0.1(expo@57.0.11)
+      expo-file-system:
+        specifier: 57.0.2
+        version: 57.0.2(expo@57.0.11)(react-native@0.86.0(@babel/core@7.29.7(supports-color@10.2.2))(@types/react@19.2.18)(react@19.2.3)(supports-color@10.2.2))
       expo-notifications:
         specifier: 57.0.9
         version: 57.0.9(expo@57.0.11)(react-native@0.86.0(@babel/core@7.29.7(supports-color@10.2.2))(@types/react@19.2.18)(react@19.2.3)(supports-color@10.2.2))(react@19.2.3)(supports-color@10.2.2)(typescript@5.9.3)
@@ -189,6 +195,9 @@ importers:
       '@rmr/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
+      '@rmr/discovery':
+        specifier: workspace:*
+        version: link:../../packages/discovery
       '@rmr/web-ui':
         specifier: workspace:*
         version: link:../../packages/web-ui
@@ -274,6 +283,12 @@ importers:
         specifier: workspace:*
         version: link:../domain
 
+  packages/discovery:
+    dependencies:
+      '@rmr/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+
   packages/domain: {}
 
   packages/methodology: {}
@@ -289,6 +304,13 @@ importers:
   packages/verus: {}
 
   packages/web-ui:
+    dependencies:
+      '@rmr/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+      '@rmr/discovery':
+        specifier: workspace:*
+        version: link:../discovery
     devDependencies:
       '@types/react':
         specifier: 'catalog:'

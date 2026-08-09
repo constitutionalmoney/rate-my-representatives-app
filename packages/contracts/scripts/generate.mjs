@@ -4,6 +4,9 @@ import process from 'node:process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { compileFromFile } from 'json-schema-to-typescript';
+import Ajv2020 from 'ajv/dist/2020.js';
+import standaloneCode from 'ajv/dist/standalone/index.js';
+import addFormats from 'ajv-formats';
 import openapiTS, { astToString } from 'openapi-typescript';
 
 const packageDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -71,11 +74,17 @@ async function jsonSource(directory, filename) {
   return JSON.parse(await readFile(path.join(packageDirectory, directory, filename), 'utf8'));
 }
 
-const schemaDocuments = await Promise.all(
-  schemaDefinitions.map(
-    async ([, filename, constant]) =>
-      `export const ${constant} = ${JSON.stringify(await jsonSource('schemas', filename), null, 2)} as const;`,
+const schemaValues = Object.fromEntries(
+  await Promise.all(
+    schemaDefinitions.map(async ([, filename, constant]) => [
+      constant,
+      await jsonSource('schemas', filename),
+    ]),
   ),
+);
+const schemaDocuments = schemaDefinitions.map(
+  ([, , constant]) =>
+    `export const ${constant} = ${JSON.stringify(schemaValues[constant], null, 2)} as const;`,
 );
 const fixtureDocuments = await Promise.all(
   fixtureDefinitions.map(
@@ -83,6 +92,84 @@ const fixtureDocuments = await Promise.all(
       `export const ${constant} = ${JSON.stringify(await jsonSource('fixtures', filename), null, 2)} as const;`,
   ),
 );
+
+function standaloneValidators(boundary) {
+  const ajv = new Ajv2020({
+    allErrors: true,
+    code: { esm: true, source: true },
+    coerceTypes: false,
+    removeAdditional: boundary === 'client' ? 'all' : false,
+    strict: true,
+  });
+  addFormats(ajv);
+  ajv.addVocabulary([
+    'x-rmr-agent-access',
+    'x-rmr-allowed-actors',
+    'x-rmr-feature-status',
+    'x-rmr-human-intent',
+  ]);
+  const profileSchema = schemaValues.PUBLIC_ROLE_PROFILE_SCHEMA;
+  ajv.addSchema(profileSchema);
+  const profileSchemaId = profileSchema.$id;
+  const schemaIds = {
+    apiError: schemaValues.API_ERROR_SCHEMA.$id,
+    healthStatus: schemaValues.HEALTH_STATUS_SCHEMA.$id,
+    jurisdictionRegistry: schemaValues.JURISDICTION_REGISTRY_SCHEMA.$id,
+    mobileCompatibility: schemaValues.MOBILE_COMPATIBILITY_STATUS_SCHEMA.$id,
+    profileAppeals: 'urn:rmr:validator:profile-appeals',
+    profileCorrections: 'urn:rmr:validator:profile-corrections',
+    profileCoverage: 'urn:rmr:validator:profile-coverage',
+    profileDisputes: 'urn:rmr:validator:profile-disputes',
+    profileResponses: 'urn:rmr:validator:profile-responses',
+    profileSources: 'urn:rmr:validator:profile-sources',
+    publicRoleProfile: profileSchemaId,
+    publicRoleProfileList: schemaValues.PUBLIC_ROLE_PROFILE_LIST_SCHEMA.$id,
+    publicRoleProfileTimeline: schemaValues.PUBLIC_ROLE_PROFILE_TIMELINE_SCHEMA.$id,
+    publicRoleRegistry: schemaValues.PUBLIC_ROLE_REGISTRY_SCHEMA.$id,
+    sourceConnector: schemaValues.SOURCE_CONNECTOR_CAPABILITY_SCHEMA.$id,
+    sourceCoverage: schemaValues.SOURCE_COVERAGE_SNAPSHOT_SCHEMA.$id,
+  };
+  for (const schema of [
+    schemaValues.API_ERROR_SCHEMA,
+    schemaValues.HEALTH_STATUS_SCHEMA,
+    schemaValues.JURISDICTION_REGISTRY_SCHEMA,
+    schemaValues.MOBILE_COMPATIBILITY_STATUS_SCHEMA,
+    schemaValues.PUBLIC_ROLE_PROFILE_LIST_SCHEMA,
+    schemaValues.PUBLIC_ROLE_PROFILE_TIMELINE_SCHEMA,
+    schemaValues.PUBLIC_ROLE_REGISTRY_SCHEMA,
+    schemaValues.SOURCE_CONNECTOR_CAPABILITY_SCHEMA,
+    schemaValues.SOURCE_COVERAGE_SNAPSHOT_SCHEMA,
+  ]) {
+    ajv.addSchema(schema);
+  }
+  for (const [name, ref] of [
+    ['profileAppeals', `${profileSchemaId}#/$defs/appealSection`],
+    ['profileCorrections', `${profileSchemaId}#/$defs/correctionSection`],
+    ['profileCoverage', `${profileSchemaId}#/$defs/coverageSection`],
+    ['profileDisputes', `${profileSchemaId}#/$defs/disputeSection`],
+    ['profileResponses', `${profileSchemaId}#/$defs/responseSection`],
+    ['profileSources', `${profileSchemaId}#/$defs/sourceSection`],
+  ]) {
+    ajv.addSchema({ $id: schemaIds[name], $ref: ref });
+  }
+  const dependencies = new Map();
+  const validators = standaloneCode(ajv, schemaIds).replace(
+    /require\("([^"]+)"\)/g,
+    (_match, specifier) => {
+      if (!dependencies.has(specifier)) {
+        dependencies.set(specifier, `runtimeDependency${dependencies.size}`);
+      }
+      return dependencies.get(specifier);
+    },
+  );
+  const imports = [...dependencies.entries()]
+    .map(([specifier, identifier]) => {
+      const namespace = `${identifier}Namespace`;
+      return `import * as ${namespace} from '${specifier}.js';\nconst ${identifier} = ${namespace}['module.exports'] ?? (typeof ${namespace}.default === 'object' && ${namespace}.default !== null ? ${namespace}.default : ${namespace});`;
+    })
+    .join('\n');
+  return `/* Generated standalone ${boundary} validators. Do not edit directly. */\n/* eslint-disable */\n// @ts-nocheck\n${imports}\n${validators}\n`;
+}
 
 const outputs = [
   {
@@ -111,6 +198,14 @@ const outputs = [
   {
     path: path.join(generatedDirectory, 'contract-fixtures.ts'),
     value: `/* Generated synthetic contract fixtures. Do not edit directly. */\n\n${fixtureDocuments.join('\n\n')}\n`,
+  },
+  {
+    path: path.join(generatedDirectory, 'client-validators.ts'),
+    value: standaloneValidators('client'),
+  },
+  {
+    path: path.join(generatedDirectory, 'server-validators.ts'),
+    value: standaloneValidators('server'),
   },
 ];
 

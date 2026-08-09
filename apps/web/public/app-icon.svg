@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">Rate My Representatives</title>
+  <rect width="512" height="512" rx="112" fill="#183028"/>
+  <circle cx="256" cy="256" r="166" fill="#f7d995"/>
+  <path d="M167 362V150h101c50 0 85 30 85 75 0 32-18 57-48 68l67 69h-67l-57-61h-27v61h-54zm54-108h42c23 0 37-11 37-29 0-19-14-29-37-29h-42v58z" fill="#183028"/>
+</svg>

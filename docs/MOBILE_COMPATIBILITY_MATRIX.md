@@ -52,6 +52,42 @@ The device flow used only the deliberately malformed public URL
 `Unrecognized or incompatible generic request protocol version`. The test did not inspect
 or use a wallet profile, address, balance, identity, credential, or network response.
 
+## Issue #30 read-only discovery — Pixel 9 Audit
+
+| Component | Tested value |
+|---|---|
+| RMR package | `com.ratemyrepresentatives.app.dev` |
+| RMR version | `0.1.0` (`versionCode` 1; minimum SDK 24; target SDK 36) |
+| Device-targeted APK | x86_64 debug build, 64,234,659 bytes |
+| APK SHA-256 | `55C731F74CAFF764046DC8AAC7F41CAB53A7EC590621EAB30084FFF5F7330F2C` |
+| Native alignment | 17 x86_64 libraries and 51 ELF LOAD segments; every applicable segment is at least 16 KiB aligned |
+| Packaging checks | APK Signature Scheme v2 and `zipalign -c -P 16 -v 4` pass |
+| Data boundary | Synthetic public records only; no wallet, identity, private location, signal, or chain data used |
+
+### Device results
+
+| Test | Status |
+|---|---|
+| Canada and United States country-only finite decks | Pass |
+| Person, office, district, and office-term entities remain distinct | Pass |
+| Support and Concern open an unsaved local preview | Pass; no submission or confirmation path exists |
+| Skip and finite-deck completion retain no judgment | Pass |
+| Full sourced-record detail and correction/method fields | Pass |
+| Custom-scheme profile deep link | Pass |
+| Validated public cache with API unavailable | Pass; explicit offline-copy notice shown after process restart |
+| 150% Android font scale | Pass; country controls and all card actions remained reachable without horizontal clipping |
+| Minimum action target size | Pass; visible card actions measured 146 Android pixels high on the 420 dpi AVD |
+| TalkBack service and touch exploration | Pass; service bound on-device and all primary actions exposed descriptive accessibility nodes |
+| Drag-free alternative | Pass; every gesture action has a button and keyboard/D-pad country activation succeeded |
+| Swipe shortcut safety with TalkBack | Pass; `Enable swipe shortcuts` changed from checked to unchecked when TalkBack became active |
+| Reduced-motion system setting | Pass; the read-only flow remained usable with all three Android animation scales set to zero |
+| Optional dependency boundary | Pass; public browsing ran with Verus and every high-risk feature gate disabled |
+
+The Android test changed only temporary RMR development state. Font, animation, TalkBack,
+accessibility-service, notification-permission, ADB reverse, and staged-APK state were restored
+after the run. The installed `com.verusmobile` package remained untouched, and no wallet content
+or credential was inspected.
+
 ## RMR VRSCTEST authentication service
 
 The RMR-branded `verusid-auth` service is being established at
@@ -68,3 +104,8 @@ retain separate server-side signer roles and false-by-default feature gates.
 
 CI compiles an unsigned iOS simulator app. No signed Verus Mobile request is exercised by
 issue #61; signed-request iOS wallet compatibility remains an issue #31 release gate.
+
+Issue #30 also exports the iOS bundle and verifies shared discovery state, public-cache rules,
+deep-link parsing, accessibility labels, scalable text, and drag-free controls in automated
+tests. A signed iOS device, VoiceOver rotor, and physical-device Dynamic Type run were not
+available from the Windows development host and remain iOS release gates.

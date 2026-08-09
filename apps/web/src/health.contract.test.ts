@@ -29,8 +29,18 @@ describe('web generated-client wiring', () => {
   });
 
   it('reads source-backed profile contracts through the web client', async () => {
-    const mockFetch = createContractMockFetch();
-    const list = await readWebPublicProfiles('http://127.0.0.1:3000', mockFetch);
+    const contractFetch = createContractMockFetch();
+    const requests: Request[] = [];
+    const mockFetch: typeof globalThis.fetch = async (input, init) => {
+      const request = new Request(input, init);
+      requests.push(request);
+      return contractFetch(request);
+    };
+    const list = await readWebPublicProfiles(
+      'http://127.0.0.1:3000',
+      { countryCode: 'CA' },
+      mockFetch,
+    );
     const profile = await readWebPublicProfile(
       'http://127.0.0.1:3000',
       list.items[0]?.profileId ?? '',
@@ -40,5 +50,7 @@ describe('web generated-client wiring', () => {
       dataMode: 'synthetic',
       method: { compositeScoreIncluded: false, signalAggregateIncluded: false },
     });
+    expect(requests.map(({ method }) => method)).toEqual(['GET', 'GET']);
+    expect(requests[0]?.url).toContain('countryCode=CA');
   });
 });

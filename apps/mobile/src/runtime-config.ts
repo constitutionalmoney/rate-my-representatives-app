@@ -6,7 +6,7 @@ export type MobileRuntimeConfig = Readonly<{
   appLinkHost: string;
   crashReporting: 'redacted-noop';
   mobileEnvironment: MobileEnvironmentName;
-  productStatus: 'native-foundation-only';
+  productStatus: 'read-only-discovery-pilot';
   pushProjectId: string | null;
   releaseChannel: MobileEnvironmentName;
   representativeActivityVdxfWritesEnabled: false;
@@ -83,7 +83,7 @@ export function parseMobileRuntimeConfig(value: unknown): MobileRuntimeConfig {
   if (
     value.apiContractVersion !== 'v1' ||
     value.crashReporting !== 'redacted-noop' ||
-    value.productStatus !== 'native-foundation-only' ||
+    value.productStatus !== 'read-only-discovery-pilot' ||
     value.releaseChannel !== environment ||
     value.representativeActivityVdxfWritesEnabled !== false ||
     value.representativeVerusIdProvisioningEnabled !== false ||
@@ -116,7 +116,7 @@ export function parseMobileRuntimeConfig(value: unknown): MobileRuntimeConfig {
     appLinkHost,
     crashReporting: 'redacted-noop',
     mobileEnvironment: environment as MobileEnvironmentName,
-    productStatus: 'native-foundation-only',
+    productStatus: 'read-only-discovery-pilot',
     pushProjectId: value.pushProjectId ?? null,
     releaseChannel: environment as MobileEnvironmentName,
     representativeActivityVdxfWritesEnabled: false,

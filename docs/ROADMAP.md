@@ -1,7 +1,7 @@
 # Rate My Representatives — End-to-End Roadmap
 
 **Status:** Build sequence for the official repository  
-**Last updated:** 2026-08-07
+**Last updated:** 2026-08-08
 **Rule:** A merged feature is not operational until its release gates pass.
 
 ## Roadmap model
@@ -76,6 +76,7 @@ packages/verus
 packages/provenance
 packages/observability
 packages/config
+packages/discovery
 infra/docker
 infra/deployment
 infra/mobile
@@ -161,6 +162,17 @@ Deliver the six-step product-led experience as a read-only civic application.
 - Raw location is absent from logs, traces, analytics, crash reports, and queues.
 - Gestures have visible equivalents.
 - The UI accurately says no public signal or composite score is live.
+
+### Foundation progress
+
+Issue #30 now provides a synthetic country-only finite deck and sourced detail view for
+native iOS/Android and responsive web/PWA. It uses the generated issue #11 GET clients,
+a validated public-only offline cache, safe profile deep links, explicit completion and
+coverage-gap states, and visible no-drag controls. Support/concern remain unsubmitted
+local previews, skip creates no retained event, and no score or Verus dependency exists.
+Issue #29 still owns minimized jurisdiction resolution; issue #37 still owns confirmed
+representative-signal writes. Production coverage, browser/device release evidence, and
+the Phase 3 pilot exit metrics remain separate release gates.
 
 ## Phase 4 — Accounts, roles, and representative authorization
 

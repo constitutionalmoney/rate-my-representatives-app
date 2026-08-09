@@ -38,7 +38,7 @@ describe('mobile environment isolation', () => {
       appLinkHost: environment.appLinkHost,
       crashReporting: 'redacted-noop',
       mobileEnvironment: environment.name,
-      productStatus: 'native-foundation-only',
+      productStatus: 'read-only-discovery-pilot',
       pushProjectId: null,
       releaseChannel: environment.releaseChannel,
       representativeActivityVdxfWritesEnabled: false,

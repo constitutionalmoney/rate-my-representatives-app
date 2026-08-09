@@ -13,7 +13,6 @@
     "mobile-environments.ts",
     "mobile-environments.json",
     "src/**/*.ts",
-    "src/**/*.tsx",
-    ".expo/types/**/*.ts"
+    "src/**/*.tsx"
   ]
 }

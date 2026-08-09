@@ -1,8 +1,8 @@
 # Native mobile foundation
 
-**Status:** Development foundation only. No iOS or Android application is published.
-All civic writes, representative VerusID provisioning, representative activity
-publication, scoring, and mainnet behavior remain disabled.
+**Status:** Read-only synthetic discovery pilot. No iOS or Android application is
+published. All civic writes, representative VerusID provisioning, representative
+activity publication, scoring, and mainnet behavior remain disabled.
 
 ## Environment isolation
 
@@ -33,13 +33,28 @@ fallback variable. Production release roles require protected-environment approv
 
 The installed app imports only the generated `@rmr/contracts` mobile client. It reads the
 public API health and mobile compatibility endpoints at launch and whenever the app
-returns to the foreground. The compatibility decision rejects unsupported contract
-versions, versions below `minimumAppVersion`, and builds below `minimumBuildNumber`.
-Malformed versions fail closed.
+returns to the foreground. The Discover area also reads the synthetic public profile list
+and detail endpoints through that generated client. The compatibility decision rejects
+unsupported contract versions, versions below `minimumAppVersion`, and builds below
+`minimumBuildNumber`. Malformed versions fail closed.
 
 The app accepts an initial link for cold launch and link events for warm/background
 return. It never trusts linked or pushed profile text; it accepts an allowlisted opaque
 reference and refetches current API state.
+
+## Read-only discovery
+
+The default Discover area provides the issue #30 country-only finite deck, explicit
+coverage-gap/completion states, local unsubmitted support/concern previews, skip with no
+retained judgment, and full sourced detail. The System area retains compatibility and the
+disabled-by-default synthetic wallet harness status. Issue #29 still owns a minimized
+jurisdiction resolver and issue #37 still owns representative-signal confirmation.
+
+An Expo cache file stores only schema-validated public profile responses. Entries expire
+after seven days, the serialized cache is limited to 2 MiB, and reads use an eight-second
+network budget before a current public copy is considered. No preview, skip, account,
+token, address, precise location, or private civic activity is stored. See
+`READ_ONLY_DISCOVERY.md`.
 
 ## Links and wallet harness
 
@@ -81,10 +96,11 @@ Keychain accessibility, and Android Keystore-backed storage. Android backup is d
 Every protected key is deleted for sign-out, revoke-all, account deletion, compromise
 response, and environment switch.
 
-No precise address, private civic activity, evidence, wallet response, representative
-signer material, or moderator content is cached by this foundation. Crash records retain
-only allowlisted operational fields and error type; error messages are discarded. Third-
-party session replay is forbidden on sensitive screens.
+No precise address, private civic activity, wallet response, representative signer
+material, or moderator content is cached. Issue #30 may cache only validated public
+profile evidence/source fields already returned by the public API. Crash records retain
+only allowlisted operational fields and error type; error messages are discarded.
+Third-party session replay is forbidden.
 
 ## Push privacy
 
@@ -101,10 +117,13 @@ evidence, and moderation content are rejected.
 ## Accessibility and quality
 
 The baseline requires scalable text, screen-reader labels and announcements, reduced
-motion, 44-by-44-point actions, non-biometric authentication fallback, and a visible
-alternative to every gesture. The foundation screen has no drag-only interaction.
-VoiceOver, TalkBack, switch-control, contrast, and wallet review remain entries in the
-device matrix for every release candidate.
+motion, at least 44-by-44-point actions, non-biometric authentication fallback, and a
+visible alternative to every gesture. Issue #30 native actions use at least 48-point
+targets. Optional swipe shortcuts have visible equivalents, can be turned off, and are
+disabled automatically while a screen reader is active. Card changes move accessibility
+focus to the heading, and Android hardware Back exits detail and preview states.
+VoiceOver, TalkBack, switch-control, contrast, and wallet review remain distinct entries
+in the device matrix for every release candidate.
 
 See [ADR 0010](./adr/0010-native-mobile-foundation.md) and the
 [mobile release runbook](./runbooks/MOBILE_RELEASE.md).

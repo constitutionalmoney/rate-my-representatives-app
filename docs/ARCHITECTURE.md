@@ -14,8 +14,8 @@ shares a transaction with redacted audit and outbox records. Corrections append 
 superseding version. The issue #55 pilots are synthetic, execute without Verus, and add
 no public API. See `docs/SOURCE_INGESTION.md` and ADR 0008.
 
-**Status:** Approved target; issues through #55 are synthetic foundations
-**Last updated:** 2026-08-07
+**Status:** Approved target; issues through #30 are synthetic foundations
+**Last updated:** 2026-08-08
 
 ## 1. Architecture goals
 
@@ -90,6 +90,7 @@ packages/
   db/              PostgreSQL migrations, repositories, transaction helpers, outbox
   contracts/       OpenAPI, JSON Schema, generated clients, event schemas
   auth/            Passkeys, email, sessions, roles, VerusID links, attestations
+  discovery/       Finite read-only deck state and validated public cache
   connectors/      Approved source and jurisdiction adapters
   methodology/     Coverage, freshness, indicators, Light Mathematics versions
   civic-signal/    Subscriptions, briefings, notification rules
@@ -171,6 +172,13 @@ office term or candidacy. Append-only versions carry reviewed-source links and e
 human publication decisions; API serializers enforce the exact public JSON Schema.
 Corrections and source refreshes increment the record version/ETag. This projection is
 rebuildable and cannot publish itself. See `docs/PUBLIC_PROFILE_API.md`.
+
+Issue #30 consumes that projection through generated native/web GET clients. Shared
+finite-deck state preserves API order and retains no skipped or abandoned judgment.
+Validated public-only caches are derived, bounded, expiring representations; they never
+become canonical. Public browsing, completion, coverage gaps, source detail, and error
+recovery work with Verus and all civic-write flags disabled. See
+`docs/READ_ONLY_DISCOVERY.md`.
 
 ### 5.3 Accounts and authorization
 

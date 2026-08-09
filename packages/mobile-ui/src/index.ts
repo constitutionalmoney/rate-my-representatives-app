@@ -14,5 +14,5 @@ export const mobileFoundationTokens = Object.freeze({
 
 export const mobileFoundationCopy = Object.freeze({
   heading: 'Rate My Representatives',
-  status: 'Foundation only — civic features are not operational.',
+  status: 'Read-only synthetic discovery — participation is not operational.',
 });

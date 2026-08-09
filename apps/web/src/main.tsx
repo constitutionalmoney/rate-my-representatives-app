@@ -1,18 +1,18 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { FoundationPage } from '@rmr/web-ui';
-
 import '@rmr/web-ui/foundation.css';
+
+import App from './App';
+import { registerPublicDiscoveryWorker } from './pwa';
 
 const root = document.querySelector('#root');
 if (!root) throw new Error('Missing #root application mount point.');
 
 createRoot(root).render(
   <StrictMode>
-    <FoundationPage
-      description="Responsive public-app placeholder with generated API contract wiring."
-      surface="Public web application"
-    />
+    <App />
   </StrictMode>,
 );
+
+void registerPublicDiscoveryWorker(navigator.serviceWorker, import.meta.env.PROD);

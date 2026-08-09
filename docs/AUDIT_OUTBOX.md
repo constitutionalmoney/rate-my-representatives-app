@@ -48,7 +48,16 @@ reviewed mechanism; it must not silently weaken append-only evidence.
 | moderation | non-security audit history | security-only records |
 | security | audit records and record policy | no application mutation grant |
 | public provenance | allowlisted public manifest/confirmed-anchor projection | internal/restricted/security records and individual signals |
-| outbox worker | leases, safe transition functions, receipts, and aggregate health | audit mutation and unrestricted replay |
+| legacy outbox worker | migration-owner smoke and compatibility only | no runtime login inherits it |
+| core worker | notification/search/aggregate scoped claims and safe transitions | source, AI, provenance, signer, audit mutation, unrestricted replay |
+| source worker | source-retrieval scoped claims and safe transitions | core, AI, provenance, signer |
+| provenance worker | public-manifest/provenance scoped claims and safe transitions | core, source, AI; no runtime process is provisioned by issue #22 |
+
+Issue #22 also adds `rmr_security.access_review_event`, a separate append-only,
+payload-free decision ledger. It records only service principal, source/target domain,
+operation, allow/deny, safe reason, correlation, and time. It cannot store the actor or
+resource subject, precise location, private activity, evidence, wallet payload, or
+moderation content. See `docs/DATA_CLASSIFICATION.md`.
 
 Representative/staff access does not expose an individual's representative signal. The
 database also prevents `representative_signal.*` actions from being classified public.

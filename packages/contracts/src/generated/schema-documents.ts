@@ -6030,6 +6030,217 @@ export const PUBLIC_ROLE_REGISTRY_SCHEMA = {
   }
 } as const;
 
+export const SECURITY_DOMAIN_POLICY_SCHEMA = {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.checksandbalances.services/security-domain-policy.schema.json",
+  "title": "Security domain policy v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "dataMode",
+    "defaultAccess",
+    "domains",
+    "access",
+    "objectStorage",
+    "backup",
+    "signerIsolation",
+    "noSocialCredit"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "security-domain-policy.v1"
+    },
+    "dataMode": {
+      "const": "synthetic"
+    },
+    "defaultAccess": {
+      "const": "deny"
+    },
+    "domains": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/domain"
+      }
+    },
+    "access": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "principal",
+          "domain",
+          "operations"
+        ],
+        "properties": {
+          "principal": {
+            "$ref": "#/$defs/principal"
+          },
+          "domain": {
+            "$ref": "#/$defs/domain"
+          },
+          "operations": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "read",
+                "write",
+                "transient_process",
+                "public_serialize",
+                "backup",
+                "restore",
+                "audit_review"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "objectStorage": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "bucket",
+          "classification",
+          "anonymousRead"
+        ],
+        "properties": {
+          "bucket": {
+            "enum": [
+              "rmr-public",
+              "rmr-public-manifests",
+              "rmr-quarantine",
+              "rmr-private-evidence"
+            ]
+          },
+          "classification": {
+            "enum": [
+              "public",
+              "restricted",
+              "highly_restricted"
+            ]
+          },
+          "anonymousRead": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "backup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "encrypted",
+        "restoreMustPreserveClassification",
+        "productionToNonProductionAllowed"
+      ],
+      "properties": {
+        "encrypted": {
+          "const": true
+        },
+        "restoreMustPreserveClassification": {
+          "const": true
+        },
+        "productionToNonProductionAllowed": {
+          "const": false
+        }
+      }
+    },
+    "signerIsolation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "publicApiHasCredentials",
+        "nativeHasCredentials",
+        "webHasCredentials",
+        "coreWorkerHasCredentials",
+        "verusRequiredForCore"
+      ],
+      "properties": {
+        "publicApiHasCredentials": {
+          "const": false
+        },
+        "nativeHasCredentials": {
+          "const": false
+        },
+        "webHasCredentials": {
+          "const": false
+        },
+        "coreWorkerHasCredentials": {
+          "const": false
+        },
+        "verusRequiredForCore": {
+          "const": false
+        }
+      }
+    },
+    "noSocialCredit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generalizedCitizenScoreAllowed",
+        "identityActivityJoinAllowed",
+        "politicalProfileAnalyticsAllowed"
+      ],
+      "properties": {
+        "generalizedCitizenScoreAllowed": {
+          "const": false
+        },
+        "identityActivityJoinAllowed": {
+          "const": false
+        },
+        "politicalProfileAnalyticsAllowed": {
+          "const": false
+        }
+      }
+    }
+  },
+  "$defs": {
+    "domain": {
+      "enum": [
+        "public_registry",
+        "account_authentication",
+        "location_resolver",
+        "identity_attestation",
+        "private_civic_activity",
+        "moderation",
+        "public_methodology_provenance",
+        "verus_signing_rpc"
+      ]
+    },
+    "principal": {
+      "enum": [
+        "public_reader",
+        "native_client",
+        "web_client",
+        "public_api",
+        "account_service",
+        "location_service",
+        "identity_service",
+        "participation_service",
+        "moderation_service",
+        "publication_service",
+        "core_worker",
+        "source_worker",
+        "signer_worker",
+        "security_auditor",
+        "backup_operator"
+      ]
+    }
+  }
+} as const;
+
 export const SOURCE_CONNECTOR_CAPABILITY_SCHEMA = {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schemas.ratemyrepresentatives.com/source-connector-capability.schema.json",

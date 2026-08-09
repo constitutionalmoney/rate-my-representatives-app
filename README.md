@@ -94,6 +94,15 @@ reproducible. Issue #21 still owns live report publication; no pilot geography, 
 automatic publisher, scoring method, provenance write, or production release is approved.
 See [`docs/COVERAGE_POLICY.md`](./docs/COVERAGE_POLICY.md).
 
+Issue #22 makes the eight PRD security domains enforceable across TypeScript policy,
+generated contracts, PostgreSQL schemas/roles, scoped outbox claims, distinct API/worker
+credentials, four isolated object buckets, observability/analytics, and classified
+backup metadata. Public exports reject private-domain joins and generalized citizen
+scores; signer/RPC credentials remain absent from API, native, web, and general-worker
+processes. All added data is synthetic, high-risk flags remain false, and the core stack
+still requires no Verus. See
+[`docs/DATA_CLASSIFICATION.md`](./docs/DATA_CLASSIFICATION.md).
+
 - No production iOS or Android app is released; issue #30 remains a synthetic pilot.
 - No production representative profile, category rating, representative signal, Civic Signal briefing, authenticated aggregate, VerusID claim, or Representative Accountability Score is live; issue #11 responses are synthetic only.
 - No composite score is approved.

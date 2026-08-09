@@ -101,4 +101,5 @@ export type { InfrastructureServicesContract } from './generated/infrastructure-
 export type { AuditEvent } from './generated/audit-event.js';
 export type { OutboxEvent } from './generated/outbox-event.js';
 export type { RepresentativeSignalCommand } from './generated/representative-signal-command.js';
+export type { SecurityDomainPolicyV1 } from './generated/security-domain-policy.js';
 export type { components, operations, paths } from './generated/openapi.js';

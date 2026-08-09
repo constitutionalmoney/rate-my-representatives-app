@@ -14,8 +14,8 @@ shares a transaction with redacted audit and outbox records. Corrections append 
 superseding version. The issue #55 pilots are synthetic, execute without Verus, and add
 no public API. See `docs/SOURCE_INGESTION.md` and ADR 0008.
 
-**Status:** Approved target; issues through #30 are synthetic foundations
-**Last updated:** 2026-08-08
+**Status:** Approved target; issues through #30 plus #22 are synthetic foundations
+**Last updated:** 2026-08-09
 
 ## 1. Architecture goals
 
@@ -253,6 +253,22 @@ At minimum use separate database schemas/roles or equivalent service controls fo
 | Verus signing/RPC | credentials, signer state, queues | No public network access |
 
 The public read model must not be able to join a person/account identity to private political activity.
+
+Issue #22 makes this table executable. `packages/domain/src/security-domains.ts` denies
+unknown principal/domain/operation tuples and audits every decision without subject or
+payload data. PostgreSQL reserves one schema and `NOLOGIN` service role per restricted
+domain, while `rmr_api_runtime` and `rmr_worker_runtime` use distinct secrets and inherit
+only public-read or scoped-core-worker grants. Core, source, and provenance workers have
+separate outbox claim functions. `rmr_security.access_review_event` is append-only and
+structurally omits subject/payload columns.
+
+Object storage separates approved public records, approved public manifests, quarantine,
+and private evidence. Public/native/web/general-worker processes have no signer/RPC
+credential or network path. Observability recursively redacts sensitive keys; analytics
+admits only operational allowlisted events/fields. Backup manifests preserve the domain
+classification and prohibit production-to-non-production restore. See
+`docs/DATA_CLASSIFICATION.md` and ADR 0011. Issue #6 and #25 still own the full threat and
+disaster-recovery exercises respectively.
 
 ## 8. Command/query model
 

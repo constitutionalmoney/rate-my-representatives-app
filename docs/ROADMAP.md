@@ -96,6 +96,13 @@ infra/mobile
 - Generated OpenAPI client workflow.
 - CI matrices for server, web, iOS, and Android units/build checks.
 
+Issue #22 now enforces the eight security domains with deny-by-default runtime policy,
+generated contracts, PostgreSQL schemas/service roles, distinct API/worker credentials,
+domain-scoped outbox claims, four classified object buckets, payload-free access audit,
+operational-only analytics, and classification-preserving backup metadata. This is a
+synthetic foundation, not completion of issue #6's threat exercise or issue #25's
+production restore exercise.
+
 ### Exit gate
 
 - Clean checkout can install, build, lint, type-check, test, migrate an empty database, and run the core stack without Verus.

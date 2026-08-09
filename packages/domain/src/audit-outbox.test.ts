@@ -7,6 +7,10 @@ describe('audit and outbox domain policy', () => {
     expect(() =>
       assertAuditSafePayload({ safe: { nested: [{ private_key: 'blocked' }] } }),
     ).toThrow('safe.nested.0.private_key');
+    expect(() => assertAuditSafePayload({ nested: { representativeSignal: 'concern' } })).toThrow(
+      'nested.representativeSignal',
+    );
+    expect(() => assertAuditSafePayload({ categoryRating: 4 })).toThrow('categoryRating');
     expect(() => assertAuditSafePayload({ publicStatus: 'synthetic' })).not.toThrow();
   });
 

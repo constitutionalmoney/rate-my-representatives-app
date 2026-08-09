@@ -14,7 +14,7 @@ shares a transaction with redacted audit and outbox records. Corrections append 
 superseding version. The issue #55 pilots are synthetic, execute without Verus, and add
 no public API. See `docs/SOURCE_INGESTION.md` and ADR 0008.
 
-**Status:** Approved target; issues through #30 plus #22 are synthetic foundations
+**Status:** Approved target; issues through #30, #22, #29, and #2 are synthetic/documentation foundations
 **Last updated:** 2026-08-09
 
 ## 1. Architecture goals
@@ -128,6 +128,13 @@ The implementation issue must pin actual versions. The intended baseline is:
 Framework choice is subordinate to the domain, privacy, wallet, accessibility, and app-store requirements.
 
 ## 5. Bounded contexts
+
+The versioned logical entity catalog, ERDs, identifiers, temporal rules, privacy and
+retention classes, state machines, database invariants, and migration strategy are
+canonicalized in [`DATA_MODEL.md`](./DATA_MODEL.md) and ADR 0013. That baseline labels
+each entity **Implemented**, **Foundation only**, or **Planned**. A planned entity in the
+model is not authorization to create its table or enable its feature outside the owning
+issue.
 
 ### 5.1 Civic registry
 

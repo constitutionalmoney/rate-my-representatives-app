@@ -36,6 +36,7 @@ Turn the empty repository and conflicting backlog into an honest, buildable sour
 - Architecture, subdomain, wallet/identity, website-alignment, privacy, threat-model, moderation, methodology, and coverage documentation.
 - OpenAPI v1 skeleton and JSON Schema conventions.
 - Monorepo decision record.
+- Canonical logical data model and ERDs (`DATA_MODEL.md`).
 - Issue tracker consolidated and relabeled by phase.
 - CI baseline for formatting, type checking, tests, dependency review, secret scanning, and licence checks.
 
@@ -48,6 +49,15 @@ Turn the empty repository and conflicting backlog into an honest, buildable sour
 ### Disabled
 
 All public data, identity, wallet, signal, AI publication, provenance write, and score features.
+
+### Foundation progress
+
+Issue #2 now defines `rmr-data-model.v1`: stable identifiers, temporal/versioning rules,
+source-of-truth ownership, privacy and retention classes, state machines, ERDs, critical
+database constraints, and migration compatibility for every required civic and
+participation entity. It distinguishes implemented migrations from foundation-only and
+planned entities. No planned table, civic write, Verus operation, or score is enabled by
+the documentation baseline. See [`DATA_MODEL.md`](./DATA_MODEL.md) and ADR 0013.
 
 ## Phase 1 — Monorepo and local development foundation
 

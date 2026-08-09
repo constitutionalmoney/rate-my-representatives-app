@@ -5,6 +5,7 @@ import {
   SYNTHETIC_JURISDICTIONS,
   SYNTHETIC_PUBLIC_ROLE_REGISTRY,
   SYNTHETIC_PUBLIC_ROLE_PROFILE,
+  SYNTHETIC_SECURITY_DOMAIN_POLICY,
   SYNTHETIC_CA_SOURCE_CONNECTOR,
   SYNTHETIC_SOURCE_COVERAGE,
   SYNTHETIC_US_SOURCE_CONNECTOR,
@@ -12,6 +13,7 @@ import {
 import {
   CIVIC_SIGNAL_BRIEFING_SCHEMA,
   REPRESENTATIVE_SIGNAL_COMMAND_SCHEMA,
+  SECURITY_DOMAIN_POLICY_SCHEMA,
 } from './generated/schema-documents.js';
 import {
   ContractValidationError,
@@ -108,5 +110,23 @@ describe('runtime contract validators', () => {
     const profile = structuredClone(SYNTHETIC_PUBLIC_ROLE_PROFILE) as Record<string, unknown>;
     profile.person = { ...(profile.person as object), accountId: 'must-not-escape' };
     expect(() => parsePublicRoleProfile(profile, 'server')).toThrow(ContractValidationError);
+  });
+
+  it('generates the deny-by-default security-domain contract from a synthetic fixture', () => {
+    expect(SYNTHETIC_SECURITY_DOMAIN_POLICY).toMatchObject({
+      dataMode: 'synthetic',
+      defaultAccess: 'deny',
+      signerIsolation: {
+        coreWorkerHasCredentials: false,
+        publicApiHasCredentials: false,
+        verusRequiredForCore: false,
+      },
+      noSocialCredit: {
+        generalizedCitizenScoreAllowed: false,
+        identityActivityJoinAllowed: false,
+      },
+    });
+    expect(SYNTHETIC_SECURITY_DOMAIN_POLICY.domains).toHaveLength(8);
+    expect(SECURITY_DOMAIN_POLICY_SCHEMA.properties.defaultAccess.const).toBe('deny');
   });
 });

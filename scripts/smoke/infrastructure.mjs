@@ -148,13 +148,16 @@ assert(
 );
 
 const publicObject = await fetch(
-  `http://127.0.0.1:${storagePort}/rmr-public/approved-manifests/synthetic-foundation.json`,
+  `http://127.0.0.1:${storagePort}/rmr-public-manifests/synthetic-foundation.json`,
 );
 assert(publicObject.status === 200, 'Approved public manifest is not anonymously readable.');
+const publicRecord = await fetch(
+  `http://127.0.0.1:${storagePort}/rmr-public/records/synthetic-foundation.json`,
+);
+assert(publicRecord.status === 200, 'Approved public record is not anonymously readable.');
 for (const pathname of [
-  '/rmr-public/unapproved/synthetic-foundation.json',
   '/rmr-quarantine/synthetic-quarantine-object.txt',
-  '/rmr-private/synthetic-private-object.txt',
+  '/rmr-private-evidence/synthetic-private-object.txt',
 ]) {
   const response = await fetch(`http://127.0.0.1:${storagePort}${pathname}`);
   assert(response.status === 403 || response.status === 404, `${pathname} was publicly exposed.`);
@@ -335,6 +338,35 @@ assert(
   publicProfileSmoke.stderr || 'Source-backed public profile PostgreSQL smoke failed.',
 );
 
+const securityDomainSmoke = spawnSync(
+  'docker',
+  [
+    'compose',
+    '-f',
+    'compose.infrastructure.yaml',
+    'exec',
+    '-T',
+    'postgres',
+    'psql',
+    '-U',
+    'rmr',
+    '-d',
+    'rmr',
+    '--set',
+    'ON_ERROR_STOP=1',
+    '--file=-',
+  ],
+  {
+    cwd: root,
+    encoding: 'utf8',
+    input: await readFile(path.join(root, 'scripts', 'smoke', 'security-domains.sql'), 'utf8'),
+  },
+);
+assert(
+  securityDomainSmoke.status === 0,
+  securityDomainSmoke.stderr || 'Security-domain PostgreSQL smoke failed.',
+);
+
 const running = spawnSync(
   'docker',
   ['compose', '-f', 'compose.infrastructure.yaml', 'ps', '--services', '--status', 'running'],
@@ -348,5 +380,5 @@ assert(
 assert(!running.stdout.includes('signer-stub'), 'Core smoke unexpectedly started signer stubs.');
 
 process.stdout.write(
-  'Core infrastructure smoke passed: migration/seed, jurisdiction/public-role/source-ingestion/profile registries, atomic audit/outbox, leases/retry/DLQ/replay, bucket isolation, mail, API, worker, and Verus-off readiness.\n',
+  'Core infrastructure smoke passed: migration/seed, security-domain roles, jurisdiction/public-role/source-ingestion/profile registries, atomic audit/outbox, scoped leases/retry/DLQ/replay, four-bucket isolation, mail, API, worker, and Verus-off readiness.\n',
 );

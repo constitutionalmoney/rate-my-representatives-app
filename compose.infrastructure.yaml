@@ -32,8 +32,6 @@ x-core-application-environment: &core-application-environment
   DATABASE_HOST: postgres
   DATABASE_PORT: '5432'
   DATABASE_NAME: rmr
-  DATABASE_USER: rmr
-  DATABASE_PASSWORD_FILE: /run/secrets/postgres_password
   QUEUE_HOST: rabbitmq
   QUEUE_PORT: '5672'
   QUEUE_USERNAME: rmr-local
@@ -41,8 +39,9 @@ x-core-application-environment: &core-application-environment
   QUEUE_PASSWORD_FILE: /run/secrets/rabbitmq_password
   OBJECT_STORAGE_ENDPOINT: http://object-storage:9000
   OBJECT_STORAGE_PUBLIC_BUCKET: rmr-public
+  OBJECT_STORAGE_PUBLIC_MANIFEST_BUCKET: rmr-public-manifests
   OBJECT_STORAGE_QUARANTINE_BUCKET: rmr-quarantine
-  OBJECT_STORAGE_PRIVATE_BUCKET: rmr-private
+  OBJECT_STORAGE_PRIVATE_BUCKET: rmr-private-evidence
   SMTP_HOST: mailpit
   SMTP_PORT: '1025'
   VERUS_NETWORK: VRSCTEST
@@ -79,8 +78,12 @@ services:
       PGHOST: postgres
       PGUSER: rmr
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_API_PASSWORD_FILE: /run/secrets/postgres_api_password
+      POSTGRES_WORKER_PASSWORD_FILE: /run/secrets/postgres_worker_password
     secrets:
       - postgres_password
+      - postgres_api_password
+      - postgres_worker_password
     volumes:
       - ./infra/postgres/run-migrations.sh:/opt/rmr/run-migrations.sh:ro
       - ./packages/db/migrations:/opt/rmr/migrations:ro
@@ -189,13 +192,15 @@ services:
       MINIO_ROOT_USER: rmr-local-root
       MINIO_API_USER: rmr-api
       MINIO_QUARANTINE_USER: rmr-quarantine-worker
-      MINIO_PRIVATE_USER: rmr-private-worker
+      MINIO_PRIVATE_USER: rmr-private-evidence-worker
+      MINIO_MANIFEST_USER: rmr-manifest-worker
       MC_CONFIG_DIR: /tmp/.mc
     secrets:
       - minio_root_password
       - minio_api_password
       - minio_quarantine_password
       - minio_private_password
+      - minio_manifest_password
     volumes:
       - ./infra/object-storage/configure-storage.sh:/opt/rmr/configure-storage.sh:ro
       - ./infra/object-storage/policies:/opt/rmr/policies:ro
@@ -234,10 +239,12 @@ services:
       <<: *core-application-environment
       HOST: 0.0.0.0
       PORT: '3000'
+      DATABASE_USER: rmr_api_runtime
+      DATABASE_PASSWORD_FILE: /run/secrets/postgres_api_password
       OBJECT_STORAGE_ACCESS_KEY: rmr-api
       OBJECT_STORAGE_SECRET_KEY_FILE: /run/secrets/minio_api_password
     secrets:
-      - postgres_password
+      - postgres_api_password
       - rabbitmq_password
       - minio_api_password
     ports:
@@ -280,12 +287,11 @@ services:
       <<: *core-application-environment
       HOST: 0.0.0.0
       PORT: '3001'
-      OBJECT_STORAGE_ACCESS_KEY: rmr-private-worker
-      OBJECT_STORAGE_SECRET_KEY_FILE: /run/secrets/minio_private_password
+      DATABASE_USER: rmr_worker_runtime
+      DATABASE_PASSWORD_FILE: /run/secrets/postgres_worker_password
     secrets:
-      - postgres_password
+      - postgres_worker_password
       - rabbitmq_password
-      - minio_private_password
     networks:
       - core-internal
     depends_on:
@@ -428,6 +434,10 @@ services:
 secrets:
   postgres_password:
     file: ${RMR_LOCAL_SECRET_DIR:-.local/infra/secrets}/postgres_password
+  postgres_api_password:
+    file: ${RMR_LOCAL_SECRET_DIR:-.local/infra/secrets}/postgres_api_password
+  postgres_worker_password:
+    file: ${RMR_LOCAL_SECRET_DIR:-.local/infra/secrets}/postgres_worker_password
   rabbitmq_password:
     file: ${RMR_LOCAL_SECRET_DIR:-.local/infra/secrets}/rabbitmq_password
   minio_root_password:
@@ -438,6 +448,8 @@ secrets:
     file: ${RMR_LOCAL_SECRET_DIR:-.local/infra/secrets}/minio_quarantine_password
   minio_private_password:
     file: ${RMR_LOCAL_SECRET_DIR:-.local/infra/secrets}/minio_private_password
+  minio_manifest_password:
+    file: ${RMR_LOCAL_SECRET_DIR:-.local/infra/secrets}/minio_manifest_password
   verus_rpc_user:
     file: ${RMR_LOCAL_SECRET_DIR:-.local/infra/secrets}/verus_rpc_user
   verus_rpc_password:

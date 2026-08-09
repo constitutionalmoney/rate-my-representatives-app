@@ -1,0 +1,52 @@
+{
+  "manifestVersion": "security-domain-backup.v1",
+  "dataMode": "synthetic",
+  "environment": "development",
+  "encrypted": true,
+  "restoreMustPreserveClassification": true,
+  "productionToNonProductionAllowed": false,
+  "domains": [
+    { "domain": "public_registry", "classification": "public", "databaseSchema": "rmr_registry" },
+    {
+      "domain": "account_authentication",
+      "classification": "highly_restricted",
+      "databaseSchema": "rmr_account"
+    },
+    {
+      "domain": "location_resolver",
+      "classification": "highly_restricted",
+      "databaseSchema": "rmr_location"
+    },
+    {
+      "domain": "identity_attestation",
+      "classification": "highly_restricted",
+      "databaseSchema": "rmr_identity"
+    },
+    {
+      "domain": "private_civic_activity",
+      "classification": "highly_restricted",
+      "databaseSchema": "rmr_participation"
+    },
+    {
+      "domain": "moderation",
+      "classification": "highly_restricted",
+      "databaseSchema": "rmr_moderation"
+    },
+    {
+      "domain": "public_methodology_provenance",
+      "classification": "public",
+      "databaseSchema": "rmr_provenance"
+    },
+    {
+      "domain": "verus_signing_rpc",
+      "classification": "highly_restricted",
+      "databaseSchema": "rmr_signer"
+    }
+  ],
+  "objectStorage": [
+    { "bucket": "rmr-public", "classification": "public" },
+    { "bucket": "rmr-public-manifests", "classification": "public" },
+    { "bucket": "rmr-quarantine", "classification": "restricted" },
+    { "bucket": "rmr-private-evidence", "classification": "highly_restricted" }
+  ]
+}

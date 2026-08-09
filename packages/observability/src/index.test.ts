@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { createStructuredEvent, redactSensitive } from './index.js';
+import {
+  createAnalyticsEvent,
+  createStructuredEvent,
+  redactSensitive,
+  sanitizeForObservabilitySink,
+} from './index.js';
 
 describe('privacy-safe observability', () => {
   it('redacts civic, identity, location, wallet, and authorization fields recursively', () => {
@@ -35,5 +40,42 @@ describe('privacy-safe observability', () => {
       fields: { service: 'api' },
       timestamp: '2026-01-01T00:00:00Z',
     });
+  });
+
+  it.each(['audit', 'crash', 'log', 'queue', 'trace'] as const)(
+    'redacts precise location and private civic activity from the %s sink',
+    (sink) => {
+      expect(
+        sanitizeForObservabilitySink(sink, {
+          nested: {
+            preciseLocation: { address: 'synthetic private address' },
+            representativeSignal: 'concern',
+          },
+          operation: 'synthetic.check',
+        }),
+      ).toEqual({
+        nested: { preciseLocation: '[REDACTED]', representativeSignal: '[REDACTED]' },
+        operation: 'synthetic.check',
+      });
+    },
+  );
+
+  it('permits only aggregate-free operational analytics fields', () => {
+    expect(
+      createAnalyticsEvent(
+        'deck.load',
+        { durationBucket: 'under_500ms', platform: 'android', status: 'ready' },
+        '2026-08-09T12:00:00Z',
+      ),
+    ).toMatchObject({ event: 'deck.load', fields: { platform: 'android' } });
+    expect(() =>
+      createAnalyticsEvent('deck.complete', {
+        platform: 'web',
+        representativeSignal: 'support',
+      }),
+    ).toThrow(/not allowlisted/);
+    expect(() =>
+      createAnalyticsEvent('deck.complete', { platform: 'web', preciseLocation: 'synthetic' }),
+    ).toThrow(/not allowlisted/);
   });
 });

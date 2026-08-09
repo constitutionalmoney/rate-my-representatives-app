@@ -1,10 +1,12 @@
 const SENSITIVE_KEYS = new Set([
   'accountid',
   'address',
+  'abuseindicator',
   'actorid',
   'assertion',
   'authorization',
   'challenge',
+  'categoryrating',
   'cookie',
   'credential',
   'csrftoken',
@@ -12,6 +14,7 @@ const SENSITIVE_KEYS = new Set([
   'email',
   'evidence',
   'identityevidence',
+  'identityproof',
   'identifier',
   'location',
   'moderatornotes',
@@ -19,21 +22,35 @@ const SENSITIVE_KEYS = new Set([
   'passkey',
   'preciseaddress',
   'preciselocation',
+  'preference',
+  'privateactivity',
   'privatekey',
   'recoverytoken',
   'requestid',
+  'representativesignal',
   'role',
   'rolegrants',
   'seed',
   'seedphrase',
   'signal',
+  'subscription',
   'session',
   'sessionid',
   'sessiontoken',
   'token',
   'walletpayload',
+  'walletrequest',
   'wif',
 ]);
+
+const ANALYTICS_EVENT_FIELDS = Object.freeze({
+  'accessibility.error': new Set(['component', 'platform', 'status']),
+  'deck.complete': new Set(['durationBucket', 'platform', 'status']),
+  'deck.error': new Set(['errorCode', 'platform', 'status']),
+  'deck.load': new Set(['durationBucket', 'platform', 'status']),
+});
+
+export type ObservabilitySink = 'audit' | 'crash' | 'log' | 'queue' | 'trace';
 
 function normalizedKey(key: string): string {
   return key.toLowerCase().replaceAll(/[^a-z]/g, '');
@@ -51,6 +68,33 @@ export function redactSensitive(value: unknown): unknown {
   );
 }
 
+export function sanitizeForObservabilitySink(
+  _sink: ObservabilitySink,
+  fields: Readonly<Record<string, unknown>>,
+): Readonly<Record<string, unknown>> {
+  return Object.freeze(redactSensitive(fields) as Record<string, unknown>);
+}
+
+export interface AnalyticsEvent {
+  readonly event: keyof typeof ANALYTICS_EVENT_FIELDS;
+  readonly fields: Readonly<Record<string, boolean | number | string>>;
+  readonly timestamp: string;
+}
+
+export function createAnalyticsEvent(
+  event: keyof typeof ANALYTICS_EVENT_FIELDS,
+  fields: Readonly<Record<string, boolean | number | string>>,
+  timestamp = new Date().toISOString(),
+): AnalyticsEvent {
+  const allowedFields = ANALYTICS_EVENT_FIELDS[event];
+  for (const key of Object.keys(fields)) {
+    if (!allowedFields.has(key) || SENSITIVE_KEYS.has(normalizedKey(key))) {
+      throw new Error(`Analytics field is not allowlisted for ${event}: ${key}`);
+    }
+  }
+  return Object.freeze({ event, fields: Object.freeze({ ...fields }), timestamp });
+}
+
 export interface StructuredEvent {
   readonly event: string;
   readonly fields: unknown;
@@ -64,7 +108,7 @@ export function createStructuredEvent(
 ): StructuredEvent {
   return Object.freeze({
     event,
-    fields: redactSensitive(fields),
+    fields: sanitizeForObservabilitySink('log', fields),
     timestamp,
   });
 }

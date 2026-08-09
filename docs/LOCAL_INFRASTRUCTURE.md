@@ -18,8 +18,8 @@ Migration `0006_source_backed_public_profile_read.sql` and local seed
 append-only profile versions, stable ETags, and timeline projections. The smoke verifies
 the human gate, prohibited-field rejection, source linkage, and ETag invalidation.
 
-**Status:** Issue #9 infrastructure plus issue #55 source persistence and issue #11
-synthetic profile reads. Local/CI data only. This is not a production deployment recipe
+**Status:** Issue #9 infrastructure plus issue #55 source persistence, issue #11
+synthetic profile reads, and issue #22 security-domain isolation. Local/CI data only. This is not a production deployment recipe
 and it enables no automatic publication, civic write, identity, scoring, provenance, or
 Verus write feature.
 
@@ -40,7 +40,8 @@ The command starts only:
   source, and public-profile synthetic seed markers;
 - RabbitMQ with durable primary, retry, and dead-letter queues;
 - S3-compatible object storage built from the pinned upstream MinIO source release;
-- isolated `rmr-public`, `rmr-quarantine`, and `rmr-private` buckets;
+- isolated `rmr-public`, `rmr-public-manifests`, `rmr-quarantine`, and
+  `rmr-private-evidence` buckets;
 - Mailpit as a local-only email catcher; and
 - the API and idle worker foundations, both with every high-risk flag false.
 
@@ -59,8 +60,10 @@ containment-cycle rejection; stable rename/external-ID history; public-view isol
 Canada/United States graph fixtures and public coverage/conflict gaps; state/audit/outbox atomicity; audit immutability and privacy
 rejection; lease, retry, dead-letter, replay, duplicate-delivery, and safe-metrics
 behavior; a synthetic RabbitMQ message returns from retry and reaches its dead-letter
-queue; only `approved-manifests/*` is anonymously public; quarantine/private objects are
-denied; Mailpit is ready; and API/worker health remains ready with no Verus container
+queue; only approved public records/manifests are anonymously public;
+quarantine/private-evidence objects are denied; distinct API/worker database logins have
+only scoped grants; signer and all-event/provenance claims are unavailable to the general
+worker; Mailpit is ready; and API/worker health remains ready with no Verus container
 running. It also verifies separate person/term/election/candidacy records, lifecycle
 transition guards, non-name person resolution, non-authoritative external references,
 public-view privacy, and won-candidacy/term separation. The PostgreSQL acceptance drills
@@ -70,13 +73,14 @@ roll back their temporary synthetic rows.
 
 | Principal/path | Allowed | Explicitly unavailable |
 |---|---|---|
-| anonymous | read `rmr-public/approved-manifests/*` | drafts, quarantine, private |
-| `rmr-api` | list/read approved public manifests | quarantine, private, public writes |
-| `rmr-quarantine-worker` | list/read/write/delete quarantine | public and private |
-| `rmr-private-worker` | list/read/write/delete private | public and quarantine |
+| anonymous | read approved `rmr-public/*` and `rmr-public-manifests/*` | quarantine, private evidence |
+| `rmr-api` | list/read approved public records and manifests | quarantine, private evidence, public writes |
+| `rmr-manifest-worker` | list/read/write approved public manifests | public records, quarantine, private evidence |
+| `rmr-quarantine-worker` | list/read/write/delete quarantine | public and private evidence |
+| `rmr-private-evidence-worker` | list/read/write/delete private evidence | public and quarantine |
 
-The local buckets and principals are infrastructure preparation only. No source ingestion
-or public manifest workflow is implemented by this issue.
+The local buckets and principals are infrastructure preparation only. Source ingestion
+remains disabled and no public manifest writer process is implemented by issue #22.
 
 ## Optional VRSCTEST profile
 
@@ -125,8 +129,9 @@ docker compose -f compose.infrastructure.yaml cp rabbitmq:/tmp/rabbitmq-definiti
 ```
 
 Object data can be exported through the S3-compatible API using a reviewed client and
-the generated principal appropriate for each bucket. Do not collapse public, quarantine,
-and private credentials into one application credential. An export is not a verified
+the generated principal appropriate for each bucket. Do not collapse public records,
+public manifests, quarantine, and private-evidence credentials into one application
+credential. An export is not a verified
 backup until a restore drill checks migration state, object policies, queue topology,
 and the synthetic smoke suite.
 
@@ -139,8 +144,9 @@ pnpm infra:reset
 
 The manager resolves and verifies the local path and requires
 `--confirm-local-reset` internally before issuing `docker compose down --volumes`.
-Production backup, retention, encryption, restore, and disaster-recovery policy remains
-a separate deployment/release responsibility.
+The synthetic classification manifest under `infra/backup` proves the required metadata
+shape. Production backup, retention, encryption, restore, and the issue #25
+disaster-recovery exercise remain separate deployment/release responsibilities.
 
 ## CI and troubleshooting
 

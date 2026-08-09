@@ -58,18 +58,22 @@ describe('issue #9 local infrastructure foundation', () => {
     expect(text).toContain('writeEnabled": false');
   });
 
-  it('isolates public, quarantine, and private storage policies', async () => {
-    const [publicPolicy, quarantinePolicy, privatePolicy] = await Promise.all([
+  it('isolates public records, public manifests, quarantine, and private evidence', async () => {
+    const [publicPolicy, manifestPolicy, quarantinePolicy, privatePolicy] = await Promise.all([
       read('infra/object-storage/policies/api-public-reader.json'),
+      read('infra/object-storage/policies/manifest-writer.json'),
       read('infra/object-storage/policies/quarantine-worker.json'),
       read('infra/object-storage/policies/private-worker.json'),
     ]);
 
-    expect(publicPolicy).toContain('rmr-public/approved-manifests/*');
-    expect(publicPolicy).not.toMatch(/rmr-private|rmr-quarantine/);
+    expect(publicPolicy).toContain('rmr-public/*');
+    expect(publicPolicy).toContain('rmr-public-manifests/*');
+    expect(publicPolicy).not.toMatch(/rmr-private-evidence|rmr-quarantine/);
+    expect(manifestPolicy).toContain('rmr-public-manifests/*');
+    expect(manifestPolicy).not.toMatch(/rmr-private-evidence|rmr-quarantine|rmr-public\/\*/);
     expect(quarantinePolicy).toContain('rmr-quarantine/*');
-    expect(quarantinePolicy).not.toMatch(/rmr-private|rmr-public/);
-    expect(privatePolicy).toContain('rmr-private/*');
+    expect(quarantinePolicy).not.toMatch(/rmr-private-evidence|rmr-public/);
+    expect(privatePolicy).toContain('rmr-private-evidence/*');
     expect(privatePolicy).not.toMatch(/rmr-quarantine|rmr-public/);
   });
 
@@ -79,11 +83,11 @@ describe('issue #9 local infrastructure foundation', () => {
     expect(storageSetup).toContain(
       'mc alias set -- local "${MINIO_ENDPOINT}" "${MINIO_ROOT_USER}" "${root_password}"',
     );
-    expect(storageSetup.match(/mc admin user add -- local/g)).toHaveLength(3);
+    expect(storageSetup.match(/mc admin user add -- local/g)).toHaveLength(4);
     expect(storageSetup).not.toMatch(/^mc (?:alias set|admin user add) local /m);
   });
 
-  it('applies prefix conditions only to MinIO actions that support them', async () => {
+  it('does not apply object-prefix conditions to unsupported MinIO actions', async () => {
     const publicPolicy = JSON.parse(
       await read('infra/object-storage/policies/api-public-reader.json'),
     ) as {
@@ -97,11 +101,7 @@ describe('issue #9 local infrastructure foundation', () => {
     );
 
     expect(bucketLocationStatement?.Condition).toBeUndefined();
-    expect(listStatement?.Condition).toEqual({
-      StringLike: {
-        's3:prefix': ['approved-manifests', 'approved-manifests/*'],
-      },
-    });
+    expect(listStatement?.Condition).toBeUndefined();
   });
 
   it('creates portable API and worker deploy directories with injected workspace packages', async () => {

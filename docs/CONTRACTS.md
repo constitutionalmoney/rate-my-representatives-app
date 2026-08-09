@@ -9,6 +9,11 @@ support, source rights, profile/material-claim coverage, freshness, connector fa
 gaps, corrections, release decision, and optional public-artifact provenance state.
 Issue #7 adds no HTTP operation; issue #21 owns live public-report publication.
 
+Issue #22 adds generated `security-domain-policy.v1` TypeScript/schema/fixture wiring.
+It fixes the eight domain names, deny default, classified object buckets,
+classification-preserving backup requirements, signer isolation, and No Social Credit
+constants. It is an internal policy contract and adds no HTTP route.
+
 ## Official-source internal contracts
 
 Issue #55 adds generated TypeScript and runtime validators for

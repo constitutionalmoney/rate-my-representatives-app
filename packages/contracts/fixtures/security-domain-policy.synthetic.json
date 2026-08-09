@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "security-domain-policy.v1",
+  "dataMode": "synthetic",
+  "defaultAccess": "deny",
+  "domains": [
+    "public_registry",
+    "account_authentication",
+    "location_resolver",
+    "identity_attestation",
+    "private_civic_activity",
+    "moderation",
+    "public_methodology_provenance",
+    "verus_signing_rpc"
+  ],
+  "access": [
+    {
+      "principal": "public_api",
+      "domain": "public_registry",
+      "operations": ["read", "public_serialize"]
+    },
+    {
+      "principal": "location_service",
+      "domain": "location_resolver",
+      "operations": ["transient_process"]
+    },
+    {
+      "principal": "participation_service",
+      "domain": "private_civic_activity",
+      "operations": ["read", "write"]
+    },
+    { "principal": "moderation_service", "domain": "moderation", "operations": ["read", "write"] },
+    {
+      "principal": "publication_service",
+      "domain": "public_methodology_provenance",
+      "operations": ["read", "write"]
+    },
+    {
+      "principal": "signer_worker",
+      "domain": "verus_signing_rpc",
+      "operations": ["read", "write"]
+    },
+    {
+      "principal": "security_auditor",
+      "domain": "private_civic_activity",
+      "operations": ["audit_review"]
+    },
+    {
+      "principal": "backup_operator",
+      "domain": "private_civic_activity",
+      "operations": ["backup", "restore"]
+    }
+  ],
+  "objectStorage": [
+    { "bucket": "rmr-public", "classification": "public", "anonymousRead": true },
+    { "bucket": "rmr-public-manifests", "classification": "public", "anonymousRead": true },
+    { "bucket": "rmr-quarantine", "classification": "restricted", "anonymousRead": false },
+    {
+      "bucket": "rmr-private-evidence",
+      "classification": "highly_restricted",
+      "anonymousRead": false
+    }
+  ],
+  "backup": {
+    "encrypted": true,
+    "restoreMustPreserveClassification": true,
+    "productionToNonProductionAllowed": false
+  },
+  "signerIsolation": {
+    "publicApiHasCredentials": false,
+    "nativeHasCredentials": false,
+    "webHasCredentials": false,
+    "coreWorkerHasCredentials": false,
+    "verusRequiredForCore": false
+  },
+  "noSocialCredit": {
+    "generalizedCitizenScoreAllowed": false,
+    "identityActivityJoinAllowed": false,
+    "politicalProfileAnalyticsAllowed": false
+  }
+}

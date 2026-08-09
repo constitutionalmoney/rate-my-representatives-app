@@ -276,6 +276,7 @@ const fixtureSchemas = new Map([
   ['not-found.json', 'api-error.schema.json'],
   ['public-role-profile.synthetic.json', 'public-role-profile.schema.json'],
   ['public-role-registry.synthetic.json', 'public-role-registry.schema.json'],
+  ['security-domain-policy.synthetic.json', 'security-domain-policy.schema.json'],
   ['source-connector-ca.synthetic.json', 'source-connector-capability.schema.json'],
   ['source-connector-us.synthetic.json', 'source-connector-capability.schema.json'],
   ['source-coverage.synthetic.json', 'source-coverage-snapshot.schema.json'],

@@ -43,6 +43,7 @@ const schemaDefinitions = [
     'PUBLIC_ROLE_PROFILE_TIMELINE_SCHEMA',
   ],
   ['public-role-registry', 'public-role-registry.schema.json', 'PUBLIC_ROLE_REGISTRY_SCHEMA'],
+  ['security-domain-policy', 'security-domain-policy.schema.json', 'SECURITY_DOMAIN_POLICY_SCHEMA'],
   [
     'source-connector-capability',
     'source-connector-capability.schema.json',
@@ -66,6 +67,7 @@ const fixtureDefinitions = [
   ['SYNTHETIC_JURISDICTIONS', 'jurisdictions.synthetic.json'],
   ['SYNTHETIC_PUBLIC_ROLE_PROFILE', 'public-role-profile.synthetic.json'],
   ['SYNTHETIC_PUBLIC_ROLE_REGISTRY', 'public-role-registry.synthetic.json'],
+  ['SYNTHETIC_SECURITY_DOMAIN_POLICY', 'security-domain-policy.synthetic.json'],
   ['SYNTHETIC_CA_SOURCE_CONNECTOR', 'source-connector-ca.synthetic.json'],
   ['SYNTHETIC_US_SOURCE_CONNECTOR', 'source-connector-us.synthetic.json'],
   ['SYNTHETIC_SOURCE_COVERAGE', 'source-coverage.synthetic.json'],

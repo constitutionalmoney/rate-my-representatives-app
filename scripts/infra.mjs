@@ -11,11 +11,14 @@ const secretDirectory = path.join(localDirectory, 'secrets');
 const composeArguments = ['compose', '-f', 'compose.infrastructure.yaml'];
 const secretNames = [
   'postgres_password',
+  'postgres_api_password',
+  'postgres_worker_password',
   'rabbitmq_password',
   'minio_root_password',
   'minio_api_password',
   'minio_quarantine_password',
   'minio_private_password',
+  'minio_manifest_password',
   'verus_rpc_password',
 ];
 

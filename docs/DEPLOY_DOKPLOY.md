@@ -3,13 +3,14 @@
 Issue #8 provides an application-only Docker Compose deployment for a future Dokploy
 server. It builds from the GitHub repository and contains two services:
 
-- `web`: the public static web placeholder and same-origin `/api/` reverse proxy;
-- `api`: the internal synthetic health API.
+- `web`: the responsive read-only discovery PWA and same-origin `/api/` reverse proxy;
+- `api`: the internal synthetic read-only API.
 
 This is not a production civic release. It exposes only deterministic synthetic
 jurisdiction and public-role registry data and has no real representative/person data, persistent
 storage, queue, source ingestion, account flow, scoring, Verus dependency, or mainnet
-capability. Portal and admin placeholders are intentionally not published.
+capability. Portal and admin placeholders are intentionally not published. Issue #30's
+support/concern controls are unsubmitted previews and have no API write path.
 
 ## Dokploy setup
 
@@ -22,7 +23,8 @@ capability. Portal and admin placeholders are intentionally not published.
    `/api/v1/health` return successfully through the public hostname. The
    `/api/v1/health/mobile` compatibility response and the synthetic
    `/api/v1/jurisdictions`, `/api/v1/people`, `/api/v1/office-terms`,
-   `/api/v1/elections`, and `/api/v1/candidacies` reads should also return `200`.
+   `/api/v1/elections`, `/api/v1/candidacies`, `/api/v1/profiles?countryCode=CA`,
+   `/manifest.webmanifest`, and `/sw.js` reads should also return `200`.
 
 Dokploy automatically deploys pushes only for the branch selected for the service. A
 production service should therefore track a reviewed protected branch, not a feature
@@ -69,6 +71,9 @@ curl --fail http://127.0.0.1:8080/api/v1/people
 curl --fail http://127.0.0.1:8080/api/v1/office-terms
 curl --fail http://127.0.0.1:8080/api/v1/elections
 curl --fail http://127.0.0.1:8080/api/v1/candidacies
+curl --fail 'http://127.0.0.1:8080/api/v1/profiles?countryCode=CA'
+curl --fail http://127.0.0.1:8080/manifest.webmanifest
+curl --fail http://127.0.0.1:8080/sw.js
 ```
 
 Stop the isolated local stack with:

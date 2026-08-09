@@ -8,12 +8,12 @@ This repository is the implementation home for the application described at [rat
 
 ## Current status
 
-**Repository-foundation stage — synthetic registry and source-backed profile reads only; not a production civic release.**
+**Read-only discovery pilot stage — synthetic registry and source-backed profiles only; not a production civic release.**
 
-The mobile-first TypeScript workspace and CI foundation now exist. The native, web,
-portal, admin, API, and worker surfaces are deliberately limited to placeholder,
-typed health, and synthetic registry behavior. Domain packages that belong to later
-roadmap issues remain explicit non-operational stubs.
+The mobile-first TypeScript workspace and CI foundation now exist. Native iOS/Android
+and responsive web/PWA clients provide a finite synthetic representative-discovery deck
+and sourced detail view. Portal, admin, and worker surfaces remain placeholders, and
+domain packages belonging to later roadmap issues remain explicit non-operational stubs.
 
 Issue #12 adds a synthetic, deny-by-default authentication and authorization core:
 generated passkey/email/session/role contracts, rotating revocable session policy,
@@ -78,7 +78,16 @@ harness. Representative VerusID provisioning, authenticated RPC, activity public
 participation, scoring, and all mainnet behavior remain outside the mobile client and
 disabled.
 
-- No production iOS or Android app is released.
+Issue #30 adds the first read-only application experience: country-only synthetic deck
+selection, finite completion and coverage-gap states, visible support/concern previews,
+skip-as-no-judgment, sourced detail, safe deep links, validated public-only offline cache,
+and a responsive installable PWA. The native and web clients use generated GET clients.
+Support/concern previews cannot confirm or submit before issue #37, and issue #29 still
+owns minimized jurisdiction resolution. No address, private choice, score, source write,
+Verus dependency, provenance write, or participation route is introduced. See
+[`docs/READ_ONLY_DISCOVERY.md`](./docs/READ_ONLY_DISCOVERY.md).
+
+- No production iOS or Android app is released; issue #30 remains a synthetic pilot.
 - No production representative profile, category rating, representative signal, Civic Signal briefing, authenticated aggregate, VerusID claim, or Representative Accountability Score is live; issue #11 responses are synthetic only.
 - No composite score is approved.
 - Checks and Balances Protocol integration is planned and disabled by default.
@@ -243,6 +252,7 @@ packages/
   domain/          Entities, state machines, invariants, authorization decisions
   db/              PostgreSQL schema, migrations, repositories, outbox
   contracts/       OpenAPI, JSON Schema, generated TypeScript clients
+  discovery/       Shared finite-deck and validated public-cache state
   auth/            Passkeys, email, sessions, roles, VerusID links, attestations
   mobile-ui/       Native accessible components and card-deck primitives
   web-ui/          Web accessible components
@@ -355,6 +365,7 @@ a queue, object storage, Verus, wallet software, keys, or external civic data.
 See [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md),
 [docs/CONTRACTS.md](./docs/CONTRACTS.md), [docs/API_V1.md](./docs/API_V1.md),
 [docs/PUBLIC_PROFILE_API.md](./docs/PUBLIC_PROFILE_API.md),
+[docs/READ_ONLY_DISCOVERY.md](./docs/READ_ONLY_DISCOVERY.md),
 [docs/NATIVE_MOBILE.md](./docs/NATIVE_MOBILE.md), and
 [docs/adr/0001-mobile-first-typescript-monorepo.md](./docs/adr/0001-mobile-first-typescript-monorepo.md).
 
@@ -363,7 +374,7 @@ The issue #12 security boundaries and non-operational status are documented in
 [ADR 0002](./docs/adr/0002-deny-by-default-auth-boundaries.md).
 
 The application-only [Docker Compose foundation](./compose.yaml) can build the public
-web placeholder and synthetic read-only API without Verus or backing services. It is
+read-only discovery PWA and synthetic API without Verus or backing services. It is
 prepared for GitHub-sourced Dokploy deployment; see
 [docs/DEPLOY_DOKPLOY.md](./docs/DEPLOY_DOKPLOY.md).
 

@@ -1,5 +1,4 @@
-import Ajv2020, { type ErrorObject, type ValidateFunction } from 'ajv/dist/2020.js';
-import addFormats from 'ajv-formats';
+import type { ErrorObject } from 'ajv';
 
 import type { ApiError } from './generated/api-error.js';
 import type { HealthStatus } from './generated/health-status.js';
@@ -19,18 +18,8 @@ import type { PublicRoleProfileTimeline } from './generated/public-role-profile-
 import type { PublicRoleRegistry } from './generated/public-role-registry.js';
 import type { SourceConnectorCapabilityV1 } from './generated/source-connector-capability.js';
 import type { SourceCoverageSnapshotV1 } from './generated/source-coverage-snapshot.js';
-import {
-  API_ERROR_SCHEMA,
-  HEALTH_STATUS_SCHEMA,
-  JURISDICTION_REGISTRY_SCHEMA,
-  MOBILE_COMPATIBILITY_STATUS_SCHEMA,
-  PUBLIC_ROLE_PROFILE_LIST_SCHEMA,
-  PUBLIC_ROLE_PROFILE_SCHEMA,
-  PUBLIC_ROLE_PROFILE_TIMELINE_SCHEMA,
-  PUBLIC_ROLE_REGISTRY_SCHEMA,
-  SOURCE_CONNECTOR_CAPABILITY_SCHEMA,
-  SOURCE_COVERAGE_SNAPSHOT_SCHEMA,
-} from './generated/schema-documents.js';
+import * as clientValidators from './generated/client-validators.js';
+import * as serverValidators from './generated/server-validators.js';
 
 export type ContractBoundary = 'client' | 'server';
 
@@ -46,62 +35,9 @@ export class ContractValidationError extends Error {
   }
 }
 
-function createAjv(boundary: ContractBoundary): Ajv2020 {
-  const ajv = new Ajv2020({
-    allErrors: true,
-    coerceTypes: false,
-    removeAdditional: boundary === 'client' ? 'all' : false,
-    strict: true,
-  });
-  addFormats(ajv);
-  ajv.addVocabulary([
-    'x-rmr-agent-access',
-    'x-rmr-allowed-actors',
-    'x-rmr-feature-status',
-    'x-rmr-human-intent',
-  ]);
-  return ajv;
-}
-
-const serverAjv = createAjv('server');
-const clientAjv = createAjv('client');
-const serverHealth = serverAjv.compile(HEALTH_STATUS_SCHEMA);
-const clientHealth = clientAjv.compile(HEALTH_STATUS_SCHEMA);
-const serverJurisdictionRegistry = serverAjv.compile(JURISDICTION_REGISTRY_SCHEMA);
-const clientJurisdictionRegistry = clientAjv.compile(JURISDICTION_REGISTRY_SCHEMA);
-const serverMobileCompatibility = serverAjv.compile(MOBILE_COMPATIBILITY_STATUS_SCHEMA);
-const clientMobileCompatibility = clientAjv.compile(MOBILE_COMPATIBILITY_STATUS_SCHEMA);
-const serverPublicRoleProfile = serverAjv.compile(PUBLIC_ROLE_PROFILE_SCHEMA);
-const clientPublicRoleProfile = clientAjv.compile(PUBLIC_ROLE_PROFILE_SCHEMA);
-const serverPublicRoleProfileList = serverAjv.compile(PUBLIC_ROLE_PROFILE_LIST_SCHEMA);
-const clientPublicRoleProfileList = clientAjv.compile(PUBLIC_ROLE_PROFILE_LIST_SCHEMA);
-const serverPublicRoleProfileTimeline = serverAjv.compile(PUBLIC_ROLE_PROFILE_TIMELINE_SCHEMA);
-const clientPublicRoleProfileTimeline = clientAjv.compile(PUBLIC_ROLE_PROFILE_TIMELINE_SCHEMA);
-const profileSchemaId = PUBLIC_ROLE_PROFILE_SCHEMA.$id;
-const serverProfileSections = {
-  appeals: serverAjv.compile({ $ref: `${profileSchemaId}#/$defs/appealSection` }),
-  corrections: serverAjv.compile({ $ref: `${profileSchemaId}#/$defs/correctionSection` }),
-  coverage: serverAjv.compile({ $ref: `${profileSchemaId}#/$defs/coverageSection` }),
-  disputes: serverAjv.compile({ $ref: `${profileSchemaId}#/$defs/disputeSection` }),
-  responses: serverAjv.compile({ $ref: `${profileSchemaId}#/$defs/responseSection` }),
-  sources: serverAjv.compile({ $ref: `${profileSchemaId}#/$defs/sourceSection` }),
+type ContractValidator = ((value: unknown) => boolean) & {
+  readonly errors?: readonly ErrorObject[] | null;
 };
-const clientProfileSections = {
-  appeals: clientAjv.compile({ $ref: `${profileSchemaId}#/$defs/appealSection` }),
-  corrections: clientAjv.compile({ $ref: `${profileSchemaId}#/$defs/correctionSection` }),
-  coverage: clientAjv.compile({ $ref: `${profileSchemaId}#/$defs/coverageSection` }),
-  disputes: clientAjv.compile({ $ref: `${profileSchemaId}#/$defs/disputeSection` }),
-  responses: clientAjv.compile({ $ref: `${profileSchemaId}#/$defs/responseSection` }),
-  sources: clientAjv.compile({ $ref: `${profileSchemaId}#/$defs/sourceSection` }),
-};
-const serverPublicRoleRegistry = serverAjv.compile(PUBLIC_ROLE_REGISTRY_SCHEMA);
-const clientPublicRoleRegistry = clientAjv.compile(PUBLIC_ROLE_REGISTRY_SCHEMA);
-const serverSourceConnector = serverAjv.compile(SOURCE_CONNECTOR_CAPABILITY_SCHEMA);
-const clientSourceConnector = clientAjv.compile(SOURCE_CONNECTOR_CAPABILITY_SCHEMA);
-const serverSourceCoverage = serverAjv.compile(SOURCE_COVERAGE_SNAPSHOT_SCHEMA);
-const clientSourceCoverage = clientAjv.compile(SOURCE_COVERAGE_SNAPSHOT_SCHEMA);
-const serverError = serverAjv.compile(API_ERROR_SCHEMA);
-const clientError = clientAjv.compile(API_ERROR_SCHEMA);
 
 function jsonClone(value: unknown): unknown {
   if (value === undefined) return undefined;
@@ -110,7 +46,7 @@ function jsonClone(value: unknown): unknown {
 
 function parseContract<T>(
   schemaName: string,
-  validator: ValidateFunction,
+  validator: ContractValidator,
   value: unknown,
   clone: boolean,
 ): T {
@@ -125,7 +61,7 @@ export function parseHealthStatus(
 ): HealthStatus {
   return parseContract<HealthStatus>(
     'HealthStatus',
-    boundary === 'client' ? clientHealth : serverHealth,
+    boundary === 'client' ? clientValidators.healthStatus : serverValidators.healthStatus,
     value,
     boundary === 'client',
   );
@@ -134,7 +70,7 @@ export function parseHealthStatus(
 export function parseApiError(value: unknown, boundary: ContractBoundary = 'client'): ApiError {
   return parseContract<ApiError>(
     'ApiError',
-    boundary === 'client' ? clientError : serverError,
+    boundary === 'client' ? clientValidators.apiError : serverValidators.apiError,
     value,
     boundary === 'client',
   );
@@ -146,7 +82,9 @@ export function parseJurisdictionRegistry(
 ): JurisdictionRegistry {
   return parseContract<JurisdictionRegistry>(
     'JurisdictionRegistry',
-    boundary === 'client' ? clientJurisdictionRegistry : serverJurisdictionRegistry,
+    boundary === 'client'
+      ? clientValidators.jurisdictionRegistry
+      : serverValidators.jurisdictionRegistry,
     value,
     boundary === 'client',
   );
@@ -158,7 +96,9 @@ export function parseMobileCompatibilityStatus(
 ): MobileCompatibilityStatus {
   return parseContract<MobileCompatibilityStatus>(
     'MobileCompatibilityStatus',
-    boundary === 'client' ? clientMobileCompatibility : serverMobileCompatibility,
+    boundary === 'client'
+      ? clientValidators.mobileCompatibility
+      : serverValidators.mobileCompatibility,
     value,
     boundary === 'client',
   );
@@ -170,7 +110,9 @@ export function parsePublicRoleRegistry(
 ): PublicRoleRegistry {
   return parseContract<PublicRoleRegistry>(
     'PublicRoleRegistry',
-    boundary === 'client' ? clientPublicRoleRegistry : serverPublicRoleRegistry,
+    boundary === 'client'
+      ? clientValidators.publicRoleRegistry
+      : serverValidators.publicRoleRegistry,
     value,
     boundary === 'client',
   );
@@ -182,7 +124,7 @@ export function parsePublicRoleProfile(
 ): PublicRoleProfile {
   return parseContract<PublicRoleProfile>(
     'PublicRoleProfile',
-    boundary === 'client' ? clientPublicRoleProfile : serverPublicRoleProfile,
+    boundary === 'client' ? clientValidators.publicRoleProfile : serverValidators.publicRoleProfile,
     value,
     boundary === 'client',
   );
@@ -194,7 +136,9 @@ export function parsePublicRoleProfileList(
 ): PublicRoleProfileList {
   return parseContract<PublicRoleProfileList>(
     'PublicRoleProfileList',
-    boundary === 'client' ? clientPublicRoleProfileList : serverPublicRoleProfileList,
+    boundary === 'client'
+      ? clientValidators.publicRoleProfileList
+      : serverValidators.publicRoleProfileList,
     value,
     boundary === 'client',
   );
@@ -206,7 +150,9 @@ export function parsePublicRoleProfileTimeline(
 ): PublicRoleProfileTimeline {
   return parseContract<PublicRoleProfileTimeline>(
     'PublicRoleProfileTimeline',
-    boundary === 'client' ? clientPublicRoleProfileTimeline : serverPublicRoleProfileTimeline,
+    boundary === 'client'
+      ? clientValidators.publicRoleProfileTimeline
+      : serverValidators.publicRoleProfileTimeline,
     value,
     boundary === 'client',
   );
@@ -218,7 +164,7 @@ export function parsePublicRoleProfileSources(
 ): SourceSection {
   return parseContract<SourceSection>(
     'PublicRoleProfileSources',
-    boundary === 'client' ? clientProfileSections.sources : serverProfileSections.sources,
+    boundary === 'client' ? clientValidators.profileSources : serverValidators.profileSources,
     value,
     boundary === 'client',
   );
@@ -230,7 +176,7 @@ export function parsePublicRoleProfileCoverage(
 ): CoverageSection {
   return parseContract<CoverageSection>(
     'PublicRoleProfileCoverage',
-    boundary === 'client' ? clientProfileSections.coverage : serverProfileSections.coverage,
+    boundary === 'client' ? clientValidators.profileCoverage : serverValidators.profileCoverage,
     value,
     boundary === 'client',
   );
@@ -242,7 +188,7 @@ export function parsePublicRoleProfileResponses(
 ): ResponseSection {
   return parseContract<ResponseSection>(
     'PublicRoleProfileResponses',
-    boundary === 'client' ? clientProfileSections.responses : serverProfileSections.responses,
+    boundary === 'client' ? clientValidators.profileResponses : serverValidators.profileResponses,
     value,
     boundary === 'client',
   );
@@ -254,7 +200,7 @@ export function parsePublicRoleProfileDisputes(
 ): DisputeSection {
   return parseContract<DisputeSection>(
     'PublicRoleProfileDisputes',
-    boundary === 'client' ? clientProfileSections.disputes : serverProfileSections.disputes,
+    boundary === 'client' ? clientValidators.profileDisputes : serverValidators.profileDisputes,
     value,
     boundary === 'client',
   );
@@ -266,7 +212,9 @@ export function parsePublicRoleProfileCorrections(
 ): CorrectionSection {
   return parseContract<CorrectionSection>(
     'PublicRoleProfileCorrections',
-    boundary === 'client' ? clientProfileSections.corrections : serverProfileSections.corrections,
+    boundary === 'client'
+      ? clientValidators.profileCorrections
+      : serverValidators.profileCorrections,
     value,
     boundary === 'client',
   );
@@ -278,7 +226,7 @@ export function parsePublicRoleProfileAppeals(
 ): AppealSection {
   return parseContract<AppealSection>(
     'PublicRoleProfileAppeals',
-    boundary === 'client' ? clientProfileSections.appeals : serverProfileSections.appeals,
+    boundary === 'client' ? clientValidators.profileAppeals : serverValidators.profileAppeals,
     value,
     boundary === 'client',
   );
@@ -290,7 +238,7 @@ export function parseSourceConnectorCapability(
 ): SourceConnectorCapabilityV1 {
   return parseContract<SourceConnectorCapabilityV1>(
     'SourceConnectorCapabilityV1',
-    boundary === 'client' ? clientSourceConnector : serverSourceConnector,
+    boundary === 'client' ? clientValidators.sourceConnector : serverValidators.sourceConnector,
     value,
     boundary === 'client',
   );
@@ -302,7 +250,7 @@ export function parseSourceCoverageSnapshot(
 ): SourceCoverageSnapshotV1 {
   return parseContract<SourceCoverageSnapshotV1>(
     'SourceCoverageSnapshotV1',
-    boundary === 'client' ? clientSourceCoverage : serverSourceCoverage,
+    boundary === 'client' ? clientValidators.sourceCoverage : serverValidators.sourceCoverage,
     value,
     boundary === 'client',
   );

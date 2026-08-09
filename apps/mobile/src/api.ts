@@ -12,6 +12,7 @@ import {
   type PublicRoleRegistry,
   type PublicRoleProfile,
   type PublicRoleProfileList,
+  type PublicRoleProfileListQuery,
 } from '@rmr/contracts';
 
 export function readMobileHealth(
@@ -44,9 +45,10 @@ export function readMobileCompatibilityPolicy(
 
 export function readMobilePublicProfiles(
   baseUrl: string,
+  query: PublicRoleProfileListQuery = {},
   fetchImplementation?: typeof globalThis.fetch,
 ): Promise<PublicRoleProfileList> {
-  return readPublicProfiles(createMobileClient(baseUrl, fetchImplementation));
+  return readPublicProfiles(createMobileClient(baseUrl, fetchImplementation), query);
 }
 
 export function readMobilePublicProfile(

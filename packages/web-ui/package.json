@@ -21,6 +21,10 @@
   "peerDependencies": {
     "react": "catalog:"
   },
+  "dependencies": {
+    "@rmr/contracts": "workspace:*",
+    "@rmr/discovery": "workspace:*"
+  },
   "devDependencies": {
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

@@ -43,13 +43,20 @@ export function createContractMockFetch(): typeof globalThis.fetch {
       return jsonResponse(SYNTHETIC_PUBLIC_ROLE_REGISTRY, 200);
     }
     if (request.method === 'GET' && url.pathname === '/api/v1/profiles') {
+      const requestedCountry = url.searchParams.get('countryCode');
+      const countryCode =
+        requestedCountry === 'CA' || requestedCountry === 'US' ? requestedCountry : null;
+      const items =
+        countryCode === null || SYNTHETIC_PUBLIC_ROLE_PROFILE.summary.countryCode === countryCode
+          ? [SYNTHETIC_PUBLIC_ROLE_PROFILE.summary]
+          : [];
       return jsonResponse(
         {
           schemaVersion: 'public-role-profile-list.v1',
           dataMode: 'synthetic',
           generatedAt: SYNTHETIC_PUBLIC_ROLE_PROFILE.updatedAt,
-          filters: { countryCode: null, contextKind: null },
-          items: [SYNTHETIC_PUBLIC_ROLE_PROFILE.summary],
+          filters: { countryCode, contextKind: null },
+          items,
           page: { limit: 50, nextCursor: null },
         },
         200,

@@ -110,7 +110,7 @@ jobs:
       - run: docker compose -f compose.yaml -f compose.local.yaml up --build --wait
       - name: Smoke public application routes
         run: |
-          node --input-type=module -e "const base='http://127.0.0.1:8080'; const [health,mobile,jurisdictions]=await Promise.all([fetch(base+'/api/v1/health'),fetch(base+'/api/v1/health/mobile'),fetch(base+'/api/v1/jurisdictions')]); if(health.status!==200||mobile.status!==200||jurisdictions.status!==200) process.exit(1);"
+          node --input-type=module -e "const base='http://127.0.0.1:8080'; const routes=['/','/app/profiles/profile%3Aca%3Aavery-quill%3Amaple-member%3A2024','/manifest.webmanifest','/sw.js','/api/v1/health','/api/v1/health/mobile','/api/v1/jurisdictions','/api/v1/profiles?countryCode=CA']; const responses=await Promise.all(routes.map(route=>fetch(base+route))); if(responses.some(response=>response.status!==200)) process.exit(1); const home=await responses[0].text(); if(!home.includes('Discover representatives')) process.exit(1); const profiles=await responses.at(-1).json(); if(profiles.dataMode!=='synthetic'||profiles.items.length!==1) process.exit(1);"
       - if: failure()
         run: docker compose -f compose.yaml -f compose.local.yaml logs --no-color --tail 200
       - if: always()

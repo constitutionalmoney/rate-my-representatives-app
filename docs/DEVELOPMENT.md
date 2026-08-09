@@ -73,15 +73,15 @@ override is applied.
 
 ## Applications
 
-- `apps/mobile`: Expo development-client foundation for iOS and Android using the generated API client.
-- `apps/web`: responsive public-app placeholder and generated-client consumer.
+- `apps/mobile`: Expo iOS/Android read-only discovery pilot using the generated API client.
+- `apps/web`: responsive read-only discovery PWA and generated-client consumer.
 - `apps/portal`: representative portal placeholder.
 - `apps/admin`: administration/moderation placeholder.
 - `apps/api`: built-in Node HTTP adapter exposing health plus typed, read-only synthetic
   jurisdiction, public-role registry, and source-backed public-profile reads.
 - `apps/worker`: no-job worker process proving the worker build boundary.
 
-Start local placeholder surfaces with `pnpm dev:web`, `pnpm dev:api`, or
+Start local application surfaces with `pnpm dev:web`, `pnpm dev:api`, or
 `pnpm dev:mobile`. No public or production hostname is configured.
 
 ## Native development builds

@@ -76,7 +76,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       appLinkHost: environment.appLinkHost,
       crashReporting: 'redacted-noop',
       mobileEnvironment: environment.name,
-      productStatus: 'native-foundation-only',
+      productStatus: 'read-only-discovery-pilot',
       ...(pushProjectId === null ? {} : { pushProjectId }),
       releaseChannel: environment.releaseChannel,
       representativeActivityVdxfWritesEnabled: false,

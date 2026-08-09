@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@rmr/contracts": "workspace:*",
+    "@rmr/discovery": "workspace:*",
     "@rmr/web-ui": "workspace:*",
     "react": "catalog:",
     "react-dom": "catalog:"

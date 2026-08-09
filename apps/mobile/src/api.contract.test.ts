@@ -33,11 +33,23 @@ describe('mobile generated-client wiring', () => {
   });
 
   it('reads the generated public profile list and detail with Verus absent', async () => {
-    const mockFetch = createContractMockFetch();
-    const list = await readMobilePublicProfiles('http://127.0.0.1:3000', mockFetch);
+    const contractFetch = createContractMockFetch();
+    const requests: Request[] = [];
+    const mockFetch: typeof globalThis.fetch = async (input, init) => {
+      const request = new Request(input, init);
+      requests.push(request);
+      return contractFetch(request);
+    };
+    const list = await readMobilePublicProfiles(
+      'http://127.0.0.1:3000',
+      { countryCode: 'CA' },
+      mockFetch,
+    );
     expect(list.items[0]).toMatchObject({ countryCode: 'CA', availability: 'available' });
     await expect(
       readMobilePublicProfile('http://127.0.0.1:3000', list.items[0]?.profileId ?? '', mockFetch),
     ).resolves.toMatchObject({ provenance: null, externalIdentityReferences: [] });
+    expect(requests.map(({ method }) => method)).toEqual(['GET', 'GET']);
+    expect(requests[0]?.url).toContain('countryCode=CA');
   });
 });

@@ -10,6 +10,7 @@ import {
   type PublicRoleRegistry,
   type PublicRoleProfile,
   type PublicRoleProfileList,
+  type PublicRoleProfileListQuery,
 } from '@rmr/contracts';
 
 export async function readFoundationHealth(
@@ -35,9 +36,10 @@ export async function readWebJurisdictionRegistry(
 
 export async function readWebPublicProfiles(
   baseUrl: string,
+  query: PublicRoleProfileListQuery = {},
   fetchImplementation?: typeof globalThis.fetch,
 ): Promise<PublicRoleProfileList> {
-  return readPublicProfiles(createWebClient(baseUrl, fetchImplementation));
+  return readPublicProfiles(createWebClient(baseUrl, fetchImplementation), query);
 }
 
 export async function readWebPublicProfile(

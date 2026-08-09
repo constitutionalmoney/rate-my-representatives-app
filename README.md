@@ -114,6 +114,14 @@ province, state, or territory after separate authorization. `LOCATION_RESOLUTION
 remains false by default; the public capability route reports that state without
 requiring Verus. See [`docs/LOCATION_RESOLUTION.md`](./docs/LOCATION_RESOLUTION.md).
 
+Issue #2 publishes the canonical logical data-model baseline across the civic registry,
+sources, accounts, participation, Civic Signal, moderation, methodology, optional
+identity links, audit/outbox, and provenance. It explicitly distinguishes implemented,
+foundation-only, and planned entities; assigns stable ID, temporal, privacy, retention,
+and correction rules; and records the critical database constraints for later issues.
+This is documentation only: it creates no sensitive table, route, write, Verus operation,
+or score. See [`docs/DATA_MODEL.md`](./docs/DATA_MODEL.md).
+
 - No production iOS or Android app is released; issue #30 remains a synthetic pilot.
 - No production representative profile, category rating, representative signal, Civic Signal briefing, authenticated aggregate, VerusID claim, or Representative Accountability Score is live; issue #11 responses are synthetic only.
 - No composite score is approved.
@@ -437,6 +445,7 @@ Verus-specific gates apply only when the corresponding feature is enabled. A rea
 ## Documentation
 
 - [Codex-ready Product Requirements Document](./docs/PRD.md)
+- [Canonical civic and participation data model](./docs/DATA_MODEL.md)
 - [End-to-end roadmap](./docs/ROADMAP.md)
 - [System architecture](./docs/ARCHITECTURE.md)
 - [Source-backed public profile API](./docs/PUBLIC_PROFILE_API.md)

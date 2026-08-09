@@ -138,6 +138,11 @@ public-role lifecycles, internal candidate-only source ingestion, and reviewed r
 profile API respectively. The synthetic pilots do not constitute production source
 approval or pilot release evidence.
 
+Issue #7 now defines reproducible coverage/freshness dimensions, source-rights review,
+visible gap/correction rules, and explicit support thresholds through a generated
+synthetic report contract. Issue #21 still owns public report publication and production
+pilot evidence; no geography is approved as supported yet.
+
 ## Phase 3 — Native mobile and web discovery pilot
 
 ### Objective

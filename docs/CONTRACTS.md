@@ -1,5 +1,14 @@
 # Versioned contract generation
 
+## Coverage policy report contract
+
+Issue #7 adds `coverage-report.v1` as a generated TypeScript type, schema document, and
+synthetic not-ready fixture. The contracts validator checks the fixture against the
+canonical JSON Schema. It records declared scope and denominators, jurisdiction-level
+support, source rights, profile/material-claim coverage, freshness, connector failures,
+gaps, corrections, release decision, and optional public-artifact provenance state.
+Issue #7 adds no HTTP operation; issue #21 owns live public-report publication.
+
 ## Official-source internal contracts
 
 Issue #55 adds generated TypeScript and runtime validators for
@@ -14,8 +23,8 @@ as other schemas. A material access, rights, parser, schema, schedule, or safety
 change creates a new connector version rather than mutating stored capability history.
 
 **Status:** Issue #60 foundation plus issue #49/#59 registry reads, issue #55 internal
-source contracts, and issue #11 synthetic source-backed profile reads. Remaining HTTP
-route families are proposed or disabled.
+source contracts, issue #11 synthetic source-backed profile reads, and issue #7's
+non-operational report contract. Remaining HTTP route families are proposed or disabled.
 
 ## Canonical sources and committed outputs
 
@@ -36,7 +45,7 @@ pnpm check:api-compat
 pnpm test:contract
 ```
 
-`check:contracts` rejects generated drift and validates the OpenAPI document, all seventeen
+`check:contracts` rejects generated drift and validates the OpenAPI document, all eighteen
 schemas, synthetic fixtures, operation metadata, privacy fields, and human-intent
 boundaries. `check:api-compat` compares the canonical contract with the parent commit and
 rejects unapproved breaking changes. An intentional break requires a versioned migration

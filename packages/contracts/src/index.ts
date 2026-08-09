@@ -96,6 +96,7 @@ export type {
 } from './generated/authentication.js';
 export type { FeatureGatesContract } from './generated/feature-gates.js';
 export type { CivicSignalBriefing } from './generated/civic-signal-briefing.js';
+export type { CoverageReportV1 } from './generated/coverage-report.js';
 export type { InfrastructureServicesContract } from './generated/infrastructure-services.js';
 export type { AuditEvent } from './generated/audit-event.js';
 export type { OutboxEvent } from './generated/outbox-event.js';

@@ -16,6 +16,7 @@ const schemaDefinitions = [
   ['audit-event', 'audit-event.schema.json', 'AUDIT_EVENT_SCHEMA'],
   ['authentication', 'authentication.schema.json', 'AUTHENTICATION_SCHEMA'],
   ['civic-signal-briefing', 'civic-signal-briefing.schema.json', 'CIVIC_SIGNAL_BRIEFING_SCHEMA'],
+  ['coverage-report', 'coverage-report.schema.json', 'COVERAGE_REPORT_SCHEMA'],
   ['feature-gates', 'feature-gates.schema.json', 'FEATURE_GATES_SCHEMA'],
   ['health-status', 'health-status.schema.json', 'HEALTH_STATUS_SCHEMA'],
   ['jurisdiction-registry', 'jurisdiction-registry.schema.json', 'JURISDICTION_REGISTRY_SCHEMA'],
@@ -59,6 +60,7 @@ const schemaDefinitions = [
   ],
 ];
 const fixtureDefinitions = [
+  ['SYNTHETIC_COVERAGE_REPORT', 'coverage-report.synthetic.json'],
   ['SYNTHETIC_HEALTH_READY', 'health.ready.json'],
   ['SYNTHETIC_MOBILE_COMPATIBILITY_READY', 'mobile-compatibility.ready.json'],
   ['SYNTHETIC_JURISDICTIONS', 'jurisdictions.synthetic.json'],

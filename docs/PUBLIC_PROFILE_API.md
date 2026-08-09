@@ -86,4 +86,5 @@ confirming no downstream reader depends on it; canonical registry and reviewed-s
 history remain untouched. Never roll back by mutating append-only profile versions.
 
 See [API_V1.md](./API_V1.md), [SOURCE_INGESTION.md](./SOURCE_INGESTION.md), and
+[COVERAGE_POLICY.md](./COVERAGE_POLICY.md). See also
 [ADR 0009](./adr/0009-reviewed-source-backed-public-profile-projection.md).

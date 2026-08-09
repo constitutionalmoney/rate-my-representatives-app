@@ -87,6 +87,13 @@ owns minimized jurisdiction resolution. No address, private choice, score, sourc
 Verus dependency, provenance write, or participation route is introduced. See
 [`docs/READ_ONLY_DISCOVERY.md`](./docs/READ_ONLY_DISCOVERY.md).
 
+Issue #7 defines the versioned coverage, freshness, public-gap, correction, and pilot
+support policy. A generated `coverage-report.v1` contract and synthetic not-ready example
+make its denominators, formulas, thresholds, source rights, and missing-data meaning
+reproducible. Issue #21 still owns live report publication; no pilot geography, source,
+automatic publisher, scoring method, provenance write, or production release is approved.
+See [`docs/COVERAGE_POLICY.md`](./docs/COVERAGE_POLICY.md).
+
 - No production iOS or Android app is released; issue #30 remains a synthetic pilot.
 - No production representative profile, category rating, representative signal, Civic Signal briefing, authenticated aggregate, VerusID claim, or Representative Accountability Score is live; issue #11 responses are synthetic only.
 - No composite score is approved.

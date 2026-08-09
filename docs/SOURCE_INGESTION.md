@@ -119,10 +119,11 @@ Issue #55 deliberately does not implement contributor evidence (#39), representa
 scoring, native UI, Verus identities or identity updates, provenance writes, or mainnet
 work. Issue #11 now consumes only human-approved records through allowlisted,
 profile-scoped reads; it does not change the ingestion runtime gate or add automatic
-publication. Source access policy (#7) and the security-domain program (#22) remain
-broader governance dependencies; this issue
-implements the smallest safe internal slice with explicit synthetic approvals and
-deny-by-default runtime execution.
+publication. The broader source access, freshness, public-gap, and pilot support policy
+is now defined by issue #7 in [COVERAGE_POLICY.md](./COVERAGE_POLICY.md). The
+security-domain program (#22) remains a governance dependency. Issue #55 implements the
+smallest safe internal slice with explicit synthetic approvals and deny-by-default
+runtime execution.
 
 See [the runbook](./runbooks/SOURCE_INGESTION.md) and
 [ADR 0008](./adr/0008-candidate-only-official-source-ingestion.md).

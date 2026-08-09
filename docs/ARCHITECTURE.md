@@ -198,6 +198,15 @@ rotating session policy, scoped effective-dated role grants, route/domain author
 and typed audited feature gates. Its in-memory stores are synthetic test adapters, not a
 hosted account database. See `docs/AUTH_SECURITY_FOUNDATION.md`.
 
+The complete policy is canonicalized in
+[`AUTH_AND_IDENTITY.md`](./AUTH_AND_IDENTITY.md) and ADR 0014. Authentication
+method/assurance, actor role, VerusID control, human attestation, jurisdiction eligibility,
+representative/staff authority, and privileged-session state are independent, expiring,
+revocable facts. Claims, delegation, recovery, and appeal remain application-local and
+must work with Verus disabled. Optional wallet proof stores an immutable i-address and
+proves control only; minimum attestation status carries no underlying identity evidence.
+Issue #3 enables none of these planned sensitive workflows.
+
 ### 5.4 Civic Signal
 
 Owns subscriptions, follow rules, briefing generation, notification preferences, delivery state, corrections to earlier briefings, and source links.

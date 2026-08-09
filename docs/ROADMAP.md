@@ -59,6 +59,15 @@ participation entity. It distinguishes implemented migrations from foundation-on
 planned entities. No planned table, civic write, Verus operation, or score is enabled by
 the documentation baseline. See [`DATA_MODEL.md`](./DATA_MODEL.md) and ADR 0013.
 
+Issue #3 now defines `rmr-auth-identity-policy.v1`: independent authentication,
+role, VerusID-control, human-attestation, jurisdiction-eligibility, representative-
+authority, and privileged-session facts; the full role matrix; recovery and data-class
+rights; application-local claim/delegation/appeal rules; optional GenericRequest proof;
+the minimum-status attestation boundary; and No Social Credit enforcement. Issue #50 is
+recorded as superseded by the RMR-managed directory model in issues #80–#83. This policy
+adds no runtime account, identity, provider, wallet, Verus, or chain behavior. See
+[`AUTH_AND_IDENTITY.md`](./AUTH_AND_IDENTITY.md) and ADR 0014.
+
 ## Phase 1 — Monorepo and local development foundation
 
 ### Objective
@@ -333,33 +342,44 @@ Create a source-backed, correctable record rather than an allegation feed.
 - Representative authorization proves authority to respond, not truth.
 - File uploads remain off unless a separate release gate passes.
 
-## Phase 9 — Representative-controlled Verus identity updates
+## Phase 9 — RMR-managed representative Verus directory and activity publication
 
 ### Objective
 
-Allow a representative to approve a narrowly scoped public reference or signed response on a controlled VerusID without making it the canonical profile or a prerequisite.
+Define and test the administrator-controlled representative identity hierarchy on
+VRSCTEST, then publish only separately approved public representative activity through a
+versioned VDXF `contentmultimap` path without making Verus canonical.
 
 ### Deliverables
 
-- VRSCTEST-only `IdentityUpdateRequest` proof of concept.
-- Allowlisted payload schema.
-- Complete wallet review of relying party, network, identity, purpose, fields, public nature, fee, expiry, and effect.
-- Representative/staff authorization binding.
-- Callback verification, transaction tracking, current identity validation, and chain readback.
-- Cancellation, timeout, rejection, wrong-chain, recovery/revocation, and supersession handling.
-- Public UI explaining application record versus optional on-chain reference.
-- Separate governance approval to enable per environment.
+- Issue #80 hierarchy, naming, custody, collision, correction, and recovery policy.
+- Issue #81 reviewed VRSCTEST jurisdiction namespace inventory and provisioning evidence.
+- Issue #82 idempotent administrator-controlled representative VerusID provisioning.
+- Issue #83 allowlisted approved-activity manifest and VDXF `contentmultimap`
+  publication through an isolated signer.
+- Confirmation, reorganization, exact readback, supersession, revocation/recovery, and
+  emergency-disable handling.
+- Public UI distinguishing the canonical RMR record, RMR-managed directory identity,
+  publication/readback state, and factual truth.
 
 ### Exit gate
 
-- iOS and Android pinned-version matrix passes.
-- Payload contains no private, unreviewed, or citizen data.
-- Failure leaves the canonical profile and correction rights intact.
-- Recovery and revocation runbooks pass.
+- Names, parent relationships, stable RMR references, signer custody, and network are
+  reviewed before any identity creation.
+- Only human-approved, allowlisted public representative activity may reach a manifest.
+- Duplicate command, partial failure, chain outage, reorganization, and lost
+  acknowledgement tests remain idempotent and fail closed.
+- Confirmation and exact chain readback match the approved bytes before public
+  `readback_verified` status.
+- Failure leaves the canonical profile, responses, disputes, and correction rights
+  intact; recovery and revocation runbooks pass.
 
 ### Disabled
 
-Mainnet identity updates unless separately approved.
+Mainnet creation/publication, representative custody, custody handoff, representative-
+controlled `IdentityUpdateRequest`, private/citizen data, unreviewed activity, automatic
+publication, and client access to signer or RPC. Issue #50 remains superseded; any future
+representative-controlled ceremony requires a new governance issue.
 
 ## Phase 10 — VDXF public provenance
 

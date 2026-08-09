@@ -1,8 +1,14 @@
 # Identity and Verus Mobile Integration
 
-**Status:** Design baseline; all wallet and identity-update flows disabled by default  
+**Status:** Design baseline; all wallet, provisioning, and publication flows disabled by default
 **Network:** VRSCTEST before any mainnet decision  
-**Last updated:** 2026-08-05
+**Last updated:** 2026-08-09
+
+Application authentication, role, authority, attestation, eligibility, consent, and
+recovery policy is canonicalized in
+[`AUTH_AND_IDENTITY.md`](./AUTH_AND_IDENTITY.md). The initial representative directory
+identity model is RMR-managed under issues #80–#83; issue #50's representative-controlled
+update design is superseded and not authorized for initial implementation.
 
 ## 1. Identity layers
 
@@ -134,11 +140,21 @@ rejected reasons:
 
 Every failure response shown to a user must avoid leaking whether another person's identity or account exists.
 
-## 5. Representative-controlled IdentityUpdateRequest
+## 5. Superseded representative-controlled IdentityUpdateRequest design
+
+> **Current decision:** Issue #50 is closed as superseded. Initial RMR-managed
+> representative directory identities and approved activity publication are governed by
+> issues #80–#83. Representatives do not control those directory identities or approve
+> each activity write through Verus Mobile. The requirements below are retained only as
+> safety constraints if a future custody-handoff or representative-controlled update is
+> approved through a new governance issue.
 
 ### Purpose
 
-An identity update is an optional way for a representative-controlled VerusID to carry a small public reference. It is not authentication, not the RMR database, not a requirement for profile creation, and not proof that every linked claim is true.
+If separately approved in the future, an identity update would be an optional way for a
+representative-controlled VerusID to carry a small public reference. It is not
+authentication, not the RMR database, not a requirement for profile creation, and not
+proof that every linked claim is true.
 
 ### Initial allowlist
 

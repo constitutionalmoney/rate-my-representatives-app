@@ -5,6 +5,12 @@ service or civic write is operational.
 
 **Requirements:** FR-AUTH-001 through FR-AUTH-007.
 
+This document describes the implemented synthetic issue #12 core. The broader accepted
+policy for identity, representative authority, attestations, eligibility, consent,
+recovery, and optional wallet proof is
+[`AUTH_AND_IDENTITY.md`](./AUTH_AND_IDENTITY.md). That policy does not make its planned
+workflows operational.
+
 ## Security boundaries
 
 The implementation keeps these concepts independent:

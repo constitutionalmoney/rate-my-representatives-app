@@ -1,0 +1,252 @@
+{
+  "schemaVersion": "coverage-report.v1",
+  "policyVersion": "coverage-policy.v1",
+  "reportId": "coverage-report:synthetic:2026-08-09",
+  "dataMode": "synthetic",
+  "generatedAt": "2026-08-09T12:00:00Z",
+  "asOf": "2026-08-09T11:55:00Z",
+  "methodVersion": "coverage-method.v1",
+  "codeRevision": "synthetic-revision",
+  "scope": {
+    "countryCodes": ["CA", "US"],
+    "jurisdictionIds": ["jurisdiction:ca:maple", "jurisdiction:us:example-state"],
+    "levels": ["province", "state"],
+    "recordFamilies": [
+      "jurisdiction",
+      "district",
+      "public_body",
+      "office",
+      "person",
+      "office_term",
+      "election",
+      "candidacy",
+      "profile",
+      "material_claim"
+    ],
+    "validFrom": "2026-01-01T00:00:00Z",
+    "validTo": "2027-01-01T00:00:00Z",
+    "inventorySourceIds": ["source:ca:synthetic-roster", "source:us:synthetic-roster"]
+  },
+  "jurisdictions": [
+    {
+      "jurisdictionId": "jurisdiction:ca:maple",
+      "countryCode": "CA",
+      "level": "province",
+      "supportState": "partial",
+      "gapIds": ["gap:ca:synthetic-freshness"]
+    },
+    {
+      "jurisdictionId": "jurisdiction:us:example-state",
+      "countryCode": "US",
+      "level": "state",
+      "supportState": "unsupported",
+      "gapIds": ["gap:us:synthetic-candidacy"]
+    }
+  ],
+  "authoritativeSources": [
+    {
+      "sourceId": "source:ca:synthetic-roster",
+      "sourceClass": "official_roster",
+      "publisherAuthority": "Synthetic Maple Public Body",
+      "connectorOwner": "RMR synthetic connector team",
+      "dataStewardOwner": "RMR synthetic data steward",
+      "termsUrl": "https://maple.invalid/terms",
+      "licence": "CC0-1.0 synthetic fixture",
+      "attribution": "Synthetic Maple roster; no real civic data",
+      "retentionAllowed": true,
+      "redistributionAllowed": true,
+      "approvedFreshnessHours": 24,
+      "lastCheckedAt": "2026-08-07T12:00:00Z",
+      "availability": "stale"
+    },
+    {
+      "sourceId": "source:us:synthetic-roster",
+      "sourceClass": "legal_authority",
+      "publisherAuthority": "Synthetic Example State Authority",
+      "connectorOwner": "RMR synthetic connector team",
+      "dataStewardOwner": "RMR synthetic data steward",
+      "termsUrl": "https://example-state.invalid/terms",
+      "licence": "CC0-1.0 synthetic fixture",
+      "attribution": "Synthetic Example State roster; no real civic data",
+      "retentionAllowed": true,
+      "redistributionAllowed": true,
+      "approvedFreshnessHours": 24,
+      "lastCheckedAt": "2026-08-09T11:30:00Z",
+      "availability": "available"
+    }
+  ],
+  "inventory": {
+    "expected": {
+      "jurisdiction": 2,
+      "district": 3,
+      "publicBody": 2,
+      "office": 3,
+      "person": 3,
+      "officeTerm": 2,
+      "election": 1,
+      "candidacy": 2,
+      "profile": 3,
+      "materialClaim": 6
+    },
+    "observed": {
+      "jurisdiction": 2,
+      "district": 3,
+      "publicBody": 2,
+      "office": 3,
+      "person": 3,
+      "officeTerm": 2,
+      "election": 1,
+      "candidacy": 1,
+      "profile": 2,
+      "materialClaim": 5
+    },
+    "unexpectedDiscoveryCount": 0
+  },
+  "dimensions": [
+    {
+      "dimensionId": "structural_registry",
+      "numerator": 10,
+      "denominator": 10,
+      "percentage": 100,
+      "thresholdPercentage": 100,
+      "supportState": "supported",
+      "gapIds": []
+    },
+    {
+      "dimensionId": "person_role_lifecycle",
+      "numerator": 7,
+      "denominator": 8,
+      "percentage": 87.5,
+      "thresholdPercentage": 100,
+      "supportState": "gap",
+      "gapIds": ["gap:us:synthetic-candidacy"]
+    },
+    {
+      "dimensionId": "profile_coverage",
+      "numerator": 2,
+      "denominator": 3,
+      "percentage": 66.67,
+      "thresholdPercentage": 100,
+      "supportState": "gap",
+      "gapIds": ["gap:us:synthetic-candidacy"]
+    },
+    {
+      "dimensionId": "material_claim_source_coverage",
+      "numerator": 5,
+      "denominator": 6,
+      "percentage": 83.33,
+      "thresholdPercentage": 100,
+      "supportState": "gap",
+      "gapIds": ["gap:us:synthetic-candidacy"]
+    },
+    {
+      "dimensionId": "public_gap_disclosure",
+      "numerator": 2,
+      "denominator": 2,
+      "percentage": 100,
+      "thresholdPercentage": 100,
+      "supportState": "supported",
+      "gapIds": []
+    },
+    {
+      "dimensionId": "correction_supersession",
+      "numerator": 0,
+      "denominator": 0,
+      "percentage": null,
+      "thresholdPercentage": 100,
+      "supportState": "not_applicable",
+      "gapIds": []
+    },
+    {
+      "dimensionId": "representative_match",
+      "numerator": 19,
+      "denominator": 20,
+      "percentage": 95,
+      "thresholdPercentage": 99,
+      "supportState": "gap",
+      "gapIds": ["gap:us:synthetic-candidacy"]
+    }
+  ],
+  "freshness": {
+    "denominator": 2,
+    "currentCount": 1,
+    "staleCount": 1,
+    "unknownCount": 0,
+    "unavailableCount": 0,
+    "currentPercentage": 50
+  },
+  "connectors": [
+    {
+      "sourceId": "source:ca:synthetic-roster",
+      "health": "stale",
+      "lastScheduledAt": "2026-08-09T11:00:00Z",
+      "lastCompletedAt": "2026-08-07T12:00:00Z",
+      "scheduledRunCount": 2,
+      "successfulRunCount": 1,
+      "successPercentage": 50,
+      "failureCount": 1,
+      "gapIds": ["gap:ca:synthetic-freshness"]
+    },
+    {
+      "sourceId": "source:us:synthetic-roster",
+      "health": "healthy",
+      "lastScheduledAt": "2026-08-09T11:00:00Z",
+      "lastCompletedAt": "2026-08-09T11:30:00Z",
+      "scheduledRunCount": 2,
+      "successfulRunCount": 2,
+      "successPercentage": 100,
+      "failureCount": 0,
+      "gapIds": ["gap:us:synthetic-candidacy"]
+    }
+  ],
+  "gaps": [
+    {
+      "conditionId": "gap:ca:synthetic-freshness",
+      "kind": "stale",
+      "severity": "non_critical",
+      "status": "open",
+      "affectedIds": ["source:ca:synthetic-roster"],
+      "firstObservedAt": "2026-08-08T12:00:01Z",
+      "lastObservedAt": "2026-08-09T11:55:00Z",
+      "publicExplanation": "The synthetic Canadian roster is outside its declared freshness limit. This is a coverage gap, not evidence about a person."
+    },
+    {
+      "conditionId": "gap:us:synthetic-candidacy",
+      "kind": "missing",
+      "severity": "critical",
+      "status": "open",
+      "affectedIds": ["jurisdiction:us:example-state"],
+      "firstObservedAt": "2026-08-09T11:30:00Z",
+      "lastObservedAt": "2026-08-09T11:55:00Z",
+      "publicExplanation": "One expected synthetic candidacy is not reviewed. No negative or misconduct inference is permitted."
+    }
+  ],
+  "knownErrors": [],
+  "corrections": {
+    "acceptedCount": 0,
+    "reflectedCount": 0,
+    "pastTargetOutstandingCount": 0,
+    "supersessionCoveragePercentage": null,
+    "supersedesReportId": null
+  },
+  "changelog": [
+    {
+      "changeId": "change:synthetic:initial",
+      "changedAt": "2026-08-09T12:00:00Z",
+      "kind": "initial",
+      "summary": "Initial non-production synthetic coverage-report example."
+    }
+  ],
+  "missingDataMeaning": "coverage_gap_not_misconduct",
+  "provenance": {
+    "state": "not_anchored",
+    "approvedPublicArtifactOnly": true,
+    "anchorReference": null
+  },
+  "releaseDecision": {
+    "status": "not_ready",
+    "publicApproval": false,
+    "blockingGapIds": ["gap:ca:synthetic-freshness", "gap:us:synthetic-candidacy"]
+  },
+  "sha256": "4e0f518607653707fc089ffef8e2fcb47799e66b5e004a0f5dd17a8bcd7df6df"
+}

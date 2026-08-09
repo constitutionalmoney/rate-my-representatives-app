@@ -219,6 +219,7 @@ const publicForbidden = new Set([
 ]);
 for (const filename of [
   'api-error.schema.json',
+  'coverage-report.schema.json',
   'health-status.schema.json',
   'jurisdiction-registry.schema.json',
   'mobile-compatibility-status.schema.json',
@@ -267,6 +268,7 @@ assert(
 );
 
 const fixtureSchemas = new Map([
+  ['coverage-report.synthetic.json', 'coverage-report.schema.json'],
   ['health.ready.json', 'health-status.schema.json'],
   ['mobile-compatibility.ready.json', 'mobile-compatibility-status.schema.json'],
   ['jurisdictions.proposed.json', 'api-error.schema.json'],

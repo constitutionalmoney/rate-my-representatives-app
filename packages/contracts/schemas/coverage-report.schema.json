@@ -1,0 +1,557 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ratemyrepresentatives.com/coverage-report.schema.json",
+  "title": "CoverageReportV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "policyVersion",
+    "reportId",
+    "dataMode",
+    "generatedAt",
+    "asOf",
+    "methodVersion",
+    "codeRevision",
+    "scope",
+    "jurisdictions",
+    "authoritativeSources",
+    "inventory",
+    "dimensions",
+    "freshness",
+    "connectors",
+    "gaps",
+    "knownErrors",
+    "corrections",
+    "changelog",
+    "missingDataMeaning",
+    "provenance",
+    "releaseDecision",
+    "sha256"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "coverage-report.v1" },
+    "policyVersion": { "const": "coverage-policy.v1" },
+    "reportId": { "$ref": "#/$defs/id" },
+    "dataMode": { "enum": ["synthetic", "pilot", "production"] },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "asOf": { "type": "string", "format": "date-time" },
+    "methodVersion": { "$ref": "#/$defs/id" },
+    "codeRevision": { "$ref": "#/$defs/id" },
+    "scope": { "$ref": "#/$defs/scope" },
+    "jurisdictions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/jurisdictionCoverage" }
+    },
+    "authoritativeSources": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/source" }
+    },
+    "inventory": { "$ref": "#/$defs/inventory" },
+    "dimensions": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "allOf": [
+        {
+          "contains": {
+            "type": "object",
+            "properties": { "dimensionId": { "const": "structural_registry" } },
+            "required": ["dimensionId"]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": { "dimensionId": { "const": "person_role_lifecycle" } },
+            "required": ["dimensionId"]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": { "dimensionId": { "const": "profile_coverage" } },
+            "required": ["dimensionId"]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": {
+              "dimensionId": { "const": "material_claim_source_coverage" }
+            },
+            "required": ["dimensionId"]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": { "dimensionId": { "const": "public_gap_disclosure" } },
+            "required": ["dimensionId"]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": { "dimensionId": { "const": "correction_supersession" } },
+            "required": ["dimensionId"]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": { "dimensionId": { "const": "representative_match" } },
+            "required": ["dimensionId"]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        }
+      ],
+      "items": { "$ref": "#/$defs/dimension" }
+    },
+    "freshness": { "$ref": "#/$defs/freshness" },
+    "connectors": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/connector" }
+    },
+    "gaps": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/publicCondition" }
+    },
+    "knownErrors": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/publicCondition" }
+    },
+    "corrections": { "$ref": "#/$defs/corrections" },
+    "changelog": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/change" }
+    },
+    "missingDataMeaning": { "const": "coverage_gap_not_misconduct" },
+    "provenance": { "$ref": "#/$defs/provenance" },
+    "releaseDecision": { "$ref": "#/$defs/releaseDecision" },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "type": "object",
+        "properties": { "dataMode": { "const": "synthetic" } },
+        "required": ["dataMode"]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "provenance": {
+            "type": "object",
+            "properties": { "state": { "const": "not_anchored" } },
+            "required": ["state"]
+          },
+          "releaseDecision": {
+            "type": "object",
+            "properties": {
+              "status": { "const": "not_ready" },
+              "publicApproval": { "const": false }
+            },
+            "required": ["status", "publicApproval"]
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,191}$" },
+    "nonNegativeInteger": { "type": "integer", "minimum": 0 },
+    "percentage": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+    "supportState": {
+      "enum": ["supported", "partial", "gap", "unsupported", "not_applicable"]
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "countryCodes",
+        "jurisdictionIds",
+        "levels",
+        "recordFamilies",
+        "validFrom",
+        "validTo",
+        "inventorySourceIds"
+      ],
+      "properties": {
+        "countryCodes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["CA", "US"] }
+        },
+        "jurisdictionIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "levels": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "recordFamilies": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "jurisdiction",
+              "district",
+              "public_body",
+              "office",
+              "person",
+              "office_term",
+              "election",
+              "candidacy",
+              "profile",
+              "material_claim"
+            ]
+          }
+        },
+        "validFrom": { "type": "string", "format": "date-time" },
+        "validTo": { "type": "string", "format": "date-time" },
+        "inventorySourceIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        }
+      }
+    },
+    "jurisdictionCoverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["jurisdictionId", "countryCode", "level", "supportState", "gapIds"],
+      "properties": {
+        "jurisdictionId": { "$ref": "#/$defs/id" },
+        "countryCode": { "enum": ["CA", "US"] },
+        "level": { "$ref": "#/$defs/id" },
+        "supportState": { "$ref": "#/$defs/supportState" },
+        "gapIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceId",
+        "sourceClass",
+        "publisherAuthority",
+        "connectorOwner",
+        "dataStewardOwner",
+        "termsUrl",
+        "licence",
+        "attribution",
+        "retentionAllowed",
+        "redistributionAllowed",
+        "approvedFreshnessHours",
+        "lastCheckedAt",
+        "availability"
+      ],
+      "properties": {
+        "sourceId": { "$ref": "#/$defs/id" },
+        "sourceClass": {
+          "enum": ["legal_authority", "official_roster", "official_page", "secondary_gap_only"]
+        },
+        "publisherAuthority": { "type": "string", "minLength": 1 },
+        "connectorOwner": { "type": "string", "minLength": 1 },
+        "dataStewardOwner": { "type": "string", "minLength": 1 },
+        "termsUrl": { "type": "string", "format": "uri" },
+        "licence": { "type": "string", "minLength": 1 },
+        "attribution": { "type": "string", "minLength": 1 },
+        "retentionAllowed": { "type": "boolean" },
+        "redistributionAllowed": { "type": "boolean" },
+        "approvedFreshnessHours": { "type": "integer", "minimum": 1 },
+        "lastCheckedAt": { "type": ["string", "null"], "format": "date-time" },
+        "availability": {
+          "enum": ["available", "stale", "missing", "retracted", "unavailable"]
+        }
+      }
+    },
+    "entityCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "jurisdiction",
+        "district",
+        "publicBody",
+        "office",
+        "person",
+        "officeTerm",
+        "election",
+        "candidacy",
+        "profile",
+        "materialClaim"
+      ],
+      "properties": {
+        "jurisdiction": { "$ref": "#/$defs/nonNegativeInteger" },
+        "district": { "$ref": "#/$defs/nonNegativeInteger" },
+        "publicBody": { "$ref": "#/$defs/nonNegativeInteger" },
+        "office": { "$ref": "#/$defs/nonNegativeInteger" },
+        "person": { "$ref": "#/$defs/nonNegativeInteger" },
+        "officeTerm": { "$ref": "#/$defs/nonNegativeInteger" },
+        "election": { "$ref": "#/$defs/nonNegativeInteger" },
+        "candidacy": { "$ref": "#/$defs/nonNegativeInteger" },
+        "profile": { "$ref": "#/$defs/nonNegativeInteger" },
+        "materialClaim": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "inventory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["expected", "observed", "unexpectedDiscoveryCount"],
+      "properties": {
+        "expected": { "$ref": "#/$defs/entityCounts" },
+        "observed": { "$ref": "#/$defs/entityCounts" },
+        "unexpectedDiscoveryCount": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "dimension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dimensionId",
+        "numerator",
+        "denominator",
+        "percentage",
+        "thresholdPercentage",
+        "supportState",
+        "gapIds"
+      ],
+      "properties": {
+        "dimensionId": {
+          "enum": [
+            "structural_registry",
+            "person_role_lifecycle",
+            "profile_coverage",
+            "material_claim_source_coverage",
+            "public_gap_disclosure",
+            "correction_supersession",
+            "representative_match"
+          ]
+        },
+        "numerator": { "$ref": "#/$defs/nonNegativeInteger" },
+        "denominator": { "$ref": "#/$defs/nonNegativeInteger" },
+        "percentage": { "$ref": "#/$defs/percentage" },
+        "thresholdPercentage": { "type": "number", "minimum": 0, "maximum": 100 },
+        "supportState": { "$ref": "#/$defs/supportState" },
+        "gapIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        }
+      }
+    },
+    "freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "denominator",
+        "currentCount",
+        "staleCount",
+        "unknownCount",
+        "unavailableCount",
+        "currentPercentage"
+      ],
+      "properties": {
+        "denominator": { "$ref": "#/$defs/nonNegativeInteger" },
+        "currentCount": { "$ref": "#/$defs/nonNegativeInteger" },
+        "staleCount": { "$ref": "#/$defs/nonNegativeInteger" },
+        "unknownCount": { "$ref": "#/$defs/nonNegativeInteger" },
+        "unavailableCount": { "$ref": "#/$defs/nonNegativeInteger" },
+        "currentPercentage": { "$ref": "#/$defs/percentage" }
+      }
+    },
+    "connector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceId",
+        "health",
+        "lastScheduledAt",
+        "lastCompletedAt",
+        "scheduledRunCount",
+        "successfulRunCount",
+        "successPercentage",
+        "failureCount",
+        "gapIds"
+      ],
+      "properties": {
+        "sourceId": { "$ref": "#/$defs/id" },
+        "health": { "enum": ["healthy", "degraded", "stale", "failed", "unavailable"] },
+        "lastScheduledAt": { "type": ["string", "null"], "format": "date-time" },
+        "lastCompletedAt": { "type": ["string", "null"], "format": "date-time" },
+        "scheduledRunCount": { "$ref": "#/$defs/nonNegativeInteger" },
+        "successfulRunCount": { "$ref": "#/$defs/nonNegativeInteger" },
+        "successPercentage": { "$ref": "#/$defs/percentage" },
+        "failureCount": { "$ref": "#/$defs/nonNegativeInteger" },
+        "gapIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        }
+      }
+    },
+    "publicCondition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "conditionId",
+        "kind",
+        "severity",
+        "status",
+        "affectedIds",
+        "firstObservedAt",
+        "lastObservedAt",
+        "publicExplanation"
+      ],
+      "properties": {
+        "conditionId": { "$ref": "#/$defs/id" },
+        "kind": {
+          "enum": [
+            "missing",
+            "stale",
+            "failed",
+            "conflicting",
+            "quarantined",
+            "retracted",
+            "unavailable",
+            "method_error"
+          ]
+        },
+        "severity": { "enum": ["informational", "non_critical", "critical"] },
+        "status": { "enum": ["open", "corrected", "superseded", "retracted"] },
+        "affectedIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "firstObservedAt": { "type": "string", "format": "date-time" },
+        "lastObservedAt": { "type": "string", "format": "date-time" },
+        "publicExplanation": { "type": "string", "minLength": 1 }
+      }
+    },
+    "corrections": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "acceptedCount",
+        "reflectedCount",
+        "pastTargetOutstandingCount",
+        "supersessionCoveragePercentage",
+        "supersedesReportId"
+      ],
+      "properties": {
+        "acceptedCount": { "$ref": "#/$defs/nonNegativeInteger" },
+        "reflectedCount": { "$ref": "#/$defs/nonNegativeInteger" },
+        "pastTargetOutstandingCount": { "$ref": "#/$defs/nonNegativeInteger" },
+        "supersessionCoveragePercentage": { "$ref": "#/$defs/percentage" },
+        "supersedesReportId": { "anyOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }] }
+      }
+    },
+    "change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["changeId", "changedAt", "kind", "summary"],
+      "properties": {
+        "changeId": { "$ref": "#/$defs/id" },
+        "changedAt": { "type": "string", "format": "date-time" },
+        "kind": {
+          "enum": [
+            "initial",
+            "scope",
+            "denominator",
+            "source",
+            "method",
+            "correction",
+            "supersession",
+            "retraction"
+          ]
+        },
+        "summary": { "type": "string", "minLength": 1 }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "approvedPublicArtifactOnly", "anchorReference"],
+      "properties": {
+        "state": { "enum": ["not_anchored", "not_applicable", "verified_public_anchor"] },
+        "approvedPublicArtifactOnly": { "const": true },
+        "anchorReference": { "type": ["string", "null"], "minLength": 1 }
+      },
+      "allOf": [
+        {
+          "if": {
+            "type": "object",
+            "properties": { "state": { "const": "verified_public_anchor" } },
+            "required": ["state"]
+          },
+          "then": {
+            "type": "object",
+            "properties": { "anchorReference": { "type": "string" } }
+          },
+          "else": {
+            "type": "object",
+            "properties": { "anchorReference": { "type": "null" } }
+          }
+        }
+      ]
+    },
+    "releaseDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "publicApproval", "blockingGapIds"],
+      "properties": {
+        "status": { "enum": ["not_ready", "eligible_for_review", "supported"] },
+        "publicApproval": { "type": "boolean" },
+        "blockingGapIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "type": "object",
+            "properties": { "status": { "const": "supported" } },
+            "required": ["status"]
+          },
+          "then": {
+            "type": "object",
+            "properties": {
+              "publicApproval": { "const": true },
+              "blockingGapIds": { "type": "array", "maxItems": 0 }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

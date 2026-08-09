@@ -262,7 +262,7 @@ Required evidence fields:
 
 The system validates and fetches sources through an SSRF-safe, size-limited, content-type-restricted, redirect-controlled pipeline. AI may prepare a draft but cannot publish the claim.
 
-### Journey 7 — Representative claim, response, and identity update
+### Journey 7 — Representative claim and response
 
 1. A representative or staff member creates an account with strong authentication.
 2. They select a public-role profile and submit authorization evidence under policy.
@@ -270,9 +270,12 @@ The system validates and fetches sources through an SSRF-safe, size-limited, con
 4. RMR approves, rejects, or requests more information; authorization state remains visible to the claimant.
 5. An authorized actor can submit an official response or correction request.
 6. The actor may sign the response through Verus Mobile when supported.
-7. An optional representative-controlled VerusID update may publish an allowlisted public reference after explicit payload review and approval.
-8. RMR verifies the callback, transaction, identity state, and chain readback.
-9. Declining or failing the update does not block the RMR profile, response, or correction workflow.
+7. Separately governed RMR-managed directory publication may later reference an approved
+   public response under issues #80–#83; it is not part of claim approval or login.
+8. Any enabled publication path verifies authorization, transaction, identity state,
+   confirmation, and exact chain readback.
+9. Disabled, declined, or failed Verus behavior does not block the RMR profile, response,
+   or correction workflow.
 
 ### Journey 8 — Correct and appeal
 
@@ -482,9 +485,15 @@ Prefer a signed `GenericRequest` / `GenericResponse` flow only after an exact co
 
 Same-device mobile uses an allowlisted `verus://` deep link where supported. Desktop uses QR. The callback is public HTTPS and the server verifies request ID, nonce, expiry, audience, chain, signer, response signature, and current identity state. A polling result endpoint supports return-flow recovery.
 
-### Representative-controlled identity update
+### Identity update governance
 
-The first supported use is an optional public reference controlled by the representative, not bulk creation of politician IDs by RMR.
+No representative-controlled identity update is approved for the initial model. Issue
+#50 is closed as superseded; issues #80–#83 govern administrator-controlled RMR directory
+identities and approved representative activity publication. Any future custody handoff
+or representative-controlled `IdentityUpdateRequest` requires a new governance issue.
+
+The following allowlist and wallet-review constraints remain mandatory if such a future
+ceremony is separately approved:
 
 Allowlisted payload classes may include:
 
@@ -495,7 +504,9 @@ Allowlisted payload classes may include:
 - schema and policy versions; and
 - no private or unreviewed content.
 
-The wallet must display the relying party, network, identity, purpose, fields, public nature, fee, expiry, and effect. The update is never required for baseline profile existence or correction rights.
+The wallet must display the relying party, network, identity, purpose, fields, public
+nature, fee, expiry, and effect. The update is never required for baseline profile
+existence or correction rights and is never login.
 
 ### Provenance
 

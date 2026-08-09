@@ -122,6 +122,15 @@ and correction rules; and records the critical database constraints for later is
 This is documentation only: it creates no sensitive table, route, write, Verus operation,
 or score. See [`docs/DATA_MODEL.md`](./docs/DATA_MODEL.md).
 
+Issue #3 publishes the canonical authentication and identity policy. Authentication
+method/assurance, actor role, VerusID control, human attestation, jurisdiction eligibility,
+representative/staff authority, and privileged access remain independent, revocable facts.
+Representative authorization is application-local and works without Verus; wallet proof
+is optional, CBC consumes minimum status only, and the superseded representative-controlled
+identity-update model is not authorized. This is documentation and regression coverage
+only: sensitive gates remain false and no account, claim, attestation, wallet, or chain
+workflow is enabled. See [`docs/AUTH_AND_IDENTITY.md`](./docs/AUTH_AND_IDENTITY.md).
+
 - No production iOS or Android app is released; issue #30 remains a synthetic pilot.
 - No production representative profile, category rating, representative signal, Civic Signal briefing, authenticated aggregate, VerusID claim, or Representative Accountability Score is live; issue #11 responses are synthetic only.
 - No composite score is approved.
@@ -404,7 +413,11 @@ See [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md),
 [docs/NATIVE_MOBILE.md](./docs/NATIVE_MOBILE.md), and
 [docs/adr/0001-mobile-first-typescript-monorepo.md](./docs/adr/0001-mobile-first-typescript-monorepo.md).
 
-The issue #12 security boundaries and non-operational status are documented in
+The canonical authentication, identity, authority, attestation, recovery, and consent
+policy is documented in
+[docs/AUTH_AND_IDENTITY.md](./docs/AUTH_AND_IDENTITY.md) and
+[ADR 0014](./docs/adr/0014-authentication-identity-authority-separation.md). The issue #12
+implemented security-core boundary remains documented in
 [docs/AUTH_SECURITY_FOUNDATION.md](./docs/AUTH_SECURITY_FOUNDATION.md) and
 [ADR 0002](./docs/adr/0002-deny-by-default-auth-boundaries.md).
 
@@ -446,6 +459,7 @@ Verus-specific gates apply only when the corresponding feature is enabled. A rea
 
 - [Codex-ready Product Requirements Document](./docs/PRD.md)
 - [Canonical civic and participation data model](./docs/DATA_MODEL.md)
+- [Authentication, identity, authority, and attestation policy](./docs/AUTH_AND_IDENTITY.md)
 - [End-to-end roadmap](./docs/ROADMAP.md)
 - [System architecture](./docs/ARCHITECTURE.md)
 - [Source-backed public profile API](./docs/PUBLIC_PROFILE_API.md)

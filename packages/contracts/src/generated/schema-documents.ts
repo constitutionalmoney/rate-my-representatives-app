@@ -9073,6 +9073,683 @@ export const SOURCE_COVERAGE_SNAPSHOT_SCHEMA = {
   }
 } as const;
 
+export const THREAT_CONTROL_CATALOG_SCHEMA = {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ratemyrepresentatives.com/threat-control-catalog.schema.json",
+  "title": "ThreatControlCatalogV1",
+  "description": "Status-aware threat/control review catalog; never a production telemetry or citizen-risk record.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "policyVersion",
+    "catalogId",
+    "dataMode",
+    "generatedAt",
+    "assumptions",
+    "hardRules",
+    "actorClasses",
+    "boundaryIds",
+    "domainCoverage",
+    "threats",
+    "releaseReadiness"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "threat-control-catalog.v1"
+    },
+    "policyVersion": {
+      "const": "application-threat-model.v1"
+    },
+    "catalogId": {
+      "$ref": "#/$defs/id"
+    },
+    "dataMode": {
+      "enum": [
+        "synthetic",
+        "production"
+      ]
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "assumptions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 500
+      }
+    },
+    "hardRules": {
+      "$ref": "#/$defs/hardRules"
+    },
+    "actorClasses": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/actorClass"
+      }
+    },
+    "boundaryIds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^B(?:0[1-9]|1[0-2])$"
+      }
+    },
+    "domainCoverage": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/domain"
+      }
+    },
+    "threats": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/threat"
+      }
+    },
+    "releaseReadiness": {
+      "$ref": "#/$defs/releaseReadiness"
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,191}$"
+    },
+    "actorClass": {
+      "enum": [
+        "external_attacker",
+        "compromised_user",
+        "representative_or_staff",
+        "coordinated_group",
+        "malicious_submitter",
+        "colluding_moderators",
+        "insider",
+        "data_broker",
+        "scraper",
+        "source_publisher",
+        "compromised_dependency",
+        "ai_provider",
+        "wallet_link_attacker",
+        "compromised_signer_or_node",
+        "operator_error"
+      ]
+    },
+    "domain": {
+      "enum": [
+        "authentication_authority",
+        "privacy_location",
+        "no_social_credit",
+        "sources_documents",
+        "ai",
+        "moderation_safety",
+        "mobile_supply_chain",
+        "mobile_links_storage_push",
+        "verus_account_proof",
+        "verus_identity_update",
+        "verus_managed_identities",
+        "provenance",
+        "operations_resilience",
+        "public_registry_memory"
+      ]
+    },
+    "hardRules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "coreBuildRequiresVerus",
+        "mainnetWritesAllowed",
+        "privateMaterialAllowedInPublicProvenance",
+        "aiMayExerciseHumanIntent",
+        "automaticAllegationPublicationAllowed",
+        "provenanceProvesTruth",
+        "highRiskFeaturesDefaultEnabled",
+        "optionalDependencyFailureBlocksSafePublicReads",
+        "productionAssuranceClaimed"
+      ],
+      "properties": {
+        "coreBuildRequiresVerus": {
+          "const": false
+        },
+        "mainnetWritesAllowed": {
+          "const": false
+        },
+        "privateMaterialAllowedInPublicProvenance": {
+          "const": false
+        },
+        "aiMayExerciseHumanIntent": {
+          "const": false
+        },
+        "automaticAllegationPublicationAllowed": {
+          "const": false
+        },
+        "provenanceProvesTruth": {
+          "const": false
+        },
+        "highRiskFeaturesDefaultEnabled": {
+          "const": false
+        },
+        "optionalDependencyFailureBlocksSafePublicReads": {
+          "const": false
+        },
+        "productionAssuranceClaimed": {
+          "const": false
+        }
+      }
+    },
+    "threat": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "threatId",
+        "domain",
+        "title",
+        "scenario",
+        "assetClasses",
+        "actorClasses",
+        "boundaryIds",
+        "impacts",
+        "controls",
+        "tests",
+        "residualRisk",
+        "incidentOwnerRole",
+        "safeDegradation",
+        "pilotBlocker",
+        "unresolvedDecisions"
+      ],
+      "properties": {
+        "threatId": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]{1,31}-[0-9]{2}$"
+        },
+        "domain": {
+          "$ref": "#/$defs/domain"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "scenario": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "assetClasses": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "actorClasses": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/actorClass"
+          }
+        },
+        "boundaryIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^B(?:0[1-9]|1[0-2])$"
+          }
+        },
+        "impacts": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "safety",
+              "privacy",
+              "integrity",
+              "availability",
+              "authorization",
+              "legal",
+              "democratic_process",
+              "supply_chain"
+            ]
+          }
+        },
+        "controls": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/control"
+          }
+        },
+        "tests": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/testEvidence"
+          }
+        },
+        "residualRisk": {
+          "$ref": "#/$defs/residualRisk"
+        },
+        "incidentOwnerRole": {
+          "enum": [
+            "security_lead",
+            "privacy_lead",
+            "platform_owner",
+            "data_stewardship",
+            "identity_authority_owner",
+            "moderation_safety_owner",
+            "ai_governance_owner",
+            "mobile_release_owner",
+            "verus_operations_owner",
+            "provenance_owner",
+            "governance_legal"
+          ]
+        },
+        "safeDegradation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "pilotBlocker": {
+          "type": "boolean"
+        },
+        "unresolvedDecisions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        }
+      }
+    },
+    "control": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "controlId",
+        "status",
+        "description",
+        "evidenceReferences"
+      ],
+      "properties": {
+        "controlId": {
+          "$ref": "#/$defs/id"
+        },
+        "status": {
+          "enum": [
+            "implemented_foundation",
+            "accepted_policy",
+            "future_required",
+            "unresolved"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "evidenceReferences": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        }
+      }
+    },
+    "testEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "testId",
+        "kind",
+        "status",
+        "evidenceReference",
+        "redactionRequired"
+      ],
+      "properties": {
+        "testId": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "enum": [
+            "automated",
+            "manual",
+            "independent_review"
+          ]
+        },
+        "status": {
+          "enum": [
+            "implemented",
+            "planned",
+            "manual_required",
+            "independent_review_required"
+          ]
+        },
+        "evidenceReference": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "redactionRequired": {
+          "const": true
+        }
+      }
+    },
+    "residualRisk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "severity",
+        "status",
+        "explanation"
+      ],
+      "properties": {
+        "severity": {
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ]
+        },
+        "status": {
+          "enum": [
+            "accepted_for_foundation",
+            "requires_mitigation",
+            "pilot_blocker",
+            "unresolved"
+          ]
+        },
+        "explanation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "evidenceReferences"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "pending",
+            "approved",
+            "rejected"
+          ]
+        },
+        "evidenceReferences": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "pending"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "evidenceReferences": {
+                "type": "array",
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "approved",
+                  "rejected"
+                ]
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "evidenceReferences": {
+                "type": "array",
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "approvedReview": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/review"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "approved"
+            }
+          }
+        }
+      ]
+    },
+    "reviews": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "applicationSecurity",
+        "privacyAndNoSocialCredit",
+        "sourceAndHostileContent",
+        "moderationAndSafety",
+        "nativeMobileSupplyChain",
+        "aiSafety",
+        "verusAndSignerOperations",
+        "backupRestoreAndIncidentResponse"
+      ],
+      "properties": {
+        "applicationSecurity": {
+          "$ref": "#/$defs/review"
+        },
+        "privacyAndNoSocialCredit": {
+          "$ref": "#/$defs/review"
+        },
+        "sourceAndHostileContent": {
+          "$ref": "#/$defs/review"
+        },
+        "moderationAndSafety": {
+          "$ref": "#/$defs/review"
+        },
+        "nativeMobileSupplyChain": {
+          "$ref": "#/$defs/review"
+        },
+        "aiSafety": {
+          "$ref": "#/$defs/review"
+        },
+        "verusAndSignerOperations": {
+          "$ref": "#/$defs/review"
+        },
+        "backupRestoreAndIncidentResponse": {
+          "$ref": "#/$defs/review"
+        }
+      }
+    },
+    "approvedReviews": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "applicationSecurity",
+        "privacyAndNoSocialCredit",
+        "sourceAndHostileContent",
+        "moderationAndSafety",
+        "nativeMobileSupplyChain",
+        "aiSafety",
+        "verusAndSignerOperations",
+        "backupRestoreAndIncidentResponse"
+      ],
+      "properties": {
+        "applicationSecurity": {
+          "$ref": "#/$defs/approvedReview"
+        },
+        "privacyAndNoSocialCredit": {
+          "$ref": "#/$defs/approvedReview"
+        },
+        "sourceAndHostileContent": {
+          "$ref": "#/$defs/approvedReview"
+        },
+        "moderationAndSafety": {
+          "$ref": "#/$defs/approvedReview"
+        },
+        "nativeMobileSupplyChain": {
+          "$ref": "#/$defs/approvedReview"
+        },
+        "aiSafety": {
+          "$ref": "#/$defs/approvedReview"
+        },
+        "verusAndSignerOperations": {
+          "$ref": "#/$defs/approvedReview"
+        },
+        "backupRestoreAndIncidentResponse": {
+          "$ref": "#/$defs/approvedReview"
+        }
+      }
+    },
+    "releaseReadiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision",
+        "namedOwnersAssigned",
+        "publicReadDegradationTested",
+        "independentReviews",
+        "unresolvedDecisionIds",
+        "pilotBlockerThreatIds",
+        "decisionReason"
+      ],
+      "properties": {
+        "decision": {
+          "enum": [
+            "blocked",
+            "eligible_for_independent_review",
+            "approved_for_pilot"
+          ]
+        },
+        "namedOwnersAssigned": {
+          "type": "boolean",
+          "default": false
+        },
+        "publicReadDegradationTested": {
+          "type": "boolean",
+          "default": false
+        },
+        "independentReviews": {
+          "$ref": "#/$defs/reviews"
+        },
+        "unresolvedDecisionIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "pilotBlockerThreatIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]{1,31}-[0-9]{2}$"
+          }
+        },
+        "decisionReason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "decision": {
+                "const": "approved_for_pilot"
+              }
+            },
+            "required": [
+              "decision"
+            ]
+          },
+          "then": {
+            "properties": {
+              "namedOwnersAssigned": {
+                "const": true
+              },
+              "publicReadDegradationTested": {
+                "const": true
+              },
+              "independentReviews": {
+                "$ref": "#/$defs/approvedReviews"
+              },
+              "unresolvedDecisionIds": {
+                "type": "array",
+                "maxItems": 0
+              },
+              "pilotBlockerThreatIds": {
+                "type": "array",
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+} as const;
+
 export const REPRESENTATIVE_SIGNAL_COMMAND_SCHEMA = {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schemas.ratemyrepresentatives.com/v1/representative-signal-command.schema.json",

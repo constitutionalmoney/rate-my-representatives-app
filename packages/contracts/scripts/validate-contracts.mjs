@@ -309,6 +309,7 @@ const fixtureSchemas = new Map([
   ['source-connector-ca.synthetic.json', 'source-connector-capability.schema.json'],
   ['source-connector-us.synthetic.json', 'source-connector-capability.schema.json'],
   ['source-coverage.synthetic.json', 'source-coverage-snapshot.schema.json'],
+  ['threat-control-catalog.synthetic.json', 'threat-control-catalog.schema.json'],
 ]);
 for (const [fixtureName, schemaName] of fixtureSchemas) {
   const fixture = JSON.parse(await readFile(path.join(fixtureDirectory, fixtureName), 'utf8'));

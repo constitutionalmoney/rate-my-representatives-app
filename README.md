@@ -131,6 +131,14 @@ identity-update model is not authorized. This is documentation and regression co
 only: sensitive gates remain false and no account, claim, attestation, wallet, or chain
 workflow is enabled. See [`docs/AUTH_AND_IDENTITY.md`](./docs/AUTH_AND_IDENTITY.md).
 
+Issue #6 publishes the status-aware application, native mobile, AI, Verus, provenance,
+and public-memory threat model. Thirty-one abuse/privacy cases map assets, actors, trust
+boundaries, controls, evidence state, residual risk, safe degradation, and incident-owner
+roles. A generated `threat-control-catalog.v1` synthetic fixture remains blocked pending
+named owners, production exercises, and independent review. This baseline adds no runtime
+feature or production assurance; safe public reads remain independent of optional AI and
+Verus services. See [`docs/THREAT_MODEL.md`](./docs/THREAT_MODEL.md).
+
 - No production iOS or Android app is released; issue #30 remains a synthetic pilot.
 - No production representative profile, category rating, representative signal, Civic Signal briefing, authenticated aggregate, VerusID claim, or Representative Accountability Score is live; issue #11 responses are synthetic only.
 - No composite score is approved.
@@ -414,7 +422,8 @@ See [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md),
 [docs/CONTRACTS.md](./docs/CONTRACTS.md), [docs/API_V1.md](./docs/API_V1.md),
 [docs/PUBLIC_PROFILE_API.md](./docs/PUBLIC_PROFILE_API.md),
 [docs/READ_ONLY_DISCOVERY.md](./docs/READ_ONLY_DISCOVERY.md),
-[docs/NATIVE_MOBILE.md](./docs/NATIVE_MOBILE.md), and
+[docs/NATIVE_MOBILE.md](./docs/NATIVE_MOBILE.md),
+[docs/THREAT_MODEL.md](./docs/THREAT_MODEL.md), and
 [docs/adr/0001-mobile-first-typescript-monorepo.md](./docs/adr/0001-mobile-first-typescript-monorepo.md).
 
 The canonical authentication, identity, authority, attestation, recovery, and consent
@@ -466,6 +475,7 @@ Verus-specific gates apply only when the corresponding feature is enabled. A rea
 - [Authentication, identity, authority, and attestation policy](./docs/AUTH_AND_IDENTITY.md)
 - [Light Mathematics methodology policy](./docs/METHODOLOGY.md)
 - [Moderation and due-process policy](./docs/MODERATION_AND_DUE_PROCESS.md)
+- [Application, mobile, AI, and Verus threat model](./docs/THREAT_MODEL.md)
 - [End-to-end roadmap](./docs/ROADMAP.md)
 - [System architecture](./docs/ARCHITECTURE.md)
 - [Source-backed public profile API](./docs/PUBLIC_PROFILE_API.md)

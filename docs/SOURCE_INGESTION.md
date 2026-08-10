@@ -105,6 +105,8 @@ reserved synthetic `.invalid` hosts; production capabilities cannot use them.
 
 The transport and resolver are injected. Core build/test makes no network request and
 needs no live official endpoint, database, Verus node, wallet, identity, or key.
+Production egress isolation, hostile-document processing, source poisoning, rights, and
+parser residual risks remain pilot blockers in [`THREAT_MODEL.md`](./THREAT_MODEL.md).
 
 ## AI boundary
 

@@ -90,6 +90,7 @@ const schemaDefinitions = [
     'source-coverage-snapshot.schema.json',
     'SOURCE_COVERAGE_SNAPSHOT_SCHEMA',
   ],
+  ['threat-control-catalog', 'threat-control-catalog.schema.json', 'THREAT_CONTROL_CATALOG_SCHEMA'],
   [
     'representative-signal-command',
     'representative-signal-command.schema.json',
@@ -113,6 +114,7 @@ const fixtureDefinitions = [
   ['SYNTHETIC_CA_SOURCE_CONNECTOR', 'source-connector-ca.synthetic.json'],
   ['SYNTHETIC_US_SOURCE_CONNECTOR', 'source-connector-us.synthetic.json'],
   ['SYNTHETIC_SOURCE_COVERAGE', 'source-coverage.synthetic.json'],
+  ['SYNTHETIC_THREAT_CONTROL_CATALOG', 'threat-control-catalog.synthetic.json'],
   ['SYNTHETIC_NOT_FOUND', 'not-found.json'],
 ];
 

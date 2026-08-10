@@ -76,6 +76,14 @@ decision contract and pure transition map do not enable intake, moderation, publ
 or chain behavior. See [`MODERATION_AND_DUE_PROCESS.md`](./MODERATION_AND_DUE_PROCESS.md)
 and ADR 0016.
 
+Issue #6 now defines `application-threat-model.v1`: assets, fifteen actor classes, twelve
+trust boundaries, thirty-one application/mobile/AI/Verus/provenance/public-memory threats,
+safe degradation, incident ownership, evidence status, pilot blockers, and independent-
+review scope. Generated `threat-control-catalog.v1` wiring keeps every irreversible rule
+false and the synthetic release decision blocked. This is a design/test baseline, not a
+runtime control or production assurance. See [`THREAT_MODEL.md`](./THREAT_MODEL.md) and
+ADR 0017.
+
 ## Phase 1 — Monorepo and local development foundation
 
 ### Objective
@@ -127,8 +135,9 @@ Issue #22 now enforces the eight security domains with deny-by-default runtime p
 generated contracts, PostgreSQL schemas/service roles, distinct API/worker credentials,
 domain-scoped outbox claims, four classified object buckets, payload-free access audit,
 operational-only analytics, and classification-preserving backup metadata. This is a
-synthetic foundation, not completion of issue #6's threat exercise or issue #25's
-production restore exercise.
+synthetic enforcement foundation. Issue #6 now maps its controls and residual risk in
+[`THREAT_MODEL.md`](./THREAT_MODEL.md), while production exercises and independent review
+remain blocked. Issue #25 still owns the production restore exercise.
 
 ### Exit gate
 

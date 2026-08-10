@@ -438,8 +438,10 @@ Decide whether a composite result is justified after the underlying public recor
 
 ### Required work before implementation
 
-- Canonical Light Mathematics methodology.
-- Mapping between website factor families and beta display categories.
+- Canonical [`Light Mathematics methodology policy`](./METHODOLOGY.md) (baseline accepted;
+  execution remains disabled).
+- Mapping between website factor families and beta display categories (defined in the
+  policy; future UI/execution must implement it without silent regrouping).
 - Public factors, weights, exclusions, missing-data rules, confidence, source coverage, and versioning.
 - Bias, adversarial, manipulation, stability, correction, and small-data tests.
 - Representative response and appeal behavior.
@@ -452,7 +454,10 @@ Decide whether a composite result is justified after the underlying public recor
 2. **Limited pilot:** feature-flagged, labeled experimental, no broad ranking.
 3. **Approved product:** only after all gates and reserved governance approval.
 
-The score remains off by default in all outcomes until an approved release explicitly enables it.
+The generated release-gate contract requires all eleven policy gates, an approved method
+version, and the false-by-default runtime flag. The score remains off by default in all
+outcomes until an approved release explicitly enables it. A decision not to build remains
+valid.
 
 ## Future context, not core backlog
 

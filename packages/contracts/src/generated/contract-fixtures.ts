@@ -417,6 +417,176 @@ export const SYNTHETIC_JURISDICTIONS = {
   }
 } as const;
 
+export const SYNTHETIC_METHODOLOGY_INDICATOR = {
+  "schemaVersion": "methodology-indicator-result.v1",
+  "resultId": "synthetic:indicator:publication-timeliness:2028-q1:v1",
+  "dataMode": "synthetic",
+  "target": {
+    "kind": "office_term",
+    "targetId": "synthetic:office-term:harbour-council:2028"
+  },
+  "displayCategory": "performance_and_effectiveness",
+  "method": {
+    "methodId": "synthetic:method:publication-timeliness",
+    "version": "0.0.0-illustrative",
+    "specificationSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+    "codeRevision": "synthetic-fixture-v1",
+    "approvalState": "illustrative_not_approved"
+  },
+  "sourceSet": {
+    "sourceIds": [
+      "synthetic:source:harbour-council-publications"
+    ],
+    "recordVersionIds": [
+      "synthetic:record:meeting-1:v1",
+      "synthetic:record:meeting-2:v1",
+      "synthetic:record:meeting-3:v1",
+      "synthetic:record:meeting-4:v1"
+    ],
+    "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+    "inputCutoffAt": "2028-01-14T23:59:59Z"
+  },
+  "coverage": {
+    "numerator": 4,
+    "denominator": 4,
+    "percentage": 100,
+    "state": "supported",
+    "gapIds": []
+  },
+  "freshness": {
+    "state": "current",
+    "evaluatedAt": "2028-01-15T12:00:00Z",
+    "thresholdHours": 168,
+    "oldestInputAt": "2028-01-10T15:00:00Z"
+  },
+  "result": {
+    "status": "available",
+    "value": 75,
+    "unit": "percent",
+    "calculationRule": "100 * published_within_threshold / eligible_events",
+    "calculationInputs": [
+      {
+        "name": "published_within_threshold",
+        "value": 3
+      },
+      {
+        "name": "eligible_events",
+        "value": 4
+      }
+    ],
+    "explanation": "Three of four fully sourced synthetic publications met the illustrative threshold."
+  },
+  "missingData": {
+    "state": "complete",
+    "missingInputCount": 0,
+    "treatment": "no_adverse_inference",
+    "publicExplanation": "All denominator inputs are present; no missing input was treated as a negative event."
+  },
+  "confidence": {
+    "status": "moderate",
+    "value": 0.75,
+    "rationale": "Synthetic confidence is illustrative and is not approved for public use."
+  },
+  "ai": {
+    "role": "none",
+    "outputPublication": false,
+    "humanReviewState": "not_required"
+  },
+  "correction": {
+    "state": "current",
+    "supersedesResultId": null,
+    "affectedByRecordVersionIds": [],
+    "explanation": "This synthetic fixture has no correction, dispute, appeal, or supersession."
+  },
+  "participationIncluded": false,
+  "calculatedAt": "2028-01-15T12:00:00Z",
+  "publicationState": "test_only",
+  "provenance": {
+    "state": "not_anchored",
+    "meaning": "commitment_not_truth",
+    "manifestSha256": null
+  }
+} as const;
+
+export const SYNTHETIC_METHODOLOGY_RELEASE_GATE = {
+  "schemaVersion": "methodology-release-gate.v1",
+  "policyVersion": "light-mathematics-policy.v1",
+  "reportId": "synthetic:methodology-release-gate:foundation",
+  "generatedAt": "2028-01-15T12:00:00Z",
+  "runtimeFlagEnabled": false,
+  "approvedMethodologyVersion": null,
+  "gates": {
+    "publicMethodologyReview": {
+      "status": "pending",
+      "evidenceReferences": [],
+      "decidedAt": null,
+      "publicReason": "No public methodology review has approved a composite method."
+    },
+    "sourceAndFactorAudit": {
+      "status": "pending",
+      "evidenceReferences": [],
+      "decidedAt": null,
+      "publicReason": "No source and factor audit has approved a composite method."
+    },
+    "biasAndDisparateImpactReview": {
+      "status": "pending",
+      "evidenceReferences": [],
+      "decidedAt": null,
+      "publicReason": "No bias and disparate-impact review has approved a composite method."
+    },
+    "adversarialAndManipulationTesting": {
+      "status": "pending",
+      "evidenceReferences": [],
+      "decidedAt": null,
+      "publicReason": "No adversarial and manipulation test evidence has been approved."
+    },
+    "stabilityAndSmallDataTesting": {
+      "status": "pending",
+      "evidenceReferences": [],
+      "decidedAt": null,
+      "publicReason": "No stability and small-data test evidence has been approved."
+    },
+    "correctionAndSupersessionTesting": {
+      "status": "pending",
+      "evidenceReferences": [],
+      "decidedAt": null,
+      "publicReason": "No correction and supersession test evidence has been approved."
+    },
+    "privacyAndNoSocialCreditReview": {
+      "status": "pending",
+      "evidenceReferences": [],
+      "decidedAt": null,
+      "publicReason": "No privacy and No Social Credit review has approved a composite method."
+    },
+    "legalReview": {
+      "status": "pending",
+      "evidenceReferences": [],
+      "decidedAt": null,
+      "publicReason": "No Canada and United States legal review has approved a composite method."
+    },
+    "representativeResponseAndAppealBehavior": {
+      "status": "pending",
+      "evidenceReferences": [],
+      "decidedAt": null,
+      "publicReason": "Representative response and appeal behavior has not been approved."
+    },
+    "publicConsultation": {
+      "status": "pending",
+      "evidenceReferences": [],
+      "decidedAt": null,
+      "publicReason": "No public consultation has approved a composite method."
+    },
+    "reservedGovernanceApproval": {
+      "status": "pending",
+      "evidenceReferences": [],
+      "decidedAt": null,
+      "publicReason": "Reserved governance approval has not been granted."
+    }
+  },
+  "decision": "disabled",
+  "decisionReason": "The composite feature flag is false and every release gate is pending."
+} as const;
+
 export const SYNTHETIC_PUBLIC_ROLE_PROFILE = {
   "schemaVersion": "public-role-profile.v1",
   "dataMode": "synthetic",

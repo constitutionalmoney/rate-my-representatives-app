@@ -21,6 +21,16 @@ const schemaDefinitions = [
   ['health-status', 'health-status.schema.json', 'HEALTH_STATUS_SCHEMA'],
   ['jurisdiction-registry', 'jurisdiction-registry.schema.json', 'JURISDICTION_REGISTRY_SCHEMA'],
   [
+    'methodology-indicator-result',
+    'methodology-indicator-result.schema.json',
+    'METHODOLOGY_INDICATOR_RESULT_SCHEMA',
+  ],
+  [
+    'methodology-release-gate',
+    'methodology-release-gate.schema.json',
+    'METHODOLOGY_RELEASE_GATE_SCHEMA',
+  ],
+  [
     'mobile-compatibility-status',
     'mobile-compatibility-status.schema.json',
     'MOBILE_COMPATIBILITY_STATUS_SCHEMA',
@@ -90,6 +100,8 @@ const fixtureDefinitions = [
   ['SYNTHETIC_HEALTH_READY', 'health.ready.json'],
   ['SYNTHETIC_MOBILE_COMPATIBILITY_READY', 'mobile-compatibility.ready.json'],
   ['SYNTHETIC_JURISDICTIONS', 'jurisdictions.synthetic.json'],
+  ['SYNTHETIC_METHODOLOGY_INDICATOR', 'methodology-indicator.synthetic.json'],
+  ['SYNTHETIC_METHODOLOGY_RELEASE_GATE', 'methodology-release-gate.synthetic.json'],
   ['SYNTHETIC_PUBLIC_ROLE_PROFILE', 'public-role-profile.synthetic.json'],
   ['SYNTHETIC_PUBLIC_ROLE_REGISTRY', 'public-role-registry.synthetic.json'],
   ['SYNTHETIC_REPRESENTATION_CAPABILITIES', 'representation-capabilities.synthetic.json'],

@@ -68,6 +68,14 @@ recorded as superseded by the RMR-managed directory model in issues #80–#83. T
 adds no runtime account, identity, provider, wallet, Verus, or chain behavior. See
 [`AUTH_AND_IDENTITY.md`](./AUTH_AND_IDENTITY.md) and ADR 0014.
 
+Issue #5 now defines `moderation-due-process-policy.v1`: separately labeled eligibility,
+seven explicit connected workflows, human decisions and reviewer conflict rules,
+response/correction routes, immutable public history, independent appeals, safety/legal
+handling, AI limits, public-only provenance, and staffed-pilot blockers. The generated
+decision contract and pure transition map do not enable intake, moderation, publication,
+or chain behavior. See [`MODERATION_AND_DUE_PROCESS.md`](./MODERATION_AND_DUE_PROCESS.md)
+and ADR 0016.
+
 ## Phase 1 — Monorepo and local development foundation
 
 ### Objective

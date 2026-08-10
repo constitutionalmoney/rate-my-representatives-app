@@ -587,6 +587,51 @@ export const SYNTHETIC_METHODOLOGY_RELEASE_GATE = {
   "decisionReason": "The composite feature flag is false and every release gate is pending."
 } as const;
 
+export const SYNTHETIC_MODERATION_DECISION = {
+  "schemaVersion": "moderation-decision.v1",
+  "policyVersion": "moderation-due-process-policy.v1",
+  "dataMode": "synthetic",
+  "decisionId": "synthetic:moderation-decision:foundation",
+  "workflow": "evidence_submission",
+  "targetReference": "synthetic:evidence-submission:001",
+  "previousState": "under_review",
+  "outcomeState": "rejected",
+  "review": {
+    "reviewerRole": "reviewer",
+    "assignmentReference": "synthetic:review-assignment:001",
+    "conflictDisclosure": "Synthetic reviewer declared no conflict for this test fixture.",
+    "recusalOutcome": "no_recusal_required",
+    "independentOfOriginalDecision": false,
+    "humanDecider": true
+  },
+  "basis": {
+    "methodVersion": null,
+    "sourceRecordVersionIds": [
+      "synthetic:source-record-version:001"
+    ],
+    "rightsReview": "metadata_only",
+    "reasonCode": "insufficient_source_support",
+    "publicReason": "The synthetic submission does not provide enough source support for publication."
+  },
+  "ai": {
+    "assistanceUsed": false,
+    "disclosure": "No AI assistance was used for this synthetic decision.",
+    "decidedOutcome": false
+  },
+  "history": {
+    "supersedesDecisionId": null,
+    "appealedDecisionId": null
+  },
+  "publication": {
+    "state": "restricted_only",
+    "automaticPublication": false,
+    "allowedPublicFields": [],
+    "rawPrivateMaterialIncluded": false,
+    "provenanceEligible": false
+  },
+  "decidedAt": "2028-01-15T12:00:00Z"
+} as const;
+
 export const SYNTHETIC_PUBLIC_ROLE_PROFILE = {
   "schemaVersion": "public-role-profile.v1",
   "dataMode": "synthetic",

@@ -123,7 +123,9 @@ publication. The broader source access, freshness, public-gap, and pilot support
 is now defined by issue #7 in [COVERAGE_POLICY.md](./COVERAGE_POLICY.md). The
 security-domain program (#22) remains a governance dependency. Issue #55 implements the
 smallest safe internal slice with explicit synthetic approvals and deny-by-default
-runtime execution.
+runtime execution. Contributor evidence and public due process remain disabled and are governed
+by [`MODERATION_AND_DUE_PROCESS.md`](./MODERATION_AND_DUE_PROCESS.md); source-candidate
+approval is not evidence publication.
 
 See [the runbook](./runbooks/SOURCE_INGESTION.md) and
 [ADR 0008](./adr/0008-candidate-only-official-source-ingestion.md).

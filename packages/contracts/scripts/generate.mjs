@@ -30,6 +30,7 @@ const schemaDefinitions = [
     'methodology-release-gate.schema.json',
     'METHODOLOGY_RELEASE_GATE_SCHEMA',
   ],
+  ['moderation-decision', 'moderation-decision.schema.json', 'MODERATION_DECISION_SCHEMA'],
   [
     'mobile-compatibility-status',
     'mobile-compatibility-status.schema.json',
@@ -102,6 +103,7 @@ const fixtureDefinitions = [
   ['SYNTHETIC_JURISDICTIONS', 'jurisdictions.synthetic.json'],
   ['SYNTHETIC_METHODOLOGY_INDICATOR', 'methodology-indicator.synthetic.json'],
   ['SYNTHETIC_METHODOLOGY_RELEASE_GATE', 'methodology-release-gate.synthetic.json'],
+  ['SYNTHETIC_MODERATION_DECISION', 'moderation-decision.synthetic.json'],
   ['SYNTHETIC_PUBLIC_ROLE_PROFILE', 'public-role-profile.synthetic.json'],
   ['SYNTHETIC_PUBLIC_ROLE_REGISTRY', 'public-role-registry.synthetic.json'],
   ['SYNTHETIC_REPRESENTATION_CAPABILITIES', 'representation-capabilities.synthetic.json'],

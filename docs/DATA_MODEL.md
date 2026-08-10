@@ -388,7 +388,10 @@ erDiagram
 ```
 
 All entities here are **Planned**. Issue #55's source candidate review is an implemented
-ingestion workflow, not the public evidence/due-process workflow below.
+ingestion workflow, not the public evidence/due-process workflow below. Issue #5 now
+defines their policy and generated decision contract in
+[`MODERATION_AND_DUE_PROCESS.md`](./MODERATION_AND_DUE_PROCESS.md); it does not change
+their persistence status.
 
 | Entity | Stable ID and minimum fields | Cardinality and temporal rules | Owner, privacy, retention/correction |
 | --- | --- | --- | --- |
@@ -407,22 +410,29 @@ stateDiagram-v2
   [*] --> draft
   draft --> submitted
   submitted --> validated
-  submitted --> rejected: invalid or prohibited
+  submitted --> rejected: accountable human validation decision
   validated --> under_review
   under_review --> published
   under_review --> disputed
   under_review --> rejected
+  under_review --> needs_more_information
+  needs_more_information --> submitted
+  needs_more_information --> withdrawn
   published --> disputed
   published --> corrected
   published --> withdrawn
+  published --> archived
   disputed --> corrected
+  disputed --> withdrawn
   disputed --> archived
   rejected --> appealed
   appealed --> appeal_upheld
   appealed --> appeal_denied
 ```
 
-No automated publisher may bypass `under_review` and an accountable human decision.
+No automated publisher may bypass `under_review` and an accountable human decision. The
+canonical policy contains the complete transition table and separate connected response,
+correction, dispute, appeal, context, and source-status workflows.
 
 ### 12.2 Representative claim and staff delegation
 

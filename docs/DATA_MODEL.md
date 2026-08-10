@@ -237,6 +237,11 @@ erDiagram
 | `indicator_result` — **Planned** | `indicator_result_id`, office-term/candidacy subject, method version, input cutoff/source set, value components, missing-data state, confidence, generated time, correction state | Many results over time for one public-role context. Missing data is explicit and never converted to a negative value. | Methodology/public record; `PUB`; `H1`; supersede on corrected inputs/method. |
 | `ai_run` — **Planned** | `ai_run_id`, purpose, provider/model/process version, source IDs, redaction class, output reference, confidence, human reviewer/decision, created time | Zero or many purpose-limited runs may draft work; no run directly publishes or creates human intent. | Evidence/moderation; `MOD-R`; `M1`; public disclosure is a separate allowlisted field. |
 
+[`METHODOLOGY.md`](./METHODOLOGY.md) now defines the policy and generated contract for
+these planned methodology entities. It does not change their persistence status:
+`methodology_version`, `indicator_result`, AI execution, and every representative/composite
+calculation remain **Planned** under their owning issues.
+
 Canonical public profile rows in `rmr_public` are **Implemented** derived projections.
 They require a human publication decision and reviewed source links. They are rebuildable
 and do not replace the registry, source retrieval, or future claim entities.

@@ -90,6 +90,8 @@ export type { ApiError as ApiErrorSchema } from './generated/api-error.js';
 export type { HealthStatus as HealthStatusSchema } from './generated/health-status.js';
 export type { JurisdictionRegistry as JurisdictionRegistrySchema } from './generated/jurisdiction-registry.js';
 export type { MobileCompatibilityStatus as MobileCompatibilityStatusSchema } from './generated/mobile-compatibility-status.js';
+export type { MethodologyIndicatorResultV1 } from './generated/methodology-indicator-result.js';
+export type { MethodologyReleaseGateV1 } from './generated/methodology-release-gate.js';
 export type { PublicRoleRegistry as PublicRoleRegistrySchema } from './generated/public-role-registry.js';
 export type { RepresentationAmbiguitySelection as RepresentationAmbiguitySelectionSchema } from './generated/representation-ambiguity-selection.js';
 export type { RepresentationCapabilities as RepresentationCapabilitiesSchema } from './generated/representation-capabilities.js';

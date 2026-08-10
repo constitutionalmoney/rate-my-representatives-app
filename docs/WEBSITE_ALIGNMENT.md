@@ -152,6 +152,11 @@ The website describes a future **Representative Accountability Score** and appro
 - The composite score remains disabled until public method, bias/adversarial/correction testing, privacy/legal review, and reserved governance approval.
 - The project may decide never to publish a composite score.
 
+Issue #4 resolves this conflict in [`METHODOLOGY.md`](./METHODOLOGY.md). Its stable W/B
+crosswalk maps all ten website families, the five earlier broad record-analysis families,
+the current four illustrative preview rows, and the seven beta display headings without
+approving a factor, weight, indicator, or composite.
+
 ## 10. Six-step website experience
 
 The rendered website describes six steps:

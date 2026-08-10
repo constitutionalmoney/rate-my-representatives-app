@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "methodology-indicator-result.v1",
+  "resultId": "synthetic:indicator:publication-timeliness:2028-q1:v1",
+  "dataMode": "synthetic",
+  "target": {
+    "kind": "office_term",
+    "targetId": "synthetic:office-term:harbour-council:2028"
+  },
+  "displayCategory": "performance_and_effectiveness",
+  "method": {
+    "methodId": "synthetic:method:publication-timeliness",
+    "version": "0.0.0-illustrative",
+    "specificationSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+    "codeRevision": "synthetic-fixture-v1",
+    "approvalState": "illustrative_not_approved"
+  },
+  "sourceSet": {
+    "sourceIds": ["synthetic:source:harbour-council-publications"],
+    "recordVersionIds": [
+      "synthetic:record:meeting-1:v1",
+      "synthetic:record:meeting-2:v1",
+      "synthetic:record:meeting-3:v1",
+      "synthetic:record:meeting-4:v1"
+    ],
+    "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+    "inputCutoffAt": "2028-01-14T23:59:59Z"
+  },
+  "coverage": {
+    "numerator": 4,
+    "denominator": 4,
+    "percentage": 100,
+    "state": "supported",
+    "gapIds": []
+  },
+  "freshness": {
+    "state": "current",
+    "evaluatedAt": "2028-01-15T12:00:00Z",
+    "thresholdHours": 168,
+    "oldestInputAt": "2028-01-10T15:00:00Z"
+  },
+  "result": {
+    "status": "available",
+    "value": 75,
+    "unit": "percent",
+    "calculationRule": "100 * published_within_threshold / eligible_events",
+    "calculationInputs": [
+      { "name": "published_within_threshold", "value": 3 },
+      { "name": "eligible_events", "value": 4 }
+    ],
+    "explanation": "Three of four fully sourced synthetic publications met the illustrative threshold."
+  },
+  "missingData": {
+    "state": "complete",
+    "missingInputCount": 0,
+    "treatment": "no_adverse_inference",
+    "publicExplanation": "All denominator inputs are present; no missing input was treated as a negative event."
+  },
+  "confidence": {
+    "status": "moderate",
+    "value": 0.75,
+    "rationale": "Synthetic confidence is illustrative and is not approved for public use."
+  },
+  "ai": {
+    "role": "none",
+    "outputPublication": false,
+    "humanReviewState": "not_required"
+  },
+  "correction": {
+    "state": "current",
+    "supersedesResultId": null,
+    "affectedByRecordVersionIds": [],
+    "explanation": "This synthetic fixture has no correction, dispute, appeal, or supersession."
+  },
+  "participationIncluded": false,
+  "calculatedAt": "2028-01-15T12:00:00Z",
+  "publicationState": "test_only",
+  "provenance": {
+    "state": "not_anchored",
+    "meaning": "commitment_not_truth",
+    "manifestSha256": null
+  }
+}

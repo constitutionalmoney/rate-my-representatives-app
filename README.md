@@ -228,7 +228,11 @@ Identity status affects attribution, abuse controls, and workflow. It does not m
 
 ### 5. No score before the method
 
-The only product score name is **Representative Accountability Score**. Any future result must use a public, versioned **Light Mathematics Protocol** that exposes:
+The only product score name is **Representative Accountability Score**. The canonical
+[`Light Mathematics methodology policy`](./docs/METHODOLOGY.md) defines the public
+taxonomy crosswalk, indicator contract, missing-data behavior, correction/version rules,
+and machine-enforced release gates. Any future result must use that public, versioned
+protocol and expose:
 
 - record-analysis factors;
 - community-input factors;
@@ -460,6 +464,7 @@ Verus-specific gates apply only when the corresponding feature is enabled. A rea
 - [Codex-ready Product Requirements Document](./docs/PRD.md)
 - [Canonical civic and participation data model](./docs/DATA_MODEL.md)
 - [Authentication, identity, authority, and attestation policy](./docs/AUTH_AND_IDENTITY.md)
+- [Light Mathematics methodology policy](./docs/METHODOLOGY.md)
 - [End-to-end roadmap](./docs/ROADMAP.md)
 - [System architecture](./docs/ARCHITECTURE.md)
 - [Source-backed public profile API](./docs/PUBLIC_PROFILE_API.md)

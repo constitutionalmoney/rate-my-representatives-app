@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "methodology-release-gate.v1",
+  "policyVersion": "light-mathematics-policy.v1",
+  "reportId": "synthetic:methodology-release-gate:foundation",
+  "generatedAt": "2028-01-15T12:00:00Z",
+  "runtimeFlagEnabled": false,
+  "approvedMethodologyVersion": null,
+  "gates": {
+    "publicMethodologyReview": {
+      "status": "pending",
+      "evidenceReferences": [],
+      "decidedAt": null,
+      "publicReason": "No public methodology review has approved a composite method."
+    },
+    "sourceAndFactorAudit": {
+      "status": "pending",
+      "evidenceReferences": [],
+      "decidedAt": null,
+      "publicReason": "No source and factor audit has approved a composite method."
+    },
+    "biasAndDisparateImpactReview": {
+      "status": "pending",
+      "evidenceReferences": [],
+      "decidedAt": null,
+      "publicReason": "No bias and disparate-impact review has approved a composite method."
+    },
+    "adversarialAndManipulationTesting": {
+      "status": "pending",
+      "evidenceReferences": [],
+      "decidedAt": null,
+      "publicReason": "No adversarial and manipulation test evidence has been approved."
+    },
+    "stabilityAndSmallDataTesting": {
+      "status": "pending",
+      "evidenceReferences": [],
+      "decidedAt": null,
+      "publicReason": "No stability and small-data test evidence has been approved."
+    },
+    "correctionAndSupersessionTesting": {
+      "status": "pending",
+      "evidenceReferences": [],
+      "decidedAt": null,
+      "publicReason": "No correction and supersession test evidence has been approved."
+    },
+    "privacyAndNoSocialCreditReview": {
+      "status": "pending",
+      "evidenceReferences": [],
+      "decidedAt": null,
+      "publicReason": "No privacy and No Social Credit review has approved a composite method."
+    },
+    "legalReview": {
+      "status": "pending",
+      "evidenceReferences": [],
+      "decidedAt": null,
+      "publicReason": "No Canada and United States legal review has approved a composite method."
+    },
+    "representativeResponseAndAppealBehavior": {
+      "status": "pending",
+      "evidenceReferences": [],
+      "decidedAt": null,
+      "publicReason": "Representative response and appeal behavior has not been approved."
+    },
+    "publicConsultation": {
+      "status": "pending",
+      "evidenceReferences": [],
+      "decidedAt": null,
+      "publicReason": "No public consultation has approved a composite method."
+    },
+    "reservedGovernanceApproval": {
+      "status": "pending",
+      "evidenceReferences": [],
+      "decidedAt": null,
+      "publicReason": "Reserved governance approval has not been granted."
+    }
+  },
+  "decision": "disabled",
+  "decisionReason": "The composite feature flag is false and every release gate is pending."
+}

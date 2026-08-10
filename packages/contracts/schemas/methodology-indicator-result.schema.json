@@ -1,0 +1,331 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ratemyrepresentatives.com/methodology-indicator-result.schema.json",
+  "title": "MethodologyIndicatorResultV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "resultId",
+    "dataMode",
+    "target",
+    "displayCategory",
+    "method",
+    "sourceSet",
+    "coverage",
+    "freshness",
+    "result",
+    "missingData",
+    "confidence",
+    "ai",
+    "correction",
+    "participationIncluded",
+    "calculatedAt",
+    "publicationState",
+    "provenance"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "methodology-indicator-result.v1" },
+    "resultId": { "$ref": "#/$defs/id" },
+    "dataMode": { "enum": ["synthetic", "pilot", "production"] },
+    "target": { "$ref": "#/$defs/target" },
+    "displayCategory": {
+      "enum": [
+        "policy_and_voting_alignment",
+        "integrity_and_accountability",
+        "financial_influence_and_disclosure",
+        "constituent_engagement",
+        "performance_and_effectiveness",
+        "verification_and_source_coverage"
+      ]
+    },
+    "method": { "$ref": "#/$defs/method" },
+    "sourceSet": { "$ref": "#/$defs/sourceSet" },
+    "coverage": { "$ref": "#/$defs/coverage" },
+    "freshness": { "$ref": "#/$defs/freshness" },
+    "result": { "$ref": "#/$defs/result" },
+    "missingData": { "$ref": "#/$defs/missingData" },
+    "confidence": { "$ref": "#/$defs/confidence" },
+    "ai": { "$ref": "#/$defs/ai" },
+    "correction": { "$ref": "#/$defs/correction" },
+    "participationIncluded": { "const": false },
+    "calculatedAt": { "type": "string", "format": "date-time" },
+    "publicationState": { "enum": ["test_only", "withheld", "approved"] },
+    "provenance": { "$ref": "#/$defs/provenance" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "dataMode": { "const": "synthetic" } },
+        "required": ["dataMode"]
+      },
+      "then": {
+        "properties": {
+          "method": {
+            "type": "object",
+            "properties": { "approvalState": { "const": "illustrative_not_approved" } }
+          },
+          "publicationState": { "const": "test_only" },
+          "provenance": {
+            "type": "object",
+            "properties": { "state": { "const": "not_anchored" } }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "missingData": {
+            "type": "object",
+            "properties": {
+              "state": { "enum": ["gap", "conflict", "stale", "retracted", "unavailable"] }
+            },
+            "required": ["state"]
+          }
+        },
+        "required": ["missingData"]
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "properties": {
+              "status": { "const": "unavailable" },
+              "value": { "type": "null" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "properties": { "status": { "const": "available" } },
+            "required": ["status"]
+          }
+        },
+        "required": ["result"]
+      },
+      "then": {
+        "properties": {
+          "coverage": {
+            "type": "object",
+            "properties": { "state": { "const": "supported" } }
+          },
+          "missingData": {
+            "type": "object",
+            "properties": {
+              "state": { "const": "complete" },
+              "missingInputCount": { "const": 0 }
+            }
+          },
+          "result": {
+            "type": "object",
+            "properties": { "value": { "type": "number" } }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "correction": {
+            "type": "object",
+            "properties": { "state": { "enum": ["superseded", "retracted"] } },
+            "required": ["state"]
+          }
+        },
+        "required": ["correction"]
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "properties": {
+              "status": { "const": "unavailable" },
+              "value": { "type": "null" }
+            }
+          },
+          "publicationState": { "enum": ["test_only", "withheld"] }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,191}$"
+    },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "nonNegativeInteger": { "type": "integer", "minimum": 0 },
+    "percentage": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "targetId"],
+      "properties": {
+        "kind": { "enum": ["office_term", "candidacy"] },
+        "targetId": { "$ref": "#/$defs/id" }
+      }
+    },
+    "method": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["methodId", "version", "specificationSha256", "codeRevision", "approvalState"],
+      "properties": {
+        "methodId": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/id" },
+        "specificationSha256": { "$ref": "#/$defs/sha256" },
+        "codeRevision": { "$ref": "#/$defs/id" },
+        "approvalState": { "enum": ["illustrative_not_approved", "approved"] }
+      }
+    },
+    "sourceSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceIds", "recordVersionIds", "digest", "inputCutoffAt"],
+      "properties": {
+        "sourceIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "recordVersionIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "digest": { "$ref": "#/$defs/sha256" },
+        "inputCutoffAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["numerator", "denominator", "percentage", "state", "gapIds"],
+      "properties": {
+        "numerator": { "$ref": "#/$defs/nonNegativeInteger" },
+        "denominator": { "$ref": "#/$defs/nonNegativeInteger" },
+        "percentage": { "$ref": "#/$defs/percentage" },
+        "state": { "enum": ["supported", "partial", "gap", "unsupported", "not_applicable"] },
+        "gapIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        }
+      }
+    },
+    "freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "evaluatedAt", "thresholdHours", "oldestInputAt"],
+      "properties": {
+        "state": { "enum": ["current", "stale", "unknown", "unavailable"] },
+        "evaluatedAt": { "type": "string", "format": "date-time" },
+        "thresholdHours": { "type": "integer", "minimum": 1 },
+        "oldestInputAt": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "calculationInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "value"],
+      "properties": {
+        "name": { "$ref": "#/$defs/id" },
+        "value": { "type": "number" }
+      }
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "value",
+        "unit",
+        "calculationRule",
+        "calculationInputs",
+        "explanation"
+      ],
+      "properties": {
+        "status": { "enum": ["available", "unavailable"] },
+        "value": { "type": ["number", "null"] },
+        "unit": { "enum": ["percent", "ratio", "count", "boolean", "not_applicable"] },
+        "calculationRule": { "type": "string", "minLength": 1 },
+        "calculationInputs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/calculationInput" }
+        },
+        "explanation": { "type": "string", "minLength": 1 }
+      }
+    },
+    "missingData": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "missingInputCount", "treatment", "publicExplanation"],
+      "properties": {
+        "state": { "enum": ["complete", "gap", "conflict", "stale", "retracted", "unavailable"] },
+        "missingInputCount": { "$ref": "#/$defs/nonNegativeInteger" },
+        "treatment": { "const": "no_adverse_inference" },
+        "publicExplanation": { "type": "string", "minLength": 1 }
+      }
+    },
+    "confidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "value", "rationale"],
+      "properties": {
+        "status": { "enum": ["not_assessed", "insufficient", "low", "moderate", "high"] },
+        "value": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "rationale": { "type": "string", "minLength": 1 }
+      }
+    },
+    "ai": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "outputPublication", "humanReviewState"],
+      "properties": {
+        "role": {
+          "enum": ["none", "extraction_assist", "classification_assist", "comparison_assist"]
+        },
+        "outputPublication": { "const": false },
+        "humanReviewState": { "enum": ["not_required", "required", "completed"] }
+      }
+    },
+    "correction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "supersedesResultId", "affectedByRecordVersionIds", "explanation"],
+      "properties": {
+        "state": {
+          "enum": ["current", "disputed", "under_appeal", "corrected", "superseded", "retracted"]
+        },
+        "supersedesResultId": {
+          "oneOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }]
+        },
+        "affectedByRecordVersionIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "explanation": { "type": "string", "minLength": 1 }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "meaning", "manifestSha256"],
+      "properties": {
+        "state": { "enum": ["not_anchored", "anchored"] },
+        "meaning": { "const": "commitment_not_truth" },
+        "manifestSha256": {
+          "oneOf": [{ "$ref": "#/$defs/sha256" }, { "type": "null" }]
+        }
+      }
+    }
+  }
+}

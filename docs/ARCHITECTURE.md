@@ -227,7 +227,10 @@ AI outputs enter as drafts within this context and never bypass state transition
 
 ### 5.7 Methodology
 
-Owns coverage/freshness calculations, category definitions, approved indicators, Light Mathematics versions, confidence, missing-data rules, and the disabled-by-default Representative Accountability Score decision.
+Owns coverage/freshness calculations, category definitions, approved indicators, Light
+Mathematics versions, confidence, missing-data rules, and the disabled-by-default
+Representative Accountability Score decision. [`METHODOLOGY.md`](./METHODOLOGY.md) is
+the canonical policy and generated-contract baseline; issue #18 owns future execution.
 
 ### 5.8 Verus wallet integration
 

@@ -1445,6 +1445,920 @@ export const SYNTHETIC_SOURCE_COVERAGE = {
   "sha256": "5555555555555555555555555555555555555555555555555555555555555555"
 } as const;
 
+export const SYNTHETIC_THREAT_CONTROL_CATALOG = {
+  "schemaVersion": "threat-control-catalog.v1",
+  "policyVersion": "application-threat-model.v1",
+  "catalogId": "synthetic:threat-control-catalog:foundation",
+  "dataMode": "synthetic",
+  "generatedAt": "2028-01-15T12:00:00Z",
+  "assumptions": [
+    "PostgreSQL application records remain canonical.",
+    "Every high-risk runtime feature remains false by default.",
+    "This fixture is policy evidence and not a production assurance claim."
+  ],
+  "hardRules": {
+    "coreBuildRequiresVerus": false,
+    "mainnetWritesAllowed": false,
+    "privateMaterialAllowedInPublicProvenance": false,
+    "aiMayExerciseHumanIntent": false,
+    "automaticAllegationPublicationAllowed": false,
+    "provenanceProvesTruth": false,
+    "highRiskFeaturesDefaultEnabled": false,
+    "optionalDependencyFailureBlocksSafePublicReads": false,
+    "productionAssuranceClaimed": false
+  },
+  "actorClasses": [
+    "external_attacker",
+    "compromised_user",
+    "representative_or_staff",
+    "coordinated_group",
+    "malicious_submitter",
+    "colluding_moderators",
+    "insider",
+    "data_broker",
+    "scraper",
+    "source_publisher",
+    "compromised_dependency",
+    "ai_provider",
+    "wallet_link_attacker",
+    "compromised_signer_or_node",
+    "operator_error"
+  ],
+  "boundaryIds": [
+    "B01",
+    "B02",
+    "B03",
+    "B04",
+    "B05",
+    "B06",
+    "B07",
+    "B08",
+    "B09",
+    "B10",
+    "B11",
+    "B12"
+  ],
+  "domainCoverage": [
+    "authentication_authority",
+    "privacy_location",
+    "no_social_credit",
+    "sources_documents",
+    "ai",
+    "moderation_safety",
+    "mobile_supply_chain",
+    "mobile_links_storage_push",
+    "verus_account_proof",
+    "verus_identity_update",
+    "verus_managed_identities",
+    "provenance",
+    "operations_resilience",
+    "public_registry_memory"
+  ],
+  "threats": [
+    {
+      "threatId": "AUTH-01",
+      "domain": "authentication_authority",
+      "title": "Account takeover and authority escalation",
+      "scenario": "A synthetic attacker replays a session or obtains a role outside its scope.",
+      "assetClasses": [
+        "accounts_sessions",
+        "representative_authority"
+      ],
+      "actorClasses": [
+        "external_attacker",
+        "compromised_user",
+        "representative_or_staff"
+      ],
+      "boundaryIds": [
+        "B01",
+        "B02",
+        "B03",
+        "B07"
+      ],
+      "impacts": [
+        "authorization",
+        "privacy",
+        "integrity"
+      ],
+      "controls": [
+        {
+          "controlId": "auth_deny_by_default",
+          "status": "implemented_foundation",
+          "description": "Route and domain policy deny invalid sessions, roles, scopes, and replay.",
+          "evidenceReferences": [
+            "packages/auth/src/authentication.abuse.test.ts"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "testId": "auth_abuse",
+          "kind": "automated",
+          "status": "implemented",
+          "evidenceReference": "packages/auth/src/authentication.abuse.test.ts",
+          "redactionRequired": true
+        }
+      ],
+      "residualRisk": {
+        "severity": "high",
+        "status": "pilot_blocker",
+        "explanation": "Production providers and representative authority workflows are not approved."
+      },
+      "incidentOwnerRole": "security_lead",
+      "safeDegradation": "Deny account and authority commands while preserving anonymous public reads.",
+      "pilotBlocker": true,
+      "unresolvedDecisions": [
+        "production_auth_provider"
+      ]
+    },
+    {
+      "threatId": "PRIV-01",
+      "domain": "privacy_location",
+      "title": "Precise location or private civic activity leakage",
+      "scenario": "Restricted synthetic data reaches logs, analytics, public output, or another account.",
+      "assetClasses": [
+        "location",
+        "private_civic_activity"
+      ],
+      "actorClasses": [
+        "insider",
+        "data_broker",
+        "scraper"
+      ],
+      "boundaryIds": [
+        "B03",
+        "B12"
+      ],
+      "impacts": [
+        "privacy",
+        "safety"
+      ],
+      "controls": [
+        {
+          "controlId": "classified_domain_separation",
+          "status": "implemented_foundation",
+          "description": "Transient location and separate security domains reject public serialization and forbidden storage.",
+          "evidenceReferences": [
+            "tests/tooling/security-domain-foundation.test.ts",
+            "packages/domain/src/location-resolution.test.ts"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "testId": "location_redaction",
+          "kind": "automated",
+          "status": "implemented",
+          "evidenceReference": "tests/tooling/location-resolution-foundation.test.ts",
+          "redactionRequired": true
+        }
+      ],
+      "residualRisk": {
+        "severity": "critical",
+        "status": "requires_mitigation",
+        "explanation": "Production telemetry, providers, and participation stores require review."
+      },
+      "incidentOwnerRole": "privacy_lead",
+      "safeDegradation": "Disable location/private writes and retain safe public directory reads.",
+      "pilotBlocker": true,
+      "unresolvedDecisions": [
+        "production_telemetry_boundary"
+      ]
+    },
+    {
+      "threatId": "NSC-01",
+      "domain": "no_social_credit",
+      "title": "Generalized citizen reputation or political profile",
+      "scenario": "Narrow identity, moderation, location, or participation states are combined into a portable citizen value.",
+      "assetClasses": [
+        "identity_attestation",
+        "private_civic_activity",
+        "analytics_exports"
+      ],
+      "actorClasses": [
+        "insider",
+        "data_broker",
+        "ai_provider"
+      ],
+      "boundaryIds": [
+        "B03",
+        "B08",
+        "B12"
+      ],
+      "impacts": [
+        "privacy",
+        "authorization",
+        "democratic_process"
+      ],
+      "controls": [
+        {
+          "controlId": "no_social_credit_invariant",
+          "status": "implemented_foundation",
+          "description": "Forbidden joins, names, exports, and agent outputs are rejected by foundation tests.",
+          "evidenceReferences": [
+            "packages/auth/src/no-social-credit.test.ts"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "testId": "no_social_credit_foundation",
+          "kind": "automated",
+          "status": "implemented",
+          "evidenceReference": "packages/auth/src/no-social-credit.test.ts",
+          "redactionRequired": true
+        }
+      ],
+      "residualRisk": {
+        "severity": "critical",
+        "status": "pilot_blocker",
+        "explanation": "Future analytics, AI, and cross-product paths need issue #57 enforcement and review."
+      },
+      "incidentOwnerRole": "privacy_lead",
+      "safeDegradation": "Reject the query, export, model, or integration and preserve narrow purpose-limited states only.",
+      "pilotBlocker": true,
+      "unresolvedDecisions": [
+        "no_social_credit_independent_review"
+      ]
+    },
+    {
+      "threatId": "SRC-01",
+      "domain": "sources_documents",
+      "title": "Source poisoning, SSRF, or hostile content",
+      "scenario": "A malicious source or submitter targets internal networks, parsers, rights, or public record integrity.",
+      "assetClasses": [
+        "source_records",
+        "evidence_moderation"
+      ],
+      "actorClasses": [
+        "malicious_submitter",
+        "source_publisher",
+        "compromised_dependency"
+      ],
+      "boundaryIds": [
+        "B05",
+        "B06"
+      ],
+      "impacts": [
+        "integrity",
+        "availability",
+        "legal",
+        "supply_chain"
+      ],
+      "controls": [
+        {
+          "controlId": "source_quarantine",
+          "status": "implemented_foundation",
+          "description": "Synthetic connector retrieval revalidates origins and addresses, applies limits, and quarantines candidates.",
+          "evidenceReferences": [
+            "packages/connectors/src/source-ingestion.test.ts"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "testId": "source_ssrf",
+          "kind": "automated",
+          "status": "implemented",
+          "evidenceReference": "packages/connectors/src/source-ingestion.test.ts",
+          "redactionRequired": true
+        }
+      ],
+      "residualRisk": {
+        "severity": "critical",
+        "status": "pilot_blocker",
+        "explanation": "Production egress sandbox, publishers, licences, and arbitrary-document controls are absent."
+      },
+      "incidentOwnerRole": "data_stewardship",
+      "safeDegradation": "Disable retrieval and publication; mark source state unavailable or quarantined.",
+      "pilotBlocker": true,
+      "unresolvedDecisions": [
+        "production_source_inventory",
+        "hostile_document_stack"
+      ]
+    },
+    {
+      "threatId": "AI-01",
+      "domain": "ai",
+      "title": "AI fabrication, prompt injection, or private-data exfiltration",
+      "scenario": "An AI provider or hostile source causes fabricated civic output, tool escape, or restricted-data disclosure.",
+      "assetClasses": [
+        "ai_inputs_jobs",
+        "source_records",
+        "private_civic_activity"
+      ],
+      "actorClasses": [
+        "ai_provider",
+        "malicious_submitter",
+        "source_publisher"
+      ],
+      "boundaryIds": [
+        "B06",
+        "B08"
+      ],
+      "impacts": [
+        "privacy",
+        "integrity",
+        "democratic_process"
+      ],
+      "controls": [
+        {
+          "controlId": "ai_draft_only",
+          "status": "accepted_policy",
+          "description": "AI has no human intent or publication authority and receives no private civic data.",
+          "evidenceReferences": [
+            "docs/METHODOLOGY.md",
+            "docs/MODERATION_AND_DUE_PROCESS.md"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "testId": "ai_red_team",
+          "kind": "independent_review",
+          "status": "planned",
+          "evidenceReference": null,
+          "redactionRequired": true
+        }
+      ],
+      "residualRisk": {
+        "severity": "critical",
+        "status": "pilot_blocker",
+        "explanation": "No provider, isolation gateway, or adversarial evaluation is approved."
+      },
+      "incidentOwnerRole": "ai_governance_owner",
+      "safeDegradation": "Disable AI and use a manual queue or unavailable state.",
+      "pilotBlocker": true,
+      "unresolvedDecisions": [
+        "ai_provider_and_model"
+      ]
+    },
+    {
+      "threatId": "MOD-01",
+      "domain": "moderation_safety",
+      "title": "Moderation capture, doxxing, or false publication",
+      "scenario": "Conflicted reviewers or malicious submissions bypass due process or expose protected material.",
+      "assetClasses": [
+        "evidence_moderation",
+        "public_registry"
+      ],
+      "actorClasses": [
+        "colluding_moderators",
+        "coordinated_group",
+        "malicious_submitter"
+      ],
+      "boundaryIds": [
+        "B02",
+        "B05",
+        "B07"
+      ],
+      "impacts": [
+        "safety",
+        "privacy",
+        "integrity",
+        "democratic_process"
+      ],
+      "controls": [
+        {
+          "controlId": "moderation_due_process",
+          "status": "accepted_policy",
+          "description": "Explicit human states, conflict recusal, public history, emergency restriction, and independent appeal are required.",
+          "evidenceReferences": [
+            "docs/MODERATION_AND_DUE_PROCESS.md"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "testId": "moderation_policy",
+          "kind": "automated",
+          "status": "implemented",
+          "evidenceReference": "tests/tooling/moderation-due-process-policy.test.ts",
+          "redactionRequired": true
+        }
+      ],
+      "residualRisk": {
+        "severity": "critical",
+        "status": "pilot_blocker",
+        "explanation": "No staffed operational queue or independent exercise exists."
+      },
+      "incidentOwnerRole": "moderation_safety_owner",
+      "safeDegradation": "Close intake and publication while existing reviewed public history remains available.",
+      "pilotBlocker": true,
+      "unresolvedDecisions": [
+        "moderation_staffing"
+      ]
+    },
+    {
+      "threatId": "MOB-01",
+      "domain": "mobile_supply_chain",
+      "title": "Native build or signing supply-chain compromise",
+      "scenario": "A dependency, CI action, signing key, artifact, or update channel is compromised.",
+      "assetClasses": [
+        "mobile_builds_links_push"
+      ],
+      "actorClasses": [
+        "compromised_dependency",
+        "insider",
+        "operator_error"
+      ],
+      "boundaryIds": [
+        "B11"
+      ],
+      "impacts": [
+        "supply_chain",
+        "privacy",
+        "integrity"
+      ],
+      "controls": [
+        {
+          "controlId": "mobile_foundation_ci",
+          "status": "implemented_foundation",
+          "description": "Pinned toolchains, lockfile, SBOM, unsigned development builds, and configuration checks run in CI.",
+          "evidenceReferences": [
+            "docs/NATIVE_MOBILE.md",
+            ".github/workflows/ci.yml"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "testId": "mobile_release_review",
+          "kind": "independent_review",
+          "status": "independent_review_required",
+          "evidenceReference": null,
+          "redactionRequired": true
+        }
+      ],
+      "residualRisk": {
+        "severity": "critical",
+        "status": "pilot_blocker",
+        "explanation": "Production app signing, store release, rollback, and recovery evidence do not exist."
+      },
+      "incidentOwnerRole": "mobile_release_owner",
+      "safeDegradation": "Stop release and rebuild only after dependency, credential, and artifact review.",
+      "pilotBlocker": true,
+      "unresolvedDecisions": [
+        "production_mobile_signing"
+      ]
+    },
+    {
+      "threatId": "MOB-02",
+      "domain": "mobile_links_storage_push",
+      "title": "Malicious link, insecure storage, clipboard, or push leakage",
+      "scenario": "A synthetic attacker substitutes an app/wallet link or obtains session/political data from device or notification state.",
+      "assetClasses": [
+        "mobile_builds_links_push",
+        "accounts_sessions"
+      ],
+      "actorClasses": [
+        "wallet_link_attacker",
+        "external_attacker",
+        "data_broker"
+      ],
+      "boundaryIds": [
+        "B01",
+        "B08",
+        "B09"
+      ],
+      "impacts": [
+        "privacy",
+        "authorization",
+        "integrity"
+      ],
+      "controls": [
+        {
+          "controlId": "mobile_safe_boundaries",
+          "status": "implemented_foundation",
+          "description": "Exact links, explicit wallet gesture, protected-storage ports, clear-all behavior, and opaque push payloads are tested.",
+          "evidenceReferences": [
+            "apps/mobile/src/links.test.ts",
+            "apps/mobile/src/secure-storage.test.ts",
+            "apps/mobile/src/push.test.ts"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "testId": "mobile_security_foundation",
+          "kind": "automated",
+          "status": "implemented",
+          "evidenceReference": "apps/mobile/src/wallet-harness.test.ts",
+          "redactionRequired": true
+        }
+      ],
+      "residualRisk": {
+        "severity": "high",
+        "status": "requires_mitigation",
+        "explanation": "Associated-domain, device lifecycle, clipboard/screenshot, and provider tests remain manual/future."
+      },
+      "incidentOwnerRole": "mobile_release_owner",
+      "safeDegradation": "Reject the link, clear local state, disable push/wallet launch, and allow safe in-app public reads.",
+      "pilotBlocker": true,
+      "unresolvedDecisions": [
+        "device_and_app_link_matrix"
+      ]
+    },
+    {
+      "threatId": "VRLOGIN-01",
+      "domain": "verus_account_proof",
+      "title": "Forged, replayed, wrong-chain, or wrong-audience wallet proof",
+      "scenario": "A wallet/deep-link attacker or compromised signer returns a response outside the exact challenge context.",
+      "assetClasses": [
+        "verus_requests_identities",
+        "accounts_sessions"
+      ],
+      "actorClasses": [
+        "wallet_link_attacker",
+        "compromised_signer_or_node"
+      ],
+      "boundaryIds": [
+        "B09",
+        "B10"
+      ],
+      "impacts": [
+        "authorization",
+        "privacy",
+        "integrity"
+      ],
+      "controls": [
+        {
+          "controlId": "verus_proof_policy",
+          "status": "accepted_policy",
+          "description": "Nonce, expiry, audience, purpose, network, session, signatures, current identity state, and compatibility must all verify.",
+          "evidenceReferences": [
+            "docs/IDENTITY_AND_VERUS_MOBILE.md"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "testId": "verus_cryptographic_e2e",
+          "kind": "manual",
+          "status": "planned",
+          "evidenceReference": null,
+          "redactionRequired": true
+        }
+      ],
+      "residualRisk": {
+        "severity": "critical",
+        "status": "pilot_blocker",
+        "explanation": "The disabled mobile harness does not perform cryptographic wallet verification."
+      },
+      "incidentOwnerRole": "identity_authority_owner",
+      "safeDegradation": "Create no link and preserve local account and public read paths.",
+      "pilotBlocker": true,
+      "unresolvedDecisions": [
+        "verus_compatibility_and_auth_service"
+      ]
+    },
+    {
+      "threatId": "VRUPDATE-01",
+      "domain": "verus_identity_update",
+      "title": "Unsafe representative-controlled identity update",
+      "scenario": "A hidden or wrong-network payload is bundled with login or accepted without exact consent and readback.",
+      "assetClasses": [
+        "verus_requests_identities",
+        "representative_authority"
+      ],
+      "actorClasses": [
+        "wallet_link_attacker",
+        "representative_or_staff",
+        "operator_error"
+      ],
+      "boundaryIds": [
+        "B09",
+        "B10"
+      ],
+      "impacts": [
+        "authorization",
+        "integrity",
+        "legal"
+      ],
+      "controls": [
+        {
+          "controlId": "identity_update_absent",
+          "status": "accepted_policy",
+          "description": "The initial RMR-managed model does not authorize representative-controlled identity updates.",
+          "evidenceReferences": [
+            "docs/IDENTITY_AND_VERUS_MOBILE.md"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "testId": "identity_update_future_review",
+          "kind": "independent_review",
+          "status": "planned",
+          "evidenceReference": null,
+          "redactionRequired": true
+        }
+      ],
+      "residualRisk": {
+        "severity": "critical",
+        "status": "accepted_for_foundation",
+        "explanation": "The safest current control is absence; a new governance issue is required to revive the path."
+      },
+      "incidentOwnerRole": "governance_legal",
+      "safeDegradation": "Keep the feature absent; canonical profiles and local corrections remain available.",
+      "pilotBlocker": false,
+      "unresolvedDecisions": []
+    },
+    {
+      "threatId": "VRMANAGED-01",
+      "domain": "verus_managed_identities",
+      "title": "Wrong representative identity, parent, namespace, or custody",
+      "scenario": "An operator or compromised signer provisions a collision, wrong parent, duplicate identity, or unsafe authority.",
+      "assetClasses": [
+        "verus_requests_identities",
+        "signer_rpc"
+      ],
+      "actorClasses": [
+        "compromised_signer_or_node",
+        "insider",
+        "operator_error"
+      ],
+      "boundaryIds": [
+        "B03",
+        "B04",
+        "B10"
+      ],
+      "impacts": [
+        "authorization",
+        "integrity",
+        "democratic_process"
+      ],
+      "controls": [
+        {
+          "controlId": "managed_identity_policy_required",
+          "status": "future_required",
+          "description": "Issues #80-#82 require deterministic hierarchy, collision checks, reviewed batches, separate custody, idempotency, and readback.",
+          "evidenceReferences": [
+            "https://github.com/constitutionalmoney/rate-my-representatives-app/issues/80"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "testId": "managed_identity_vrsctest",
+          "kind": "manual",
+          "status": "planned",
+          "evidenceReference": null,
+          "redactionRequired": true
+        }
+      ],
+      "residualRisk": {
+        "severity": "critical",
+        "status": "pilot_blocker",
+        "explanation": "Hierarchy, custody, recovery, runbooks, and write adapters are not approved."
+      },
+      "incidentOwnerRole": "verus_operations_owner",
+      "safeDegradation": "Provision nothing and keep canonical public profiles independent of Verus.",
+      "pilotBlocker": true,
+      "unresolvedDecisions": [
+        "managed_identity_hierarchy",
+        "signer_custody"
+      ]
+    },
+    {
+      "threatId": "PROV-01",
+      "domain": "provenance",
+      "title": "Signer/RPC compromise, reorg, content overwrite, or provenance-as-truth",
+      "scenario": "A compromised node or operator writes wrong bytes/network or labels a mismatch as verified truth.",
+      "assetClasses": [
+        "provenance_manifests",
+        "signer_rpc"
+      ],
+      "actorClasses": [
+        "compromised_signer_or_node",
+        "operator_error",
+        "coordinated_group"
+      ],
+      "boundaryIds": [
+        "B04",
+        "B05",
+        "B10"
+      ],
+      "impacts": [
+        "integrity",
+        "availability",
+        "democratic_process"
+      ],
+      "controls": [
+        {
+          "controlId": "provenance_disabled",
+          "status": "implemented_foundation",
+          "description": "Signer/RPC domains are isolated, gates are false, and provenance explicitly does not prove truth.",
+          "evidenceReferences": [
+            "packages/provenance/src/index.ts",
+            "packages/domain/src/security-domains.test.ts"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "testId": "provenance_vrsctest_faults",
+          "kind": "manual",
+          "status": "planned",
+          "evidenceReference": null,
+          "redactionRequired": true
+        }
+      ],
+      "residualRisk": {
+        "severity": "critical",
+        "status": "pilot_blocker",
+        "explanation": "VDXF namespace, exact-byte pipeline, signer/node faults, readback, and recovery are not implemented."
+      },
+      "incidentOwnerRole": "provenance_owner",
+      "safeDegradation": "Perform no write and show accurate pending/unavailable provenance while canonical reads remain.",
+      "pilotBlocker": true,
+      "unresolvedDecisions": [
+        "vdxf_namespace_and_pipeline",
+        "mainnet_prohibited"
+      ]
+    },
+    {
+      "threatId": "OPS-01",
+      "domain": "operations_resilience",
+      "title": "Operator error, secret exposure, unsafe backup, or failed recovery",
+      "scenario": "A broad grant, wrong environment, copied secret, backup, telemetry, or destructive retry crosses a security boundary.",
+      "assetClasses": [
+        "signer_rpc",
+        "backups_analytics",
+        "classified_data"
+      ],
+      "actorClasses": [
+        "operator_error",
+        "insider",
+        "compromised_dependency"
+      ],
+      "boundaryIds": [
+        "B03",
+        "B05",
+        "B10",
+        "B11",
+        "B12"
+      ],
+      "impacts": [
+        "privacy",
+        "integrity",
+        "availability",
+        "supply_chain"
+      ],
+      "controls": [
+        {
+          "controlId": "operations_foundation",
+          "status": "implemented_foundation",
+          "description": "Deny-by-default roles, redaction, secret scan, synthetic backup manifest, outbox, and VRSCTEST defaults exist.",
+          "evidenceReferences": [
+            "docs/DATA_CLASSIFICATION.md",
+            "docs/AUDIT_OUTBOX.md"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "testId": "production_recovery_exercise",
+          "kind": "manual",
+          "status": "manual_required",
+          "evidenceReference": null,
+          "redactionRequired": true
+        }
+      ],
+      "residualRisk": {
+        "severity": "critical",
+        "status": "pilot_blocker",
+        "explanation": "Production secret management, restore, rotation, on-call, and incident exercises are pending."
+      },
+      "incidentOwnerRole": "platform_owner",
+      "safeDegradation": "Disable affected writes/exports, rotate or revoke, and preserve classified audit evidence.",
+      "pilotBlocker": true,
+      "unresolvedDecisions": [
+        "production_operations_and_restore"
+      ]
+    },
+    {
+      "threatId": "REG-01",
+      "domain": "public_registry_memory",
+      "title": "Scraping, defacement, registry capture, or public-memory manipulation",
+      "scenario": "A scraper or coordinated actor distorts, suppresses, or over-enumerates source-backed public records and corrections.",
+      "assetClasses": [
+        "public_registry",
+        "source_records",
+        "provenance_manifests"
+      ],
+      "actorClasses": [
+        "scraper",
+        "coordinated_group",
+        "source_publisher"
+      ],
+      "boundaryIds": [
+        "B01",
+        "B03",
+        "B06"
+      ],
+      "impacts": [
+        "integrity",
+        "availability",
+        "democratic_process"
+      ],
+      "controls": [
+        {
+          "controlId": "reviewed_public_history",
+          "status": "implemented_foundation",
+          "description": "Public profiles are source-backed allowlists with versioned timelines, coverage, corrections, and explicit missing-data meaning.",
+          "evidenceReferences": [
+            "docs/PUBLIC_PROFILE_API.md",
+            "docs/COVERAGE_POLICY.md"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "testId": "public_profile_foundation",
+          "kind": "automated",
+          "status": "implemented",
+          "evidenceReference": "tests/tooling/public-profile-api-foundation.test.ts",
+          "redactionRequired": true
+        }
+      ],
+      "residualRisk": {
+        "severity": "high",
+        "status": "requires_mitigation",
+        "explanation": "Public records are intentionally enumerable; availability, abuse, and editorial monitoring need production evidence."
+      },
+      "incidentOwnerRole": "data_stewardship",
+      "safeDegradation": "Preserve proportionate public access, label gaps, and append corrections without hidden rewriting.",
+      "pilotBlocker": true,
+      "unresolvedDecisions": [
+        "public_availability_and_abuse_policy"
+      ]
+    }
+  ],
+  "releaseReadiness": {
+    "decision": "blocked",
+    "namedOwnersAssigned": false,
+    "publicReadDegradationTested": false,
+    "independentReviews": {
+      "applicationSecurity": {
+        "status": "pending",
+        "evidenceReferences": []
+      },
+      "privacyAndNoSocialCredit": {
+        "status": "pending",
+        "evidenceReferences": []
+      },
+      "sourceAndHostileContent": {
+        "status": "pending",
+        "evidenceReferences": []
+      },
+      "moderationAndSafety": {
+        "status": "pending",
+        "evidenceReferences": []
+      },
+      "nativeMobileSupplyChain": {
+        "status": "pending",
+        "evidenceReferences": []
+      },
+      "aiSafety": {
+        "status": "pending",
+        "evidenceReferences": []
+      },
+      "verusAndSignerOperations": {
+        "status": "pending",
+        "evidenceReferences": []
+      },
+      "backupRestoreAndIncidentResponse": {
+        "status": "pending",
+        "evidenceReferences": []
+      }
+    },
+    "unresolvedDecisionIds": [
+      "production_operations_and_restore",
+      "production_auth_provider",
+      "no_social_credit_independent_review",
+      "managed_identity_hierarchy",
+      "vdxf_namespace_and_pipeline"
+    ],
+    "pilotBlockerThreatIds": [
+      "AUTH-01",
+      "PRIV-01",
+      "NSC-01",
+      "SRC-01",
+      "AI-01",
+      "MOD-01",
+      "MOB-01",
+      "MOB-02",
+      "VRLOGIN-01",
+      "VRMANAGED-01",
+      "PROV-01",
+      "OPS-01",
+      "REG-01"
+    ],
+    "decisionReason": "Synthetic foundation controls exist, but named owners, independent reviews, production exercises, and unresolved high-risk decisions remain incomplete."
+  }
+} as const;
+
 export const SYNTHETIC_NOT_FOUND = {
   "schemaVersion": "api-error.v1",
   "code": "NOT_FOUND",

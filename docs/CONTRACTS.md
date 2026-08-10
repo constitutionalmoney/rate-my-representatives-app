@@ -27,6 +27,17 @@ a public reason, appeal/supersession links, false automatic publication, and an 
 public/provenance boundary. It is restricted decision metadata, not a public response or
 operational moderation route.
 
+## Threat-model review contract
+
+Issue #6 adds generated `threat-control-catalog.v1` type/schema/fixture wiring. The
+status-aware internal catalog requires assets, actors, boundaries, controls, test evidence,
+residual risk, an incident-owner role, safe degradation, blockers, unresolved decisions,
+and eight independent-review areas. Its hard rules reject core Verus dependency, mainnet
+writes, private provenance, automated human intent or allegation publication, provenance-
+as-truth, default-enabled high-risk features, optional-dependency blockage of safe public
+reads, and invented production assurance. The committed synthetic fixture is blocked and
+adds no HTTP operation or runtime feature. See [`THREAT_MODEL.md`](./THREAT_MODEL.md).
+
 ## Official-source internal contracts
 
 Issue #55 adds generated TypeScript and runtime validators for
@@ -64,7 +75,7 @@ pnpm check:api-compat
 pnpm test:contract
 ```
 
-`check:contracts` rejects generated drift and validates the OpenAPI document, all 27
+`check:contracts` rejects generated drift and validates the OpenAPI document, all 28
 schemas, synthetic fixtures, operation metadata, privacy fields, and human-intent
 boundaries. `check:api-compat` compares the canonical contract with the parent commit and
 rejects unapproved breaking changes. An intentional break requires a versioned migration

@@ -458,7 +458,8 @@ Before any evidence or community-context pilot, all of the following must be app
 - representative notice, response, correction, dispute, and independent appeal exercises;
 - staffed queues, service metrics, conflict reassignment, and safety/legal escalation;
 - restricted/public projection tests and deletion/correction/hold procedures;
-- threat model, independent security review, backup/restore, and incident exercises; and
+- the accepted [`THREAT_MODEL.md`](./THREAT_MODEL.md) baseline, independent security
+  review, backup/restore, and incident exercises; and
 - explicit enablement of only the required false-by-default feature gates.
 
 Automatic publication is not a gate that can be enabled; it is prohibited by policy.

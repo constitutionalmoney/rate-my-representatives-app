@@ -447,6 +447,9 @@ inputs, APIs, mobile/web clients, manifests, and review—not merely a disabled 
 
 ## 11. Failure behavior and release gates
 
+The cross-system abuse cases, control/evidence status, residual risk, safe degradation,
+and independent-review blockers are canonical in [`THREAT_MODEL.md`](./THREAT_MODEL.md).
+
 | Failure or attack | Required behavior |
 | --- | --- |
 | Unknown account/identity, invalid credential, or recovery request | Same generic external response; no enumeration |

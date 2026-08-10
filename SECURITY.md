@@ -83,3 +83,8 @@ No specific response deadline is promised in this pre-release policy. Active exp
 Security vulnerabilities and live incidents are related but different. A live incident may require disabling writes, wallet callbacks, identity-update flows, representative claims, signal submission, source ingestion, or provenance publication while preserving safe public read access.
 
 When Verus is degraded or compromised, the application must not describe an unconfirmed transaction as verified, and the public representative record must remain available with an accurate provenance status.
+
+The canonical abuse/privacy-harm catalog, trust boundaries, safe-degradation rules,
+evidence status, incident-owner roles, and independent-review blockers are defined in
+[`docs/THREAT_MODEL.md`](./docs/THREAT_MODEL.md). That accepted design baseline is not a
+claim that production controls or review have been completed.

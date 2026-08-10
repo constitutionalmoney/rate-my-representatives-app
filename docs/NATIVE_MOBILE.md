@@ -127,5 +127,7 @@ focus to the heading, and Android hardware Back exits detail and preview states.
 VoiceOver, TalkBack, switch-control, contrast, and wallet review remain distinct entries
 in the device matrix for every release candidate.
 
+Native supply-chain, links, clipboard/storage, push, wallet, safe-degradation, and
+independent-review requirements are cataloged in [`THREAT_MODEL.md`](./THREAT_MODEL.md).
 See [ADR 0010](./adr/0010-native-mobile-foundation.md) and the
 [mobile release runbook](./runbooks/MOBILE_RELEASE.md).

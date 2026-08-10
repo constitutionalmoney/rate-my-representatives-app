@@ -313,6 +313,11 @@ Citizen VerusID links and individual civic activity must not be joinable through
 
 ## 10. Threat model
 
+The cross-system catalog, evidence status, safe-degradation rules, and incident ownership
+are canonical in [`THREAT_MODEL.md`](./THREAT_MODEL.md). Optional account proof,
+representative-controlled `IdentityUpdateRequest`, and RMR-managed representative identity
+provisioning/activity publication remain three separately authorized threat surfaces.
+
 Required tests include:
 
 - replay and concurrent nonce claim;

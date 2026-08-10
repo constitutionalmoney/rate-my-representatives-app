@@ -307,8 +307,10 @@ and private evidence. Public/native/web/general-worker processes have no signer/
 credential or network path. Observability recursively redacts sensitive keys; analytics
 admits only operational allowlisted events/fields. Backup manifests preserve the domain
 classification and prohibit production-to-non-production restore. See
-`docs/DATA_CLASSIFICATION.md` and ADR 0011. Issue #6 and #25 still own the full threat and
-disaster-recovery exercises respectively.
+`docs/DATA_CLASSIFICATION.md` and ADR 0011. Issue #6 now defines the complete status-aware
+threat and privacy-harm baseline in [`THREAT_MODEL.md`](./THREAT_MODEL.md); production
+exercises and independent review remain blockers. Issue #25 still owns disaster-recovery
+implementation and exercises.
 
 ## 8. Command/query model
 

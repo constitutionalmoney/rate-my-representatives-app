@@ -155,5 +155,6 @@ reviewed migration. Rotate affected runtime/storage credentials after any bounda
 Dropping classified data requires explicit retention/legal authorization and a verified
 classification-preserving backup.
 
-Issue #6 still owns the full threat-model exercise and abuse-case review. Issue #25 owns
-the disaster-recovery exercise. Neither exercise is claimed complete by this foundation.
+Issue #6 now defines the full status-aware threat-model and abuse/privacy-harm baseline in
+[`THREAT_MODEL.md`](./THREAT_MODEL.md). Its production exercises and independent reviews
+remain pilot blockers. Issue #25 owns the disaster-recovery exercise.

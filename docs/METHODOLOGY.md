@@ -30,7 +30,7 @@ narrow authority:
   temporal rules, and planned persistence;
 - [`AUTH_AND_IDENTITY.md`](./AUTH_AND_IDENTITY.md) controls accounts, attestations,
   eligibility, role authority, and the prohibition on identity-derived reputation;
-- [`MODERATION_POLICY.md`](./MODERATION_POLICY.md) controls evidence review, response,
+- [`MODERATION_AND_DUE_PROCESS.md`](./MODERATION_AND_DUE_PROCESS.md) controls evidence review, response,
   dispute, correction, appeal, and retraction workflows; and
 - [`WEBSITE_ALIGNMENT.md`](./WEBSITE_ALIGNMENT.md) controls product terminology and the
   website/application boundary.

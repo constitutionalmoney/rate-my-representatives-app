@@ -465,6 +465,7 @@ Verus-specific gates apply only when the corresponding feature is enabled. A rea
 - [Canonical civic and participation data model](./docs/DATA_MODEL.md)
 - [Authentication, identity, authority, and attestation policy](./docs/AUTH_AND_IDENTITY.md)
 - [Light Mathematics methodology policy](./docs/METHODOLOGY.md)
+- [Moderation and due-process policy](./docs/MODERATION_AND_DUE_PROCESS.md)
 - [End-to-end roadmap](./docs/ROADMAP.md)
 - [System architecture](./docs/ARCHITECTURE.md)
 - [Source-backed public profile API](./docs/PUBLIC_PROFILE_API.md)

@@ -224,6 +224,9 @@ Representative signals and ratings are private individual data. Public output is
 Owns evidence submissions, claim review, representative responses, disputes, corrections, appeals, reviewer assignments, conflicts, decisions, and public history.
 
 AI outputs enter as drafts within this context and never bypass state transitions.
+[`MODERATION_AND_DUE_PROCESS.md`](./MODERATION_AND_DUE_PROCESS.md) is the canonical
+policy and generated-decision-contract baseline. Issue #5 implements no intake,
+persistence, queue, publication, or provenance workflow.
 
 ### 5.7 Methodology
 
@@ -335,7 +338,9 @@ State machines live in `packages/domain`. Database constraints enforce invariant
 
 ```text
 draft -> submitted -> validated -> under_review
-under_review -> published | disputed | rejected
+submitted -> rejected
+under_review -> published | disputed | rejected | needs_more_information
+needs_more_information -> submitted | withdrawn
 published/disputed -> corrected | withdrawn | archived
 rejected -> appealed -> appeal_upheld | appeal_denied
 ```

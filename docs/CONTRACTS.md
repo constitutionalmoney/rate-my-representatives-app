@@ -14,6 +14,19 @@ It fixes the eight domain names, deny default, classified object buckets,
 classification-preserving backup requirements, signer isolation, and No Social Credit
 constants. It is an internal policy contract and adds no HTTP route.
 
+## Methodology and moderation policy contracts
+
+Issue #4 adds generated `methodology-indicator-result.v1` and
+`methodology-release-gate.v1` types, schema documents, and synthetic fixtures. They keep
+missing inputs non-adverse and the composite release decision disabled unless every
+separate gate is approved.
+
+Issue #5 adds generated `moderation-decision.v1` type/schema/fixture wiring. The contract
+requires a human decider, assignment and conflict outcome, source/method/policy versions,
+a public reason, appeal/supersession links, false automatic publication, and an explicit
+public/provenance boundary. It is restricted decision metadata, not a public response or
+operational moderation route.
+
 ## Official-source internal contracts
 
 Issue #55 adds generated TypeScript and runtime validators for
@@ -51,7 +64,7 @@ pnpm check:api-compat
 pnpm test:contract
 ```
 
-`check:contracts` rejects generated drift and validates the OpenAPI document, all 24
+`check:contracts` rejects generated drift and validates the OpenAPI document, all 27
 schemas, synthetic fixtures, operation metadata, privacy fields, and human-intent
 boundaries. `check:api-compat` compares the canonical contract with the parent commit and
 rejects unapproved breaking changes. An intentional break requires a versioned migration

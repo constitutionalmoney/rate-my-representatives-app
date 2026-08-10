@@ -298,6 +298,7 @@ const fixtureSchemas = new Map([
   ['jurisdictions.synthetic.json', 'jurisdiction-registry.schema.json'],
   ['methodology-indicator.synthetic.json', 'methodology-indicator-result.schema.json'],
   ['methodology-release-gate.synthetic.json', 'methodology-release-gate.schema.json'],
+  ['moderation-decision.synthetic.json', 'moderation-decision.schema.json'],
   ['not-found.json', 'api-error.schema.json'],
   ['public-role-profile.synthetic.json', 'public-role-profile.schema.json'],
   ['public-role-registry.synthetic.json', 'public-role-registry.schema.json'],

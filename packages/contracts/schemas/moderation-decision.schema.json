@@ -1,0 +1,235 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ratemyrepresentatives.com/moderation-decision.schema.json",
+  "title": "ModerationDecisionV1",
+  "description": "Restricted decision metadata with a separately controlled public projection; never raw evidence or review notes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "policyVersion",
+    "dataMode",
+    "decisionId",
+    "workflow",
+    "targetReference",
+    "previousState",
+    "outcomeState",
+    "review",
+    "basis",
+    "ai",
+    "history",
+    "publication",
+    "decidedAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "moderation-decision.v1" },
+    "policyVersion": { "const": "moderation-due-process-policy.v1" },
+    "dataMode": { "enum": ["synthetic", "production"] },
+    "decisionId": { "$ref": "#/$defs/id" },
+    "workflow": {
+      "enum": [
+        "evidence_submission",
+        "representative_response",
+        "correction_request",
+        "dispute",
+        "appeal",
+        "community_context",
+        "source_status"
+      ]
+    },
+    "targetReference": { "$ref": "#/$defs/id" },
+    "previousState": { "$ref": "#/$defs/state" },
+    "outcomeState": { "$ref": "#/$defs/state" },
+    "review": { "$ref": "#/$defs/review" },
+    "basis": { "$ref": "#/$defs/basis" },
+    "ai": { "$ref": "#/$defs/ai" },
+    "history": { "$ref": "#/$defs/history" },
+    "publication": { "$ref": "#/$defs/publication" },
+    "decidedAt": { "type": "string", "format": "date-time" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "workflow": { "const": "appeal" } },
+        "required": ["workflow"]
+      },
+      "then": {
+        "properties": {
+          "review": {
+            "type": "object",
+            "properties": {
+              "reviewerRole": { "const": "appeal_reviewer" },
+              "independentOfOriginalDecision": { "const": true }
+            }
+          },
+          "history": {
+            "type": "object",
+            "properties": {
+              "appealedDecisionId": { "$ref": "#/$defs/id" }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,191}$"
+    },
+    "state": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,63}$"
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reviewerRole",
+        "assignmentReference",
+        "conflictDisclosure",
+        "recusalOutcome",
+        "independentOfOriginalDecision",
+        "humanDecider"
+      ],
+      "properties": {
+        "reviewerRole": {
+          "enum": ["reviewer", "admin", "legal_reviewer", "appeal_reviewer"]
+        },
+        "assignmentReference": { "$ref": "#/$defs/id" },
+        "conflictDisclosure": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "recusalOutcome": {
+          "enum": ["no_recusal_required", "reassigned_after_recusal", "secondary_review_approved"]
+        },
+        "independentOfOriginalDecision": { "type": "boolean" },
+        "humanDecider": { "const": true }
+      }
+    },
+    "basis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "methodVersion",
+        "sourceRecordVersionIds",
+        "rightsReview",
+        "reasonCode",
+        "publicReason"
+      ],
+      "properties": {
+        "methodVersion": {
+          "oneOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }]
+        },
+        "sourceRecordVersionIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "rightsReview": {
+          "enum": ["reviewed_permitted", "metadata_only", "not_applicable", "prohibited"]
+        },
+        "reasonCode": { "$ref": "#/$defs/id" },
+        "publicReason": { "type": "string", "minLength": 1, "maxLength": 2000 }
+      }
+    },
+    "ai": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assistanceUsed", "disclosure", "decidedOutcome"],
+      "properties": {
+        "assistanceUsed": { "type": "boolean" },
+        "disclosure": { "type": "string", "minLength": 1, "maxLength": 1000 },
+        "decidedOutcome": { "const": false }
+      }
+    },
+    "history": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["supersedesDecisionId", "appealedDecisionId"],
+      "properties": {
+        "supersedesDecisionId": {
+          "oneOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }]
+        },
+        "appealedDecisionId": {
+          "oneOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }]
+        }
+      }
+    },
+    "publication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "automaticPublication",
+        "allowedPublicFields",
+        "rawPrivateMaterialIncluded",
+        "provenanceEligible"
+      ],
+      "properties": {
+        "state": {
+          "enum": ["restricted_only", "public_projection_approved", "emergency_restricted"]
+        },
+        "automaticPublication": { "const": false },
+        "allowedPublicFields": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "decisionId",
+              "policyVersion",
+              "workflow",
+              "targetReference",
+              "outcomeState",
+              "reasonCode",
+              "publicReason",
+              "supersedesDecisionId",
+              "appealedDecisionId",
+              "decidedAt",
+              "aiDisclosure"
+            ]
+          }
+        },
+        "rawPrivateMaterialIncluded": { "const": false },
+        "provenanceEligible": { "type": "boolean", "default": false }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "state": { "const": "public_projection_approved" } },
+            "required": ["state"]
+          },
+          "then": {
+            "properties": {
+              "allowedPublicFields": { "type": "array", "minItems": 1 }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": { "enum": ["restricted_only", "emergency_restricted"] }
+            },
+            "required": ["state"]
+          },
+          "then": {
+            "properties": {
+              "allowedPublicFields": { "type": "array", "maxItems": 0 },
+              "provenanceEligible": { "const": false }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "provenanceEligible": { "const": true } },
+            "required": ["provenanceEligible"]
+          },
+          "then": {
+            "properties": {
+              "state": { "const": "public_projection_approved" },
+              "allowedPublicFields": { "type": "array", "minItems": 1 }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

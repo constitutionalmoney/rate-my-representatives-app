@@ -76,7 +76,7 @@ describe('issue #57 No Social Credit enforcement foundation', () => {
   it('requires all nine impact-assessment fields in every contribution path', async () => {
     const templates = await Promise.all(
       [
-        '.github/PULL_REQUEST_TEMPLATE.md',
+        '.github/pull_request_template.md',
         '.github/ISSUE_TEMPLATE/rfc.yml',
         '.github/ISSUE_TEMPLATE/feature_request.yml',
       ].map(read),

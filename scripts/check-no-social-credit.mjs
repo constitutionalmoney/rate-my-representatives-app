@@ -76,7 +76,7 @@ const requiredAssessmentFields = [
   'proving tests',
 ];
 for (const file of [
-  '.github/PULL_REQUEST_TEMPLATE.md',
+  '.github/pull_request_template.md',
   '.github/ISSUE_TEMPLATE/rfc.yml',
   '.github/ISSUE_TEMPLATE/feature_request.yml',
 ]) {

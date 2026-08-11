@@ -11,6 +11,7 @@ Read:
 - `docs/ROADMAP.md`
 - `GOVERNANCE.md`
 - `SECURITY.md`
+- `docs/NO_SOCIAL_CREDIT.md`
 - `DCO.txt`
 - `AI_CONTRIBUTIONS.md`
 
@@ -97,6 +98,10 @@ Every gesture needs a visible equivalent. Test iOS and Android with screen reade
 ### Privacy
 
 Use data minimization and separate security domains. Do not log request bodies for precise-location, authentication, wallet callback, identity, evidence, signal, moderation, or administrative routes. Add redaction tests rather than relying on developer discipline.
+
+Complete the nine-field No Social Credit impact assessment required by
+[`docs/NO_SOCIAL_CREDIT.md`](./docs/NO_SOCIAL_CREDIT.md). No feature flag, consent flow,
+customer request, or operator role can override a hard prohibition.
 
 ### Sources and evidence
 

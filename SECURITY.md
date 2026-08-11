@@ -88,3 +88,8 @@ The canonical abuse/privacy-harm catalog, trust boundaries, safe-degradation rul
 evidence status, incident-owner roles, and independent-review blockers are defined in
 [`docs/THREAT_MODEL.md`](./docs/THREAT_MODEL.md). That accepted design baseline is not a
 claim that production controls or review have been completed.
+
+The public Covenant, prohibited uses, narrow-state limits, enforcement evidence, rights,
+and release blockers are canonical in
+[`docs/NO_SOCIAL_CREDIT.md`](./docs/NO_SOCIAL_CREDIT.md). A suspected violation follows
+this private reporting process and is treated as a security/privacy incident.

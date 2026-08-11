@@ -9,6 +9,9 @@ export type RedactedCrashRecord = Readonly<{
   routeKind: 'foundation' | 'notifications' | 'profile' | 'wallet_result';
 }>;
 
+const forbiddenCitizenProfileErrorType =
+  /(citizen|civicrank|civicreputation|ideology|loyalty|politicalprofile|reputation|socialcredit|trustworthiness)/iu;
+
 export function createRedactedCrashRecord(input: {
   appBuild: number;
   appVersion: string;
@@ -19,7 +22,9 @@ export function createRedactedCrashRecord(input: {
   routeKind: RedactedCrashRecord['routeKind'];
 }): RedactedCrashRecord {
   const errorType =
-    input.error instanceof Error && /^[A-Za-z][A-Za-z0-9]{0,63}$/u.test(input.error.name)
+    input.error instanceof Error &&
+    /^[A-Za-z][A-Za-z0-9]{0,63}$/u.test(input.error.name) &&
+    !forbiddenCitizenProfileErrorType.test(input.error.name)
       ? input.error.name
       : 'UnknownError';
   if (!Number.isInteger(input.appBuild) || input.appBuild < 1) {

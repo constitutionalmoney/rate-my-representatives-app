@@ -38,6 +38,15 @@ as-truth, default-enabled high-risk features, optional-dependency blockage of sa
 reads, and invented production assurance. The committed synthetic fixture is blocked and
 adds no HTTP operation or runtime feature. See [`THREAT_MODEL.md`](./THREAT_MODEL.md).
 
+## No Social Credit enforcement contract
+
+Issue #57 adds generated `no-social-credit-policy.v1` TypeScript/schema/fixture wiring.
+It fixes twelve false hard rules, nine purpose-limited private states, required enforcement
+surfaces and contribution-assessment fields, rights/reporting status, and a conditional
+evidence gate. The synthetic fixture is blocked and cannot claim a participatory pilot,
+production legal approval, or named ownership. It is policy metadata, never a citizen
+record. See [`NO_SOCIAL_CREDIT.md`](./NO_SOCIAL_CREDIT.md) and ADR 0018.
+
 ## Official-source internal contracts
 
 Issue #55 adds generated TypeScript and runtime validators for
@@ -75,7 +84,7 @@ pnpm check:api-compat
 pnpm test:contract
 ```
 
-`check:contracts` rejects generated drift and validates the OpenAPI document, all 28
+`check:contracts` rejects generated drift and validates the OpenAPI document, all 29
 schemas, synthetic fixtures, operation metadata, privacy fields, and human-intent
 boundaries. `check:api-compat` compares the canonical contract with the parent commit and
 rejects unapproved breaking changes. An intentional break requires a versioned migration

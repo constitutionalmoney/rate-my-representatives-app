@@ -27,4 +27,23 @@ describe('privacy-safe native crash boundary', () => {
       'routeKind',
     ]);
   });
+
+  it.each(['CitizenScoreError', 'IdeologyProfileError', 'SocialCreditError'])(
+    'does not emit generalized citizen-profile error type %s',
+    (name) => {
+      const error = new Error('synthetic');
+      error.name = name;
+      expect(
+        createRedactedCrashRecord({
+          appBuild: 1,
+          appVersion: '0.1.0',
+          environment: 'development',
+          error,
+          occurredAt: '2026-08-11T12:00:00Z',
+          platform: 'ios',
+          routeKind: 'foundation',
+        }).errorType,
+      ).toBe('UnknownError');
+    },
+  );
 });

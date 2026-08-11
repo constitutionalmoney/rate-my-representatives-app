@@ -32,6 +32,11 @@ const schemaDefinitions = [
   ],
   ['moderation-decision', 'moderation-decision.schema.json', 'MODERATION_DECISION_SCHEMA'],
   [
+    'no-social-credit-policy',
+    'no-social-credit-policy.schema.json',
+    'NO_SOCIAL_CREDIT_POLICY_SCHEMA',
+  ],
+  [
     'mobile-compatibility-status',
     'mobile-compatibility-status.schema.json',
     'MOBILE_COMPATIBILITY_STATUS_SCHEMA',
@@ -105,6 +110,7 @@ const fixtureDefinitions = [
   ['SYNTHETIC_METHODOLOGY_INDICATOR', 'methodology-indicator.synthetic.json'],
   ['SYNTHETIC_METHODOLOGY_RELEASE_GATE', 'methodology-release-gate.synthetic.json'],
   ['SYNTHETIC_MODERATION_DECISION', 'moderation-decision.synthetic.json'],
+  ['SYNTHETIC_NO_SOCIAL_CREDIT_POLICY', 'no-social-credit-policy.synthetic.json'],
   ['SYNTHETIC_PUBLIC_ROLE_PROFILE', 'public-role-profile.synthetic.json'],
   ['SYNTHETIC_PUBLIC_ROLE_REGISTRY', 'public-role-registry.synthetic.json'],
   ['SYNTHETIC_REPRESENTATION_CAPABILITIES', 'representation-capabilities.synthetic.json'],

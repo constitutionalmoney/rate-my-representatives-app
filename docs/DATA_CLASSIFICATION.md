@@ -138,9 +138,12 @@ reputation, ideology, loyalty, conformity, eligibility, risk, or political profi
 `assertPublicExportSafe`, generated-contract constants, schema/view scans, authentication
 policy, and security tests reject those names and forbidden joins.
 
-Future issue #57 owns the broader repository-wide covenant review, including narrow
-single-purpose states. Issue #22 supplies the foundational deny rules; it does not weaken
-the covenant or authorize any scoring feature.
+Issue #57 now defines the broader repository-wide Covenant, semantic data-use guard,
+narrow single-purpose state register, generated release gate, contribution impact
+assessment, and cross-surface negative tests in
+[`NO_SOCIAL_CREDIT.md`](./NO_SOCIAL_CREDIT.md). Issue #22 supplies the domain-separation
+foundation. Neither issue authorizes participation, citizen scoring, AI, analytics export,
+cross-product sharing, or a pilot.
 
 ## Review, rollback, and deferred exercises
 

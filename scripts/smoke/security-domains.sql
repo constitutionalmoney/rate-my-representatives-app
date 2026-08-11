@@ -21,6 +21,9 @@ BEGIN
   END IF;
   IF has_table_privilege('rmr_api_runtime', 'rmr_source.retrieval', 'SELECT')
     OR has_table_privilege('rmr_api_runtime', 'rmr_audit.event', 'SELECT')
+    OR has_schema_privilege('rmr_api_runtime', 'rmr_account', 'USAGE')
+    OR has_schema_privilege('rmr_api_runtime', 'rmr_identity', 'USAGE')
+    OR has_schema_privilege('rmr_api_runtime', 'rmr_participation', 'USAGE')
     OR has_schema_privilege('rmr_api_runtime', 'rmr_signer', 'USAGE') THEN
     RAISE EXCEPTION 'API runtime can reach a restricted database domain.';
   END IF;
@@ -72,11 +75,21 @@ BEGIN
     SELECT 1 FROM pg_views
     WHERE schemaname LIKE 'rmr%'
       AND (
-        replace(lower(viewname), '_', '') ~ '(citizenscore|socialcredit|politicalprofile)'
-        OR lower(definition) ~ '(social[_ ]?credit|citizen[_ ]?score)'
+        replace(lower(viewname), '_', '') ~ '(citizenscore|socialcredit|politicalprofile|civicreputation|ideology(profile|score)|loyaltyscore|reputationscore|trustworthinessscore|citizenriskscore)'
+        OR lower(definition) ~ '(social[_ ]?credit|citizen[_ ]?(score|risk)|civic[_ ]?reputation|ideology[_ ]?(profile|score)|loyalty[_ ]?score|political[_ ]?profile|reputation[_ ]?score|trustworthiness[_ ]?score)'
       )
   ) THEN
     RAISE EXCEPTION 'A forbidden generalized citizen-score view exists.';
+  END IF;
+
+  IF EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema LIKE 'rmr%'
+      AND replace(lower(column_name), '_', '') ~
+        '(citizenscore|socialcredit|politicalprofile|civicreputation|ideology(profile|score)|loyaltyscore|reputationscore|trustworthinessscore|citizenriskscore)'
+  ) THEN
+    RAISE EXCEPTION 'A forbidden generalized citizen-score column exists.';
   END IF;
 
   BEGIN

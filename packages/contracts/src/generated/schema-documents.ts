@@ -4123,6 +4123,646 @@ export const MODERATION_DECISION_SCHEMA = {
   }
 } as const;
 
+export const NO_SOCIAL_CREDIT_POLICY_SCHEMA = {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ratemyrepresentatives.com/no-social-credit-policy.schema.json",
+  "title": "NoSocialCreditPolicyV1",
+  "description": "Machine-readable No Social Credit enforcement baseline; never a citizen record, score, profile, or production approval.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "policyVersion",
+    "dataMode",
+    "covenant",
+    "hardRules",
+    "citizenDataClasses",
+    "prohibitedOutcomes",
+    "narrowStates",
+    "enforcement",
+    "rightsAndReporting",
+    "impactAssessment",
+    "releaseGate"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "no-social-credit-policy.v1"
+    },
+    "policyVersion": {
+      "const": "no-social-credit-policy.v1"
+    },
+    "dataMode": {
+      "const": "synthetic"
+    },
+    "covenant": {
+      "const": "No social credit scores shall be created with this technology by Civic Ledger AI Ltd. or Checks and Balances Committee Ltd., or in any implementation that either company develops, operates, governs, or licenses."
+    },
+    "hardRules": {
+      "$ref": "#/$defs/hardRules"
+    },
+    "citizenDataClasses": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/citizenDataClass"
+      }
+    },
+    "prohibitedOutcomes": {
+      "type": "array",
+      "minItems": 12,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/prohibitedOutcome"
+      }
+    },
+    "narrowStates": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "items": {
+        "$ref": "#/$defs/narrowState"
+      }
+    },
+    "enforcement": {
+      "$ref": "#/$defs/enforcement"
+    },
+    "rightsAndReporting": {
+      "$ref": "#/$defs/rightsAndReporting"
+    },
+    "impactAssessment": {
+      "$ref": "#/$defs/impactAssessment"
+    },
+    "releaseGate": {
+      "$ref": "#/$defs/releaseGate"
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/#-]{0,255}$"
+    },
+    "citizenDataClass": {
+      "enum": [
+        "account_security",
+        "identity_attestation",
+        "jurisdiction_location",
+        "private_civic_activity",
+        "moderation_abuse",
+        "notification_subscription",
+        "browsing_behavior",
+        "cross_product_activity",
+        "ai_inferred_trait"
+      ]
+    },
+    "prohibitedOutcome": {
+      "enum": [
+        "generalized_reputation",
+        "loyalty_or_conformity",
+        "ideology_or_political_profile",
+        "generalized_trustworthiness",
+        "generalized_civic_worth",
+        "generalized_eligibility_or_risk",
+        "public_individual_civic_activity",
+        "commercial_or_advertising_targeting",
+        "unrelated_access_decision",
+        "portable_narrow_state",
+        "combined_narrow_state_rank",
+        "cross_product_citizen_profile",
+        "ai_inferred_citizen_trait",
+        "citizen_attributes_in_public_role_method"
+      ]
+    },
+    "hardRules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generalizedCitizenValueAllowed",
+        "citizenTraitInferenceAllowed",
+        "individualCivicActivityPublicAllowed",
+        "citizenDataInPublicRoleMethodAllowed",
+        "narrowStatesPortableAllowed",
+        "narrowStatesCombinableAllowed",
+        "unrelatedAccessUseAllowed",
+        "crossProductCitizenLinkageAllowed",
+        "civicAdvertisingTargetingAllowed",
+        "agentHumanIntentAllowed",
+        "featureFlagOverrideAllowed",
+        "productionApprovalClaimed"
+      ],
+      "properties": {
+        "generalizedCitizenValueAllowed": {
+          "const": false
+        },
+        "citizenTraitInferenceAllowed": {
+          "const": false
+        },
+        "individualCivicActivityPublicAllowed": {
+          "const": false
+        },
+        "citizenDataInPublicRoleMethodAllowed": {
+          "const": false
+        },
+        "narrowStatesPortableAllowed": {
+          "const": false
+        },
+        "narrowStatesCombinableAllowed": {
+          "const": false
+        },
+        "unrelatedAccessUseAllowed": {
+          "const": false
+        },
+        "crossProductCitizenLinkageAllowed": {
+          "const": false
+        },
+        "civicAdvertisingTargetingAllowed": {
+          "const": false
+        },
+        "agentHumanIntentAllowed": {
+          "const": false
+        },
+        "featureFlagOverrideAllowed": {
+          "const": false
+        },
+        "productionApprovalClaimed": {
+          "const": false
+        }
+      }
+    },
+    "narrowStateKind": {
+      "enum": [
+        "authentication_status",
+        "attestation_status",
+        "action_eligibility",
+        "rate_limit",
+        "evidence_submission",
+        "moderation_decision",
+        "representative_authorization",
+        "security_incident",
+        "account_compromise"
+      ]
+    },
+    "principal": {
+      "enum": [
+        "account_service",
+        "identity_service",
+        "moderation_service",
+        "participation_service",
+        "security_auditor"
+      ]
+    },
+    "narrowState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stateKind",
+        "purpose",
+        "dataClasses",
+        "allowedPrincipals",
+        "retentionClass",
+        "retentionStatus",
+        "reasonRule",
+        "reviewRight",
+        "publicDisclosureAllowed",
+        "portable",
+        "combinable",
+        "unrelatedAccessAllowed"
+      ],
+      "properties": {
+        "stateKind": {
+          "$ref": "#/$defs/narrowStateKind"
+        },
+        "purpose": {
+          "$ref": "#/$defs/id"
+        },
+        "dataClasses": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/citizenDataClass"
+          }
+        },
+        "allowedPrincipals": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/principal"
+          }
+        },
+        "retentionClass": {
+          "$ref": "#/$defs/id"
+        },
+        "retentionStatus": {
+          "const": "follow_on_policy_required"
+        },
+        "reasonRule": {
+          "enum": [
+            "generic_external_reason",
+            "purpose_specific_reason"
+          ]
+        },
+        "reviewRight": {
+          "enum": [
+            "access_and_correction",
+            "access_correction_and_appeal"
+          ]
+        },
+        "publicDisclosureAllowed": {
+          "const": false
+        },
+        "portable": {
+          "const": false
+        },
+        "combinable": {
+          "const": false
+        },
+        "unrelatedAccessAllowed": {
+          "const": false
+        }
+      }
+    },
+    "enforcement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "databaseForbiddenJoinGuard",
+        "publicSerializerGuard",
+        "eventAndExportGuard",
+        "analyticsAllowlistGuard",
+        "agentAndAiGuard",
+        "mobileTelemetryGuard",
+        "crossProductGuard",
+        "publicRoleMethodGuard",
+        "featureFlagsCannotOverride",
+        "evidenceReferences"
+      ],
+      "properties": {
+        "databaseForbiddenJoinGuard": {
+          "const": true
+        },
+        "publicSerializerGuard": {
+          "const": true
+        },
+        "eventAndExportGuard": {
+          "const": true
+        },
+        "analyticsAllowlistGuard": {
+          "const": true
+        },
+        "agentAndAiGuard": {
+          "const": true
+        },
+        "mobileTelemetryGuard": {
+          "const": true
+        },
+        "crossProductGuard": {
+          "const": true
+        },
+        "publicRoleMethodGuard": {
+          "const": true
+        },
+        "featureFlagsCannotOverride": {
+          "const": true
+        },
+        "evidenceReferences": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        }
+      }
+    },
+    "rightsAndReporting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "publicPolicyPath",
+        "suspectedViolationRoute",
+        "accessCorrectionObjectionDeletionStatus",
+        "productionContactApproved"
+      ],
+      "properties": {
+        "publicPolicyPath": {
+          "const": "docs/NO_SOCIAL_CREDIT.md"
+        },
+        "suspectedViolationRoute": {
+          "const": "SECURITY.md#report-privately"
+        },
+        "accessCorrectionObjectionDeletionStatus": {
+          "const": "follow_on_policy_required"
+        },
+        "productionContactApproved": {
+          "const": false
+        }
+      }
+    },
+    "impactAssessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pullRequestTemplateRequired",
+        "rfcTemplateRequired",
+        "featureRequestTemplateRequired",
+        "requiredFields"
+      ],
+      "properties": {
+        "pullRequestTemplateRequired": {
+          "const": true
+        },
+        "rfcTemplateRequired": {
+          "const": true
+        },
+        "featureRequestTemplateRequired": {
+          "const": true
+        },
+        "requiredFields": {
+          "type": "array",
+          "minItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "citizen_data",
+              "purpose",
+              "ranking_or_prediction",
+              "access",
+              "retention",
+              "reason_and_appeal",
+              "cross_product_use",
+              "unrelated_access_effect",
+              "proving_tests"
+            ]
+          }
+        }
+      }
+    },
+    "evidenceStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "references"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "implemented_foundation",
+            "follow_on_required",
+            "approved"
+          ]
+        },
+        "references": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "approved"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "references": {
+                "type": "array",
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "releaseEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "database",
+        "publicSerializers",
+        "authorization",
+        "eventsAndExports",
+        "analytics",
+        "ai",
+        "mobileTelemetry",
+        "crossProduct",
+        "aggregateDifferencing",
+        "publicRoleMethodology",
+        "rightsAndReporting",
+        "independentReview"
+      ],
+      "properties": {
+        "database": {
+          "$ref": "#/$defs/evidenceStatus"
+        },
+        "publicSerializers": {
+          "$ref": "#/$defs/evidenceStatus"
+        },
+        "authorization": {
+          "$ref": "#/$defs/evidenceStatus"
+        },
+        "eventsAndExports": {
+          "$ref": "#/$defs/evidenceStatus"
+        },
+        "analytics": {
+          "$ref": "#/$defs/evidenceStatus"
+        },
+        "ai": {
+          "$ref": "#/$defs/evidenceStatus"
+        },
+        "mobileTelemetry": {
+          "$ref": "#/$defs/evidenceStatus"
+        },
+        "crossProduct": {
+          "$ref": "#/$defs/evidenceStatus"
+        },
+        "aggregateDifferencing": {
+          "$ref": "#/$defs/evidenceStatus"
+        },
+        "publicRoleMethodology": {
+          "$ref": "#/$defs/evidenceStatus"
+        },
+        "rightsAndReporting": {
+          "$ref": "#/$defs/evidenceStatus"
+        },
+        "independentReview": {
+          "$ref": "#/$defs/evidenceStatus"
+        }
+      }
+    },
+    "approvedEvidenceStatus": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/evidenceStatus"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "approved"
+            }
+          }
+        }
+      ]
+    },
+    "approvedReleaseEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "database",
+        "publicSerializers",
+        "authorization",
+        "eventsAndExports",
+        "analytics",
+        "ai",
+        "mobileTelemetry",
+        "crossProduct",
+        "aggregateDifferencing",
+        "publicRoleMethodology",
+        "rightsAndReporting",
+        "independentReview"
+      ],
+      "properties": {
+        "database": {
+          "$ref": "#/$defs/approvedEvidenceStatus"
+        },
+        "publicSerializers": {
+          "$ref": "#/$defs/approvedEvidenceStatus"
+        },
+        "authorization": {
+          "$ref": "#/$defs/approvedEvidenceStatus"
+        },
+        "eventsAndExports": {
+          "$ref": "#/$defs/approvedEvidenceStatus"
+        },
+        "analytics": {
+          "$ref": "#/$defs/approvedEvidenceStatus"
+        },
+        "ai": {
+          "$ref": "#/$defs/approvedEvidenceStatus"
+        },
+        "mobileTelemetry": {
+          "$ref": "#/$defs/approvedEvidenceStatus"
+        },
+        "crossProduct": {
+          "$ref": "#/$defs/approvedEvidenceStatus"
+        },
+        "aggregateDifferencing": {
+          "$ref": "#/$defs/approvedEvidenceStatus"
+        },
+        "publicRoleMethodology": {
+          "$ref": "#/$defs/approvedEvidenceStatus"
+        },
+        "rightsAndReporting": {
+          "$ref": "#/$defs/approvedEvidenceStatus"
+        },
+        "independentReview": {
+          "$ref": "#/$defs/approvedEvidenceStatus"
+        }
+      }
+    },
+    "releaseGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision",
+        "participatoryPilotAllowed",
+        "productionLegalReviewApproved",
+        "namedOwnerAssigned",
+        "evidence",
+        "openBlockers",
+        "decisionReason"
+      ],
+      "properties": {
+        "decision": {
+          "enum": [
+            "blocked",
+            "eligible_for_review",
+            "approved_for_pilot"
+          ]
+        },
+        "participatoryPilotAllowed": {
+          "type": "boolean",
+          "default": false
+        },
+        "productionLegalReviewApproved": {
+          "type": "boolean",
+          "default": false
+        },
+        "namedOwnerAssigned": {
+          "type": "boolean",
+          "default": false
+        },
+        "evidence": {
+          "$ref": "#/$defs/releaseEvidence"
+        },
+        "openBlockers": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "decisionReason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "decision": {
+                "const": "approved_for_pilot"
+              }
+            },
+            "required": [
+              "decision"
+            ]
+          },
+          "then": {
+            "properties": {
+              "participatoryPilotAllowed": {
+                "const": true
+              },
+              "productionLegalReviewApproved": {
+                "const": true
+              },
+              "namedOwnerAssigned": {
+                "const": true
+              },
+              "evidence": {
+                "$ref": "#/$defs/approvedReleaseEvidence"
+              },
+              "openBlockers": {
+                "type": "array",
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+} as const;
+
 export const MOBILE_COMPATIBILITY_STATUS_SCHEMA = {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schemas.ratemyrepresentatives.com/v1/mobile-compatibility-status.schema.json",

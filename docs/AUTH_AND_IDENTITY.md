@@ -444,6 +444,9 @@ Specifically:
 
 Violations require rejection in schemas, migrations, queries, exports, analytics, AI
 inputs, APIs, mobile/web clients, manifests, and review—not merely a disabled flag.
+The exact purpose-limited state register, semantic guard, rights/reporting route, and
+blocked evidence gate are canonical in
+[`NO_SOCIAL_CREDIT.md`](./NO_SOCIAL_CREDIT.md).
 
 ## 11. Failure behavior and release gates
 

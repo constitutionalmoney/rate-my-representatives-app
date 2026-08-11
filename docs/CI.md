@@ -38,6 +38,13 @@ replay revocation, recovery, scoped roles, route/domain authorization, privilege
 requirements, secure client storage policy, audited feature gates, privacy redaction, and
 No Social Credit prohibitions.
 
+Issue #57 adds `check:no-social-credit` plus semantic domain, generated-contract, tooling,
+event/export, analytics, mobile crash-privacy, and PostgreSQL smoke coverage. The checks
+reject generalized citizen fields/state, public individual civic data, combined or portable
+narrow states, AI/agent misuse, cross-product linkage, and unsafe high-risk defaults. They
+prove only the synthetic repository foundation; the generated release decision remains
+blocked. See [`NO_SOCIAL_CREDIT.md`](./NO_SOCIAL_CREDIT.md).
+
 Issue #60 adds OpenAPI 3.1 parsing, JSON Schema/fixture validation, required per-operation
 policy metadata, human-intent privacy assertions, generated-client checks across all six
 consumer surfaces, additive-client/strict-server runtime validation, an isolated mock

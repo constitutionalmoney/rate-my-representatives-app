@@ -275,6 +275,12 @@ The software must prevent:
 
 Public-role accountability is limited to a defined public office, term, duty, and source-backed public record.
 
+The canonical purpose-limited state register, repository controls, mandatory impact
+assessment, rights/reporting route, and blocked release gate are defined in
+[`docs/NO_SOCIAL_CREDIT.md`](./docs/NO_SOCIAL_CREDIT.md). Issue #57 enforces that synthetic
+foundation; it does not enable participation, analytics, AI, scoring, cross-product use,
+Verus, provenance, or a pilot.
+
 ## Planned product surfaces
 
 | Surface | Purpose | Recommended host |
@@ -476,6 +482,7 @@ Verus-specific gates apply only when the corresponding feature is enabled. A rea
 - [Light Mathematics methodology policy](./docs/METHODOLOGY.md)
 - [Moderation and due-process policy](./docs/MODERATION_AND_DUE_PROCESS.md)
 - [Application, mobile, AI, and Verus threat model](./docs/THREAT_MODEL.md)
+- [No Social Credit policy and enforcement baseline](./docs/NO_SOCIAL_CREDIT.md)
 - [End-to-end roadmap](./docs/ROADMAP.md)
 - [System architecture](./docs/ARCHITECTURE.md)
 - [Source-backed public profile API](./docs/PUBLIC_PROFILE_API.md)

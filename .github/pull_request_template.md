@@ -61,8 +61,21 @@ Describe:
 - logging/analytics/crash-report redaction;
 - abuse/threat cases considered;
 - source/SSRF/file risks, if applicable;
-- No Social Credit impact assessment;
 - whether precise location, political opinions, identity/attestation, private civic activity, representative authorization, or moderation data is affected.
+
+## No Social Credit impact assessment
+
+Answer every item; use `None` only with a concrete reason.
+
+- Citizen data:
+- Purpose:
+- Ranking or prediction:
+- Access:
+- Retention:
+- Reason and appeal:
+- Cross-product use:
+- Unrelated access effect:
+- Proving tests:
 
 Checklist:
 

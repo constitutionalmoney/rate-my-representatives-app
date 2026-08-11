@@ -95,4 +95,32 @@ describe('privacy-safe observability', () => {
       createAnalyticsEvent('deck.complete', { platform: 'web', preciseLocation: 'synthetic' }),
     ).toThrow(/not allowlisted/);
   });
+
+  it.each(['citizenScore', 'ideologyProfile', 'politicalProfile', 'socialCredit'])(
+    'rejects generalized citizen profile field %s from every observability sink',
+    (field) => {
+      for (const sink of ['audit', 'crash', 'log', 'queue', 'trace'] as const) {
+        expect(() => sanitizeForObservabilitySink(sink, { nested: { [field]: 1 } })).toThrow(
+          /generalized citizen profile/,
+        );
+      }
+      expect(() => createAnalyticsEvent('deck.load', { [field]: 1 })).toThrow(
+        /generalized citizen profile/,
+      );
+    },
+  );
+
+  it('redacts political-interest and cross-product identifiers from structured sinks', () => {
+    expect(
+      sanitizeForObservabilitySink('crash', {
+        browsingHistory: 'synthetic',
+        crossProductSubjectId: 'synthetic',
+        topicRead: 'synthetic',
+      }),
+    ).toEqual({
+      browsingHistory: '[REDACTED]',
+      crossProductSubjectId: '[REDACTED]',
+      topicRead: '[REDACTED]',
+    });
+  });
 });

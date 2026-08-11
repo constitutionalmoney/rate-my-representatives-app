@@ -391,6 +391,8 @@ security event, abuse flag, private signal, rating, comment, evidence submission
 participation history may enter a citizen score or portable reputation. Narrow fraud,
 moderation, duplicate-submission, and credential states remain purpose-limited,
 contestable, non-portable, and unavailable to public-role factor calculation.
+The enforced citizen/public-role data boundary and repository release blockers are defined
+in [`NO_SOCIAL_CREDIT.md`](./NO_SOCIAL_CREDIT.md).
 
 ## 16. Provenance is not truth
 

@@ -93,6 +93,7 @@ export type { MobileCompatibilityStatus as MobileCompatibilityStatusSchema } fro
 export type { MethodologyIndicatorResultV1 } from './generated/methodology-indicator-result.js';
 export type { MethodologyReleaseGateV1 } from './generated/methodology-release-gate.js';
 export type { ModerationDecisionV1 } from './generated/moderation-decision.js';
+export type { NoSocialCreditPolicyV1 } from './generated/no-social-credit-policy.js';
 export type { ThreatControlCatalogV1 } from './generated/threat-control-catalog.js';
 export type { PublicRoleRegistry as PublicRoleRegistrySchema } from './generated/public-role-registry.js';
 export type { RepresentationAmbiguitySelection as RepresentationAmbiguitySelectionSchema } from './generated/representation-ambiguity-selection.js';

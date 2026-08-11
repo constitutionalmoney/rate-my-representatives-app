@@ -312,6 +312,12 @@ threat and privacy-harm baseline in [`THREAT_MODEL.md`](./THREAT_MODEL.md); prod
 exercises and independent review remain blockers. Issue #25 still owns disaster-recovery
 implementation and exercises.
 
+Issue #57 extends these boundaries with the semantic No Social Credit policy, registered
+purpose-limited states, public-contract and database scans, event/analytics/AI/mobile
+guards, and a blocked release contract. See
+[`NO_SOCIAL_CREDIT.md`](./NO_SOCIAL_CREDIT.md) and ADR 0018. No runtime participation,
+citizen analysis, cross-product sharing, scoring, or Verus capability is enabled.
+
 ## 8. Command/query model
 
 The API can use conventional REST while enforcing a conceptual command/query split.

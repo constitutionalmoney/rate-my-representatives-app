@@ -11,6 +11,13 @@ describe('audit and outbox domain policy', () => {
       'nested.representativeSignal',
     );
     expect(() => assertAuditSafePayload({ categoryRating: 4 })).toThrow('categoryRating');
+    expect(() => assertAuditSafePayload({ citizenRiskScore: 4 })).toThrow('citizenRiskScore');
+    expect(() => assertAuditSafePayload({ nested: { ideologyProfile: 'synthetic' } })).toThrow(
+      'nested.ideologyProfile',
+    );
+    expect(() => assertAuditSafePayload({ crossProductSubjectId: 'synthetic' })).toThrow(
+      'crossProductSubjectId',
+    );
     expect(() => assertAuditSafePayload({ publicStatus: 'synthetic' })).not.toThrow();
   });
 

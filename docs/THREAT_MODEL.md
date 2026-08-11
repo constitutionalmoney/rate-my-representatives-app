@@ -321,6 +321,12 @@ notify privacy/governance owners, assess affected people and downstream recipien
 delete or correct unauthorized derivatives where lawful, and require independent review
 before restoration.
 
+Issue #57 implements the repository-wide synthetic enforcement baseline in
+[`NO_SOCIAL_CREDIT.md`](./NO_SOCIAL_CREDIT.md): semantic data-use denial, purpose-limited
+state rules, schema/SQL/event/analytics/AI/mobile guards, mandatory impact assessment, and
+a blocked evidence gate. Aggregate re-identification, production rights, provider review,
+named ownership, and independent review remain unresolved pilot blockers.
+
 ### 9.3 Sources, evidence, and documents
 
 The submitted URL and every redirect remain untrusted. Resolution occurs immediately

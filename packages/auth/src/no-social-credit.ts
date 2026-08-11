@@ -1,9 +1,17 @@
 const FORBIDDEN_GENERALIZED_SCORE_KEYS = new Set([
   'citizenscore',
+  'citizenriskscore',
   'civicrank',
+  'civicreputation',
+  'civicworth',
   'conformityscore',
+  'ideologyprofile',
+  'ideologyscore',
   'loyaltyscore',
+  'politicalprofile',
   'reputationscore',
+  'socialcredit',
+  'trustscore',
   'trustworthinessscore',
 ]);
 
@@ -12,8 +20,24 @@ const FORBIDDEN_SCORE_INPUT_KEYS = new Set([
   'accountstate',
   'attestationstate',
   'authenticationtier',
+  'browsinghistory',
+  'categoryrating',
+  'comment',
+  'jurisdiction',
+  'location',
+  'moderationstate',
+  'notificationbehavior',
+  'petition',
+  'representativesignal',
   'rolegrants',
+  'securitystate',
+  'subscription',
+  'verusiduse',
+  'votingchoice',
 ]);
+
+const FORBIDDEN_GENERALIZED_SCORE_PATTERN =
+  /(citizen.*(?:score|rank|risk|trust)|civic(?:rank|reputation|worth)|ideology(?:profile|score)|loyaltyscore|politicalprofile|reputationscore|socialcredit|trustworthinessscore)/;
 
 function normalizedKey(key: string): string {
   return key.toLowerCase().replaceAll(/[^a-z]/g, '');
@@ -21,7 +45,7 @@ function normalizedKey(key: string): string {
 
 export class NoSocialCreditViolationError extends Error {
   constructor() {
-    super('Account security state cannot be used for a generalized citizen score.');
+    super('Citizen data cannot be used for a generalized score, profile, or unrelated access.');
     this.name = 'NoSocialCreditViolationError';
   }
 }
@@ -36,6 +60,7 @@ export function assertNoSocialCreditProjection(value: unknown): void {
     const normalized = normalizedKey(key);
     if (
       FORBIDDEN_GENERALIZED_SCORE_KEYS.has(normalized) ||
+      FORBIDDEN_GENERALIZED_SCORE_PATTERN.test(normalized) ||
       FORBIDDEN_SCORE_INPUT_KEYS.has(normalized)
     ) {
       throw new NoSocialCreditViolationError();

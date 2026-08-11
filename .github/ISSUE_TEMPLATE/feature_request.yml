@@ -102,6 +102,14 @@ body:
         - label: Proposed/testnet/disabled status will be represented honestly.
 
   - type: textarea
+    id: no_social_credit
+    attributes:
+      label: No Social Credit impact assessment
+      description: "Answer each field: Citizen data; Purpose; Ranking or prediction; Access; Retention; Reason and appeal; Cross-product use; Unrelated access effect; Proving tests. Use None only with a concrete reason."
+    validations:
+      required: true
+
+  - type: textarea
     id: privacy_security
     attributes:
       label: Privacy, security, and abuse analysis

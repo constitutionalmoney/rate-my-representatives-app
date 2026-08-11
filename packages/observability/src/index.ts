@@ -5,11 +5,13 @@ const SENSITIVE_KEYS = new Set([
   'actorid',
   'assertion',
   'authorization',
+  'browsinghistory',
   'challenge',
   'categoryrating',
   'coordinate',
   'coordinates',
   'cookie',
+  'crossproductsubjectid',
   'credential',
   'csrftoken',
   'deviceid',
@@ -18,12 +20,16 @@ const SENSITIVE_KEYS = new Set([
   'identityevidence',
   'identityproof',
   'identifier',
+  'ideologyprofile',
+  'ideologyscore',
   'location',
   'latitude',
   'longitude',
   'moderatornotes',
   'passphrase',
   'passkey',
+  'politicalbelief',
+  'politicalprofile',
   'preciseaddress',
   'preciselocation',
   'postalcode',
@@ -34,20 +40,43 @@ const SENSITIVE_KEYS = new Set([
   'recoverytoken',
   'requestid',
   'representativesignal',
+  'representativefollowed',
   'role',
   'rolegrants',
   'seed',
   'seedphrase',
   'signal',
   'subscription',
+  'topicread',
   'session',
   'sessionid',
   'sessiontoken',
   'token',
   'walletpayload',
   'walletrequest',
+  'votingchoice',
   'wif',
 ]);
+
+const PROHIBITED_GENERALIZED_PROFILE_KEYS = new Set([
+  'citizenriskscore',
+  'citizenscore',
+  'civicrank',
+  'civicreputation',
+  'civicworth',
+  'conformityscore',
+  'ideologyprofile',
+  'ideologyscore',
+  'loyaltyscore',
+  'politicalprofile',
+  'reputationscore',
+  'socialcredit',
+  'trustscore',
+  'trustworthinessscore',
+]);
+
+const PROHIBITED_GENERALIZED_PROFILE_PATTERN =
+  /(citizen.*(?:score|rank|risk|trust)|civic(?:rank|reputation|worth)|ideology(?:profile|score)|loyaltyscore|politicalprofile|reputationscore|socialcredit|trustworthinessscore)/;
 
 const ANALYTICS_EVENT_FIELDS = Object.freeze({
   'accessibility.error': new Set(['component', 'platform', 'status']),
@@ -61,6 +90,24 @@ export type ObservabilitySink = 'audit' | 'crash' | 'log' | 'queue' | 'trace';
 
 function normalizedKey(key: string): string {
   return key.toLowerCase().replaceAll(/[^a-z]/g, '');
+}
+
+function assertNoGeneralizedProfileField(value: unknown): void {
+  if (Array.isArray(value)) {
+    value.forEach((item) => assertNoGeneralizedProfileField(item));
+    return;
+  }
+  if (value === null || typeof value !== 'object') return;
+  for (const [key, item] of Object.entries(value)) {
+    const normalized = normalizedKey(key);
+    if (
+      PROHIBITED_GENERALIZED_PROFILE_KEYS.has(normalized) ||
+      PROHIBITED_GENERALIZED_PROFILE_PATTERN.test(normalized)
+    ) {
+      throw new Error('Observability cannot receive a generalized citizen profile field.');
+    }
+    assertNoGeneralizedProfileField(item);
+  }
 }
 
 export function redactSensitive(value: unknown): unknown {
@@ -79,6 +126,7 @@ export function sanitizeForObservabilitySink(
   _sink: ObservabilitySink,
   fields: Readonly<Record<string, unknown>>,
 ): Readonly<Record<string, unknown>> {
+  assertNoGeneralizedProfileField(fields);
   return Object.freeze(redactSensitive(fields) as Record<string, unknown>);
 }
 
@@ -93,6 +141,7 @@ export function createAnalyticsEvent(
   fields: Readonly<Record<string, boolean | number | string>>,
   timestamp = new Date().toISOString(),
 ): AnalyticsEvent {
+  assertNoGeneralizedProfileField(fields);
   const allowedFields = ANALYTICS_EVENT_FIELDS[event];
   for (const key of Object.keys(fields)) {
     if (!allowedFields.has(key) || SENSITIVE_KEYS.has(normalizedKey(key))) {

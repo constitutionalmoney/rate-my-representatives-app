@@ -632,6 +632,371 @@ export const SYNTHETIC_MODERATION_DECISION = {
   "decidedAt": "2028-01-15T12:00:00Z"
 } as const;
 
+export const SYNTHETIC_NO_SOCIAL_CREDIT_POLICY = {
+  "schemaVersion": "no-social-credit-policy.v1",
+  "policyVersion": "no-social-credit-policy.v1",
+  "dataMode": "synthetic",
+  "covenant": "No social credit scores shall be created with this technology by Civic Ledger AI Ltd. or Checks and Balances Committee Ltd., or in any implementation that either company develops, operates, governs, or licenses.",
+  "hardRules": {
+    "generalizedCitizenValueAllowed": false,
+    "citizenTraitInferenceAllowed": false,
+    "individualCivicActivityPublicAllowed": false,
+    "citizenDataInPublicRoleMethodAllowed": false,
+    "narrowStatesPortableAllowed": false,
+    "narrowStatesCombinableAllowed": false,
+    "unrelatedAccessUseAllowed": false,
+    "crossProductCitizenLinkageAllowed": false,
+    "civicAdvertisingTargetingAllowed": false,
+    "agentHumanIntentAllowed": false,
+    "featureFlagOverrideAllowed": false,
+    "productionApprovalClaimed": false
+  },
+  "citizenDataClasses": [
+    "account_security",
+    "identity_attestation",
+    "jurisdiction_location",
+    "private_civic_activity",
+    "moderation_abuse",
+    "notification_subscription",
+    "browsing_behavior",
+    "cross_product_activity",
+    "ai_inferred_trait"
+  ],
+  "prohibitedOutcomes": [
+    "generalized_reputation",
+    "loyalty_or_conformity",
+    "ideology_or_political_profile",
+    "generalized_trustworthiness",
+    "generalized_civic_worth",
+    "generalized_eligibility_or_risk",
+    "public_individual_civic_activity",
+    "commercial_or_advertising_targeting",
+    "unrelated_access_decision",
+    "portable_narrow_state",
+    "combined_narrow_state_rank",
+    "cross_product_citizen_profile",
+    "ai_inferred_citizen_trait",
+    "citizen_attributes_in_public_role_method"
+  ],
+  "narrowStates": [
+    {
+      "stateKind": "authentication_status",
+      "purpose": "establish_or_end_one_application_session",
+      "dataClasses": [
+        "account_security"
+      ],
+      "allowedPrincipals": [
+        "account_service",
+        "security_auditor"
+      ],
+      "retentionClass": "credential_lifecycle_pending_issues_23_45",
+      "retentionStatus": "follow_on_policy_required",
+      "reasonRule": "generic_external_reason",
+      "reviewRight": "access_and_correction",
+      "publicDisclosureAllowed": false,
+      "portable": false,
+      "combinable": false,
+      "unrelatedAccessAllowed": false
+    },
+    {
+      "stateKind": "attestation_status",
+      "purpose": "evaluate_one_separately_approved_attestation_requirement",
+      "dataClasses": [
+        "identity_attestation"
+      ],
+      "allowedPrincipals": [
+        "identity_service",
+        "security_auditor"
+      ],
+      "retentionClass": "attestation_lifecycle_pending_issues_23_45",
+      "retentionStatus": "follow_on_policy_required",
+      "reasonRule": "purpose_specific_reason",
+      "reviewRight": "access_correction_and_appeal",
+      "publicDisclosureAllowed": false,
+      "portable": false,
+      "combinable": false,
+      "unrelatedAccessAllowed": false
+    },
+    {
+      "stateKind": "action_eligibility",
+      "purpose": "authorize_one_defined_action_under_one_versioned_method",
+      "dataClasses": [
+        "identity_attestation",
+        "jurisdiction_location"
+      ],
+      "allowedPrincipals": [
+        "identity_service",
+        "participation_service",
+        "security_auditor"
+      ],
+      "retentionClass": "eligibility_snapshot_pending_issues_23_45",
+      "retentionStatus": "follow_on_policy_required",
+      "reasonRule": "purpose_specific_reason",
+      "reviewRight": "access_correction_and_appeal",
+      "publicDisclosureAllowed": false,
+      "portable": false,
+      "combinable": false,
+      "unrelatedAccessAllowed": false
+    },
+    {
+      "stateKind": "rate_limit",
+      "purpose": "limit_one_route_family_for_abuse_and_availability",
+      "dataClasses": [
+        "account_security",
+        "moderation_abuse"
+      ],
+      "allowedPrincipals": [
+        "account_service",
+        "moderation_service",
+        "security_auditor"
+      ],
+      "retentionClass": "bounded_abuse_window_pending_issues_23_45",
+      "retentionStatus": "follow_on_policy_required",
+      "reasonRule": "generic_external_reason",
+      "reviewRight": "access_correction_and_appeal",
+      "publicDisclosureAllowed": false,
+      "portable": false,
+      "combinable": false,
+      "unrelatedAccessAllowed": false
+    },
+    {
+      "stateKind": "evidence_submission",
+      "purpose": "track_one_evidence_submission_through_due_process",
+      "dataClasses": [
+        "private_civic_activity",
+        "moderation_abuse"
+      ],
+      "allowedPrincipals": [
+        "moderation_service",
+        "security_auditor"
+      ],
+      "retentionClass": "evidence_case_pending_issues_23_45",
+      "retentionStatus": "follow_on_policy_required",
+      "reasonRule": "purpose_specific_reason",
+      "reviewRight": "access_correction_and_appeal",
+      "publicDisclosureAllowed": false,
+      "portable": false,
+      "combinable": false,
+      "unrelatedAccessAllowed": false
+    },
+    {
+      "stateKind": "moderation_decision",
+      "purpose": "decide_one_moderation_case_under_one_policy_version",
+      "dataClasses": [
+        "moderation_abuse"
+      ],
+      "allowedPrincipals": [
+        "moderation_service",
+        "security_auditor"
+      ],
+      "retentionClass": "moderation_case_pending_issues_23_45",
+      "retentionStatus": "follow_on_policy_required",
+      "reasonRule": "purpose_specific_reason",
+      "reviewRight": "access_correction_and_appeal",
+      "publicDisclosureAllowed": false,
+      "portable": false,
+      "combinable": false,
+      "unrelatedAccessAllowed": false
+    },
+    {
+      "stateKind": "representative_authorization",
+      "purpose": "authorize_one_scoped_representative_or_staff_action",
+      "dataClasses": [
+        "account_security"
+      ],
+      "allowedPrincipals": [
+        "account_service",
+        "moderation_service",
+        "security_auditor"
+      ],
+      "retentionClass": "authority_lifecycle_pending_issues_23_45",
+      "retentionStatus": "follow_on_policy_required",
+      "reasonRule": "purpose_specific_reason",
+      "reviewRight": "access_correction_and_appeal",
+      "publicDisclosureAllowed": false,
+      "portable": false,
+      "combinable": false,
+      "unrelatedAccessAllowed": false
+    },
+    {
+      "stateKind": "security_incident",
+      "purpose": "contain_and_review_one_security_incident",
+      "dataClasses": [
+        "account_security",
+        "moderation_abuse"
+      ],
+      "allowedPrincipals": [
+        "account_service",
+        "security_auditor"
+      ],
+      "retentionClass": "security_incident_pending_issues_23_45",
+      "retentionStatus": "follow_on_policy_required",
+      "reasonRule": "generic_external_reason",
+      "reviewRight": "access_correction_and_appeal",
+      "publicDisclosureAllowed": false,
+      "portable": false,
+      "combinable": false,
+      "unrelatedAccessAllowed": false
+    },
+    {
+      "stateKind": "account_compromise",
+      "purpose": "recover_and_protect_one_compromised_application_account",
+      "dataClasses": [
+        "account_security"
+      ],
+      "allowedPrincipals": [
+        "account_service",
+        "security_auditor"
+      ],
+      "retentionClass": "account_recovery_pending_issues_23_45",
+      "retentionStatus": "follow_on_policy_required",
+      "reasonRule": "generic_external_reason",
+      "reviewRight": "access_correction_and_appeal",
+      "publicDisclosureAllowed": false,
+      "portable": false,
+      "combinable": false,
+      "unrelatedAccessAllowed": false
+    }
+  ],
+  "enforcement": {
+    "databaseForbiddenJoinGuard": true,
+    "publicSerializerGuard": true,
+    "eventAndExportGuard": true,
+    "analyticsAllowlistGuard": true,
+    "agentAndAiGuard": true,
+    "mobileTelemetryGuard": true,
+    "crossProductGuard": true,
+    "publicRoleMethodGuard": true,
+    "featureFlagsCannotOverride": true,
+    "evidenceReferences": [
+      "packages/domain/src/no-social-credit.test.ts",
+      "packages/auth/src/no-social-credit.test.ts",
+      "packages/domain/src/security-domains.test.ts",
+      "packages/observability/src/index.test.ts",
+      "apps/mobile/src/crash-privacy.test.ts",
+      "scripts/check-no-social-credit.mjs"
+    ]
+  },
+  "rightsAndReporting": {
+    "publicPolicyPath": "docs/NO_SOCIAL_CREDIT.md",
+    "suspectedViolationRoute": "SECURITY.md#report-privately",
+    "accessCorrectionObjectionDeletionStatus": "follow_on_policy_required",
+    "productionContactApproved": false
+  },
+  "impactAssessment": {
+    "pullRequestTemplateRequired": true,
+    "rfcTemplateRequired": true,
+    "featureRequestTemplateRequired": true,
+    "requiredFields": [
+      "citizen_data",
+      "purpose",
+      "ranking_or_prediction",
+      "access",
+      "retention",
+      "reason_and_appeal",
+      "cross_product_use",
+      "unrelated_access_effect",
+      "proving_tests"
+    ]
+  },
+  "releaseGate": {
+    "decision": "blocked",
+    "participatoryPilotAllowed": false,
+    "productionLegalReviewApproved": false,
+    "namedOwnerAssigned": false,
+    "evidence": {
+      "database": {
+        "status": "implemented_foundation",
+        "references": [
+          "packages/db/migrations/0007_security_domain_separation.sql",
+          "scripts/smoke/security-domains.sql"
+        ]
+      },
+      "publicSerializers": {
+        "status": "implemented_foundation",
+        "references": [
+          "packages/contracts/scripts/validate-contracts.mjs"
+        ]
+      },
+      "authorization": {
+        "status": "implemented_foundation",
+        "references": [
+          "packages/auth/src/no-social-credit.test.ts"
+        ]
+      },
+      "eventsAndExports": {
+        "status": "implemented_foundation",
+        "references": [
+          "packages/domain/src/audit-outbox.test.ts",
+          "packages/domain/src/security-domains.test.ts"
+        ]
+      },
+      "analytics": {
+        "status": "implemented_foundation",
+        "references": [
+          "packages/observability/src/index.test.ts"
+        ]
+      },
+      "ai": {
+        "status": "implemented_foundation",
+        "references": [
+          "packages/domain/src/no-social-credit.test.ts",
+          "packages/auth/src/roles.test.ts"
+        ]
+      },
+      "mobileTelemetry": {
+        "status": "implemented_foundation",
+        "references": [
+          "apps/mobile/src/crash-privacy.test.ts"
+        ]
+      },
+      "crossProduct": {
+        "status": "implemented_foundation",
+        "references": [
+          "packages/domain/src/no-social-credit.test.ts"
+        ]
+      },
+      "aggregateDifferencing": {
+        "status": "follow_on_required",
+        "references": [
+          "docs/THREAT_MODEL.md#92-privacy-and-no-social-credit",
+          "https://github.com/constitutionalmoney/rate-my-representatives-app/issues/37",
+          "https://github.com/constitutionalmoney/rate-my-representatives-app/issues/43"
+        ]
+      },
+      "publicRoleMethodology": {
+        "status": "implemented_foundation",
+        "references": [
+          "packages/domain/src/no-social-credit.test.ts",
+          "packages/contracts/src/methodology.contract.test.ts"
+        ]
+      },
+      "rightsAndReporting": {
+        "status": "follow_on_required",
+        "references": [
+          "docs/NO_SOCIAL_CREDIT.md",
+          "SECURITY.md#report-privately",
+          "https://github.com/constitutionalmoney/rate-my-representatives-app/issues/23"
+        ]
+      },
+      "independentReview": {
+        "status": "follow_on_required",
+        "references": []
+      }
+    },
+    "openBlockers": [
+      "production_legal_privacy_review",
+      "retention_and_deletion_durations",
+      "aggregate_differencing_method",
+      "production_ai_and_analytics_review",
+      "cross_product_data_inventory",
+      "named_privacy_governance_owner",
+      "independent_enforcement_review"
+    ],
+    "decisionReason": "Foundation controls are synthetic and enforced in repository tests, but production legal, retention, aggregate, provider, ownership, and independent-review evidence is unresolved."
+  }
+} as const;
+
 export const SYNTHETIC_PUBLIC_ROLE_PROFILE = {
   "schemaVersion": "public-role-profile.v1",
   "dataMode": "synthetic",

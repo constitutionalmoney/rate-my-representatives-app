@@ -84,6 +84,13 @@ false and the synthetic release decision blocked. This is a design/test baseline
 runtime control or production assurance. See [`THREAT_MODEL.md`](./THREAT_MODEL.md) and
 ADR 0017.
 
+Issue #57 now defines `no-social-credit-policy.v1`: hard semantic prohibitions, nine
+purpose-limited private states, schema/database/event/analytics/AI/mobile enforcement,
+required contribution impact assessments, public reporting, and an evidence-based release
+gate. The synthetic decision remains blocked pending production legal/privacy, retention,
+aggregate, provider, ownership, and independent-review evidence. See
+[`NO_SOCIAL_CREDIT.md`](./NO_SOCIAL_CREDIT.md) and ADR 0018.
+
 ## Phase 1 — Monorepo and local development foundation
 
 ### Objective

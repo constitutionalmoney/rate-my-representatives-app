@@ -225,14 +225,20 @@ assert(
 const publicForbidden = new Set([
   'accountid',
   'address',
+  'attestationstatus',
+  'citizenid',
   'identityevidence',
+  'individualcivicactivity',
   'moderatornotes',
+  'participantid',
   'preciselocation',
+  'privatecivicactivity',
   'privatekey',
   'representativesignal',
   'seedphrase',
   'sessiontoken',
   'signerrpc',
+  'subscription',
   'wif',
 ]);
 for (const filename of [
@@ -299,6 +305,7 @@ const fixtureSchemas = new Map([
   ['methodology-indicator.synthetic.json', 'methodology-indicator-result.schema.json'],
   ['methodology-release-gate.synthetic.json', 'methodology-release-gate.schema.json'],
   ['moderation-decision.synthetic.json', 'moderation-decision.schema.json'],
+  ['no-social-credit-policy.synthetic.json', 'no-social-credit-policy.schema.json'],
   ['not-found.json', 'api-error.schema.json'],
   ['public-role-profile.synthetic.json', 'public-role-profile.schema.json'],
   ['public-role-registry.synthetic.json', 'public-role-registry.schema.json'],

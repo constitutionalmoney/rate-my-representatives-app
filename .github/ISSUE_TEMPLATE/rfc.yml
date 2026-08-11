@@ -73,7 +73,7 @@ body:
     id: no_social_credit
     attributes:
       label: No Social Credit impact assessment
-      description: Identify citizen data, any ranking/prediction, purpose, access, retention, appeal, cross-product use, unrelated eligibility impact, and tests proving no generalized citizen score/profile results.
+      description: "Answer each field: Citizen data; Purpose; Ranking or prediction; Access; Retention; Reason and appeal; Cross-product use; Unrelated access effect; Proving tests. Show that no generalized citizen value or profile results."
     validations:
       required: true
 

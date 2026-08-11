@@ -25,4 +25,31 @@ describe('No Social Credit account boundary', () => {
       NoSocialCreditViolationError,
     );
   });
+
+  it.each([
+    'civicReputation',
+    'ideologyProfile',
+    'loyaltyScore',
+    'politicalProfile',
+    'socialCredit',
+    'citizenCommercialTrustRank',
+  ])('rejects generalized citizen profile output %s', (field) => {
+    expect(() => assertNoSocialCreditProjection({ [field]: 'synthetic' })).toThrow(
+      NoSocialCreditViolationError,
+    );
+  });
+
+  it.each([
+    'browsingHistory',
+    'categoryRating',
+    'jurisdiction',
+    'notificationBehavior',
+    'representativeSignal',
+    'subscription',
+    'votingChoice',
+  ])('rejects private civic input %s from a public citizen projection', (field) => {
+    expect(() => assertNoSocialCreditProjection({ citizen: { [field]: 'synthetic' } })).toThrow(
+      NoSocialCreditViolationError,
+    );
+  });
 });

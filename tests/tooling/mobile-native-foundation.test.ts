@@ -57,8 +57,8 @@ describe('native mobile delivery foundation', () => {
       await readFile(path.join(root, 'apps', 'mobile', 'package.json'), 'utf8'),
     );
     expect(packageDocument.dependencies).toMatchObject({
-      'expo-notifications': '57.0.9',
-      'expo-secure-store': '57.0.1',
+      'expo-notifications': '57.0.24',
+      'expo-secure-store': '57.0.4',
     });
     const eas = await readFile(path.join(root, 'apps', 'mobile', 'eas.json'), 'utf8');
     expect(eas).toContain('RMR_MOBILE_ENV');

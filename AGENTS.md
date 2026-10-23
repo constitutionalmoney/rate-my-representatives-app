@@ -167,7 +167,7 @@ Missing or ambiguous answers block review.
 
 ## Local capabilities
 
-- Required workspace toolchain: Node `24.19.0` and pnpm `11.20.0`.
+- Required workspace toolchain: Node `24.22.1` and pnpm `11.20.0`.
 - Install only with `pnpm install --frozen-lockfile`; do not use `npm install` or create a
   competing lockfile.
 - Verify Windows-local commands for PowerShell instead of copying POSIX environment syntax

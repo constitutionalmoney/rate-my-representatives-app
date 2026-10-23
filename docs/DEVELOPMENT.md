@@ -8,7 +8,7 @@ production civic data is operational.
 
 ## Prerequisites
 
-- Node.js `24.19.0` (the pinned Node 24 LTS release in `.node-version`)
+- Node.js `24.22.1` (the pinned Node 24 LTS release in `.node-version`)
 - pnpm `11.20.0` (pinned by `packageManager` and `engines` in `package.json`)
 - Git with contributor name and email configured for DCO sign-off
 
@@ -65,11 +65,14 @@ Issue #11 tests use only in-memory synthetic profile projections and the generat
 mock client unless `pnpm infra:smoke` is run. The API exposes no write route. Profile
 responses remain available with Verus stopped and all high-risk flags false.
 
-The initial Expo toolchain currently reports one moderate advisory in the transitive
-`xcode -> uuid@7.0.3` native-project generator path. RMR does not call that UUID API or
-ship it as application civic behavior. CI blocks high/critical advisories and GitHub
-dependency review while the Expo upstream path is monitored; no untested major-version
-override is applied.
+The October 2026 security update uses Node.js 24.22.1, Expo SDK 57.0.31 with its
+compatible native modules, Vite 8.3.5, and Vitest 4.1.12. The refreshed lockfile
+removes the former image-size dependency, so its obsolete audit exceptions are removed.
+Two high advisories remain in Expo/build tooling: node-forge (GHSA-86w9-cpqp-85rv)
+and braces (GHSA-vfj7-8cjw-p6xm). At review time their latest published npm versions
+are 1.4.0 and 3.0.3 respectively; no patched release is available. Dependency checks
+continue to fail on those findings. No blanket audit suppression is added, and this
+branch does not authorize a native release, signing, publishing, or deployment.
 
 ## Applications
 

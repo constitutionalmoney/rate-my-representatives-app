@@ -25,6 +25,15 @@ Verus write feature.
 
 ## Core stack
 
+Security maintenance, 2026-10-22: PostgreSQL is pinned to 17.11. The object-storage
+stack is still blocked: its pinned MinIO client image is unavailable from the registry,
+and the archived community server release does not contain the vendor fix for
+[GHSA-hv4r-mvr4-25vw](https://github.com/minio/minio/security/advisories/GHSA-hv4r-mvr4-25vw).
+Do not treat the complete stack as validated or suitable for real records. Selecting
+a maintained S3-compatible server or licensed vendor release requires a separate
+compatibility, licensing, policy, persistence, and recovery review. No storage product
+or data migration is performed by the runtime security patch.
+
 Docker Desktop or another Compose-compatible Docker engine is required. From the
 repository root, one command generates untracked random local secret files, builds the
 application containers, applies checksummed migrations and synthetic seeds, creates

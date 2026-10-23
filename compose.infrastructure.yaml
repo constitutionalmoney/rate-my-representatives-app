@@ -133,7 +133,7 @@ services:
     restart: unless-stopped
 
   queue-init:
-    image: node:24.19.0-bookworm-slim
+    image: node:24.22.1-bookworm-slim
     environment:
       RABBITMQ_MANAGEMENT_URL: http://rabbitmq:15672
       RABBITMQ_USERNAME: rmr-local

@@ -406,7 +406,7 @@ See [docs/ROADMAP.md](./docs/ROADMAP.md).
 
 ## Development foundation
 
-The workspace pins Node.js `24.19.0` and pnpm `11.20.0`. After installing those
+The workspace pins Node.js `24.22.1` and pnpm `11.20.0`. After installing those
 prerequisites, a clean checkout installs with one command:
 
 ```bash

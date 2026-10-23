@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 
-FROM node:24.19.0-bookworm-slim AS build
+FROM node:24.22.1-bookworm-slim AS build
 
 ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME:$PATH
@@ -12,7 +12,7 @@ RUN pnpm install --frozen-lockfile
 RUN pnpm generate:contracts && pnpm --filter @rmr/worker... build
 RUN pnpm --filter @rmr/worker --prod deploy /opt/worker
 
-FROM node:24.19.0-bookworm-slim AS runtime
+FROM node:24.22.1-bookworm-slim AS runtime
 
 ENV NODE_ENV=production
 WORKDIR /app

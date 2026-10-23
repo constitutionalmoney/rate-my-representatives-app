@@ -50,7 +50,7 @@ x-core-application-environment: &core-application-environment
 
 services:
   postgres:
-    image: postgres:17.10-alpine
+    image: postgres:17.11-alpine
     environment:
       POSTGRES_DB: rmr
       POSTGRES_USER: rmr
@@ -73,7 +73,7 @@ services:
     restart: unless-stopped
 
   migrations:
-    image: postgres:17.10-alpine
+    image: postgres:17.11-alpine
     environment:
       PGDATABASE: rmr
       PGHOST: postgres
